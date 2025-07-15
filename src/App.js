@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import QRCode from 'qrcode.react';
+import { QRCodeCanvas } from 'qrcode.react';
 
 function App() {
   const [url, setUrl] = useState('');
@@ -46,7 +46,7 @@ function App() {
         <div>
           <h2>QR Code for:</h2>
           <p>{selectedUrl}</p>
-          <QRCode value={selectedUrl} />
+          <QRCodeCanvas value={selectedUrl} />
         </div>
       )}
     </div>
