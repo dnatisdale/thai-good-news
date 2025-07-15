@@ -167,3 +167,6 @@ function App() {
   <p>Visit: <a href="https://thai-good-news.netlify.app" target="_blank" rel="noopener noreferrer">https://thai-good-news.netlify.app</a></p>
   <QRCodeCanvas value="https://thai-good-news.netlify.app" />
 </div>
+
+
+
