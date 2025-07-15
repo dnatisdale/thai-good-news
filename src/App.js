@@ -149,9 +149,12 @@ function App() {
                     checked={selectedExportUrls.includes(u)}
                     onChange={() => toggleExportSelection(u)}
                   />
-                  <span onClick={() => setSelectedUrl(u)} className="url-link">
-                    {u}
-                  </span>
+                  <div className="url-info">
+                    <span onClick={() => setSelectedUrl(u)} className="url-link">
+                      {u}
+                    </span>
+                    <QRCodeCanvas value={u} size={64} style={{ border: '1px solid white', marginTop: '5px' }} />
+                  </div>
                   <button onClick={() => handleDeleteUrl(cat, u)}>Delete</button>
                 </li>
               ))}
