@@ -1,38 +1,96 @@
-.App {
+.app-container {
+  padding: 20px;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  max-width: 600px;
+  margin: 0 auto;
+  color: #333;
+}
+
+h1, h2, h3 {
   text-align: center;
 }
 
-.App-logo {
-  height: 40vmin;
-  pointer-events: none;
+.form-section input {
+  width: 100%;
+  padding: 12px;
+  margin: 8px 0;
+  box-sizing: border-box;
+  border: 1px solid #ccc;
+  border-radius: 4px;
 }
 
-@media (prefers-reduced-motion: no-preference) {
-  .App-logo {
-    animation: App-logo-spin infinite 20s linear;
-  }
-}
-
-.App-header {
-  background-color: #282c34;
-  min-height: 100vh;
+.button-group {
   display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  font-size: calc(10px + 2vmin);
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-top: 10px;
+}
+
+.button-group button, .import-label {
+  background-color: #007BFF;
   color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  padding: 10px 16px;
+  font-size: 14px;
+  transition: background-color 0.3s ease;
 }
 
-.App-link {
-  color: #61dafb;
+.button-group button:hover, .import-label:hover {
+  background-color: #0056b3;
 }
 
-@keyframes App-logo-spin {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
+.import-label input {
+  display: none;
+}
+
+.category-section {
+  background: #f1f1f1;
+  padding: 12px;
+  margin: 12px 0;
+  border-radius: 5px;
+}
+
+.category-section h3 {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.category-section button {
+  background-color: #28a745;
+  margin-left: 10px;
+}
+
+.category-section button:hover {
+  background-color: #218838;
+}
+
+.url-link {
+  cursor: pointer;
+  color: #007BFF;
+  text-decoration: underline;
+  margin-right: 10px;
+}
+
+.url-link:hover {
+  color: #0056b3;
+}
+
+.qr-section {
+  text-align: center;
+  margin-top: 20px;
+}
+
+.qr-section p {
+  word-break: break-all;
+}
+
+/* Mobile Adjustments */
+@media (max-width: 480px) {
+  .button-group {
+    flex-direction: column;
+    align-items: stretch;
   }
 }
