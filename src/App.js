@@ -1,10 +1,13 @@
 import React, { useState, useEffect } from 'react';
 import { QRCodeCanvas } from 'qrcode.react';
 import './App.css';
+import '@fontsource/open-dyslexic';
+
+const predefinedCategories = ['Faith', 'Education', 'Health', 'Community', 'Others'];
 
 function App() {
-  const [url, setUrl] = useState('');
-  const [category, setCategory] = useState('');
+  const [url, setUrl] = useState('https://');
+  const [category, setCategory] = useState(predefinedCategories[0]);
   const [urlList, setUrlList] = useState({});
   const [selectedUrl, setSelectedUrl] = useState('');
 
@@ -31,7 +34,7 @@ function App() {
         }
         return prevList;
       });
-      setUrl('');
+      setUrl('https://');
     }
   };
 
@@ -49,40 +52,8 @@ function App() {
     if (selectedUrl === urlToDelete) setSelectedUrl('');
   };
 
-  const handleExportAll = () => {
-    const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(urlList));
-    downloadData(dataStr, 'url_data.json');
-  };
-
-  const handleExportCategory = (cat) => {
-    const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify({ [cat]: urlList[cat] }));
-    downloadData(dataStr, `${cat}_urls.json`);
-  };
-
-  const handleImport = (event) => {
-    const fileReader = new FileReader();
-    fileReader.onload = (e) => {
-      try {
-        const importedData = JSON.parse(e.target.result);
-        setUrlList(importedData);
-      } catch {
-        alert('Invalid JSON file');
-      }
-    };
-    fileReader.readAsText(event.target.files[0]);
-  };
-
-  const downloadData = (dataStr, filename) => {
-    const downloadAnchorNode = document.createElement('a');
-    downloadAnchorNode.setAttribute("href", dataStr);
-    downloadAnchorNode.setAttribute("download", filename);
-    document.body.appendChild(downloadAnchorNode);
-    downloadAnchorNode.click();
-    downloadAnchorNode.remove();
-  };
-
   return (
-    <div className="app-container">
+    <div className="app-container dyslexic-font">
       <h1>Thai: Good News - URL QR Manager</h1>
 
       <div className="form-section">
@@ -90,26 +61,15 @@ function App() {
           type="text"
           placeholder="Enter a URL"
           value={url}
-          onChange={(e) => setUrl(e.target.value)}
+          onChange={(e) => setUrl(e.target.value.startsWith('https://') ? e.target.value : 'https://' + e.target.value)}
         />
-        <input
-          type="text"
-          placeholder="Enter Category"
-          value={category}
-          onChange={(e) => setCategory(e.target.value)}
-        />
+        <select value={category} onChange={(e) => setCategory(e.target.value)}>
+          {predefinedCategories.map((cat, idx) => (
+            <option key={idx} value={cat}>{cat}</option>
+          ))}
+        </select>
         <div className="button-group">
           <button onClick={handleAddUrl}>Add URL</button>
-          <button onClick={handleExportAll}>Export All</button>
-          <label className="import-label">
-            Import
-            <input
-              type="file"
-              accept="application/json"
-              onChange={handleImport}
-              hidden
-            />
-          </label>
         </div>
       </div>
 
@@ -119,10 +79,7 @@ function App() {
       ) : (
         Object.keys(urlList).map((cat, catIndex) => (
           <div key={catIndex} className="category-section">
-            <h3>
-              {cat}
-              <button onClick={() => handleExportCategory(cat)}>Export Category</button>
-            </h3>
+            <h3>{cat}</h3>
             <ul>
               {urlList[cat].map((u, index) => (
                 <li key={index}>

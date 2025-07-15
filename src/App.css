@@ -1,77 +1,58 @@
-.app-container {
+body, .app-container {
+  margin: 0;
   padding: 20px;
-  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-  max-width: 600px;
-  margin: 0 auto;
+  font-family: 'OpenDyslexic', Arial, sans-serif;
+  background: linear-gradient(135deg, #ff5e57, #feca57, #1dd1a1, #54a0ff);
+  background-size: 600% 600%;
+  animation: gradientShift 20s ease infinite;
   color: #333;
 }
 
-h1, h2, h3 {
-  text-align: center;
+@keyframes gradientShift {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
 }
 
-.form-section input {
+.dyslexic-font {
+  font-family: 'OpenDyslexic', Arial, sans-serif;
+}
+
+input, select {
   width: 100%;
-  padding: 12px;
+  padding: 10px;
   margin: 8px 0;
-  box-sizing: border-box;
+  border-radius: 5px;
   border: 1px solid #ccc;
-  border-radius: 4px;
+  font-size: 16px;
 }
 
-.button-group {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 10px;
-  margin-top: 10px;
-}
-
-.button-group button, .import-label {
+.button-group button {
   background-color: #007BFF;
   color: white;
   border: none;
-  border-radius: 4px;
+  border-radius: 5px;
+  padding: 10px 15px;
+  margin: 5px;
   cursor: pointer;
-  padding: 10px 16px;
   font-size: 14px;
-  transition: background-color 0.3s ease;
 }
 
-.button-group button:hover, .import-label:hover {
+.button-group button:hover {
   background-color: #0056b3;
 }
 
-.import-label input {
-  display: none;
-}
-
 .category-section {
-  background: #f1f1f1;
-  padding: 12px;
-  margin: 12px 0;
-  border-radius: 5px;
-}
-
-.category-section h3 {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-}
-
-.category-section button {
-  background-color: #28a745;
-  margin-left: 10px;
-}
-
-.category-section button:hover {
-  background-color: #218838;
+  background: rgba(255, 255, 255, 0.85);
+  border-radius: 8px;
+  padding: 10px;
+  margin-top: 15px;
 }
 
 .url-link {
-  cursor: pointer;
   color: #007BFF;
   text-decoration: underline;
-  margin-right: 10px;
+  cursor: pointer;
 }
 
 .url-link:hover {
@@ -81,16 +62,4 @@ h1, h2, h3 {
 .qr-section {
   text-align: center;
   margin-top: 20px;
-}
-
-.qr-section p {
-  word-break: break-all;
-}
-
-/* Mobile Adjustments */
-@media (max-width: 480px) {
-  .button-group {
-    flex-direction: column;
-    align-items: stretch;
-  }
 }
