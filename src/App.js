@@ -26,19 +26,22 @@ function App() {
   }, [categories]);
 
   const handleAddUrl = () => {
-    if (url && category) {
+    if (url) {
+      const effectiveCategory = category || 'Uncategorized';
       setUrlList(prevList => {
-        const categoryUrls = prevList[category] || [];
+        const categoryUrls = prevList[effectiveCategory] || [];
         if (!categoryUrls.includes(url)) {
           return {
             ...prevList,
-            [category]: [...categoryUrls, url]
+            [effectiveCategory]: [...categoryUrls, url]
           };
         }
         return prevList;
       });
-      if (!categories.includes(category)) {
+      if (category && !categories.includes(category)) {
         setCategories(prev => [...prev, category]);
+      } else if (!category && !categories.includes('Uncategorized')) {
+        setCategories(prev => [...prev, 'Uncategorized']);
       }
       setUrl('https://');
     }
@@ -63,12 +66,10 @@ function App() {
     fileReader.onload = (event) => {
       const lines = event.target.result.split('\n');
       lines.forEach(line => {
-        const [cat, url] = line.split(',').map(item => item.trim());
-        if (cat && url) {
-          setCategory(cat);
-          setUrl(url);
-          handleAddUrl();
-        }
+        const [cat, urlValue] = line.split(',').map(item => item.trim());
+        setCategory(cat || 'Uncategorized');
+        setUrl(urlValue);
+        handleAddUrl();
       });
     };
     fileReader.readAsText(e.target.files[0]);
@@ -121,7 +122,7 @@ function App() {
         <input
           className="input-field"
           type="text"
-          placeholder="Enter Category"
+          placeholder="Enter Category (optional)"
           value={category}
           onChange={(e) => setCategory(e.target.value)}
         />
