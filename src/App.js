@@ -104,6 +104,10 @@ function App() {
 
   return (
     <div className="app-container dyslexic-font">
+      <div className="app-download-section">
+        <QRCodeCanvas value="https://thai-good-news.netlify.app" size={80} style={{ border: '1px solid white' }} />
+      </div>
+
       <h1 className="header-title">ข่าวดี Thai: Good News</h1>
 
       <div className="form-section">
@@ -129,7 +133,7 @@ function App() {
         </div>
       </div>
 
-      <h2>Stored URLs by Category</h2>
+      <h2>My URLs</h2>
       {categories.length === 0 ? (
         <p>No URLs stored yet.</p>
       ) : (
@@ -162,12 +166,6 @@ function App() {
           <QRCodeCanvas value={selectedUrl} />
         </div>
       )}
-
-      <div className="app-download-section">
-        <h2>Download the Thai: Good News App</h2>
-        <p>Visit: <a href="https://thai-good-news.netlify.app" target="_blank" rel="noopener noreferrer">https://thai-good-news.netlify.app</a></p>
-        <QRCodeCanvas value="https://thai-good-news.netlify.app" />
-      </div>
     </div>
   );
 }
