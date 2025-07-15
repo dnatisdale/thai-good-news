@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { QRCodeCanvas } from 'qrcode.react';
 import './App.css';
-import '@fontsource/open-dyslexic';
 
 const predefinedCategories = ['Faith', 'Education', 'Health', 'Community', 'Others'];
 
@@ -106,3 +105,8 @@ function App() {
 }
 
 export default App;
+
+/* In your public/index.html file, add this within <head> */
+/*
+<link rel="stylesheet" href="https://fonts.cdnfonts.com/css/open-dyslexic" />
+*/
