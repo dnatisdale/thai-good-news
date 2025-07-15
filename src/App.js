@@ -162,13 +162,8 @@ function App() {
           <QRCodeCanvas value={selectedUrl} />
         </div>
       )}
-    </div>
-  );
-}
-
-export default App;
-
-/* In your public/index.html file, add this within <head> */
-/*
-<link rel="stylesheet" href="https://fonts.cdnfonts.com/css/open-dyslexic" />
-*/
+    <div className="app-download-section">
+  <h2>Download the Thai: Good News App</h2>
+  <p>Visit: <a href="https://thai-good-news.netlify.app" target="_blank" rel="noopener noreferrer">https://thai-good-news.netlify.app</a></p>
+  <QRCodeCanvas value="https://thai-good-news.netlify.app" />
+</div>
