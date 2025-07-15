@@ -1,0 +1,5 @@
+Installing dependencies with legacy-peer-deps... 
+
+up to date, audited 6 packages in 931ms
+
+found 0 vulnerabilities
