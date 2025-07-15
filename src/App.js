@@ -162,11 +162,14 @@ function App() {
           <QRCodeCanvas value={selectedUrl} />
         </div>
       )}
-    <div className="app-download-section">
-  <h2>Download the Thai: Good News App</h2>
-  <p>Visit: <a href="https://thai-good-news.netlify.app" target="_blank" rel="noopener noreferrer">https://thai-good-news.netlify.app</a></p>
-  <QRCodeCanvas value="https://thai-good-news.netlify.app" />
-</div>
 
+      <div className="app-download-section">
+        <h2>Download the Thai: Good News App</h2>
+        <p>Visit: <a href="https://thai-good-news.netlify.app" target="_blank" rel="noopener noreferrer">https://thai-good-news.netlify.app</a></p>
+        <QRCodeCanvas value="https://thai-good-news.netlify.app" />
+      </div>
+    </div>
+  );
+}
 
-
+export default App;
