@@ -9,6 +9,8 @@ function App() {
   const [selectedCategories, setSelectedCategories] = useState([]);
   const [uploadHistory, setUploadHistory] = useState([]);
   const [qrZoomUrl, setQrZoomUrl] = useState('');
+  const [newUrl, setNewUrl] = useState('');
+  const [newCategory, setNewCategory] = useState('');
 
   useEffect(() => {
     const storedData = localStorage.getItem('urlList');
@@ -53,9 +55,45 @@ function App() {
     );
   };
 
+  const handleAddUrl = () => {
+    if (!newUrl || !newCategory) return;
+
+    setUrlList(prev => {
+      const updated = { ...prev };
+      if (!updated[newCategory]) {
+        updated[newCategory] = [];
+      }
+      updated[newCategory].push(newUrl);
+      return updated;
+    });
+
+    if (!categories.includes(newCategory)) {
+      setCategories(prev => [...prev, newCategory]);
+    }
+
+    setNewUrl('');
+    setNewCategory('');
+  };
+
   return (
     <div className="app-container playpen-sans-thai">
       <h1 className="header-title">ข่าวดี Thai: Good News</h1>
+
+      <div>
+        <input
+          type="text"
+          value={newUrl}
+          onChange={e => setNewUrl(e.target.value)}
+          placeholder="Enter URL"
+        />
+        <input
+          type="text"
+          value={newCategory}
+          onChange={e => setNewCategory(e.target.value)}
+          placeholder="Enter Category"
+        />
+        <button onClick={handleAddUrl}>Add URL</button>
+      </div>
 
       <button className="playpen-sans-thai" onClick={handleDeleteSelected}>Delete Selected</button>
 
