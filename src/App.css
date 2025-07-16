@@ -1,88 +1,60 @@
 body, .app-container {
-  margin: 0;
-  padding: 20px;
-  font-family: 'OpenDyslexic', 'Noto Sans', 'Roboto', sans-serif;
-  background: linear-gradient(135deg, #ff5e57, #feca57, #1dd1a1, #54a0ff);
-  background-size: 600% 600%;
-  animation: gradientShift 20s ease infinite;
-  color: #333;
+    font-family: 'Bookerly', serif;
+    background: linear-gradient(135deg, #ff9a9e, #fad0c4, #fad0c4, #a1c4fd, #c2e9fb);
+    background-size: 400% 400%;
+    animation: gradientBG 15s ease infinite;
+    color: #333;
 }
 
-@keyframes gradientShift {
-  0% { background-position: 0% 50%; }
-  50% { background-position: 100% 50%; }
-  100% { background-position: 0% 50%; }
+@keyframes gradientBG {
+    0% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
 }
 
 .header-title {
-  text-align: center;
-  font-size: 2rem;
-  margin-bottom: 20px;
+    font-size: 2em;
+    margin-bottom: 10px;
 }
 
 .input-field {
-  width: 100%;
-  padding: 10px;
-  margin: 8px 0;
-  border: 1px solid #ccc;
-  border-radius: 5px;
-  font-size: 16px;
-}
-
-.button-group {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 10px;
-  margin-top: 10px;
+    padding: 8px;
+    margin: 5px;
+    width: 250px;
 }
 
 .button-group button {
-  background-color: #007BFF;
-  color: white;
-  border: none;
-  border-radius: 5px;
-  padding: 10px 15px;
-  cursor: pointer;
-  font-size: 14px;
-  transition: background-color 0.3s ease;
-}
-
-.button-group button:hover {
-  background-color: #0056b3;
+    margin: 5px;
 }
 
 .category-section {
-  background: rgba(255, 255, 255, 0.9);
-  border-radius: 8px;
-  padding: 10px;
-  margin-top: 15px;
+    margin: 20px 0;
+    border-bottom: 1px solid #ccc;
+    padding-bottom: 10px;
 }
 
 .url-item {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  margin: 5px 0;
+    display: flex;
+    align-items: center;
+    margin-bottom: 8px;
 }
 
-.url-link {
-  color: #007BFF;
-  text-decoration: underline;
-  cursor: pointer;
-}
-
-.url-link:hover {
-  color: #0056b3;
-}
-
-.qr-section, .app-download-section {
-  text-align: center;
-  margin-top: 20px;
-}
-
-@media (max-width: 600px) {
-  .button-group {
+.url-info {
+    display: flex;
     flex-direction: column;
-    align-items: stretch;
-  }
+    margin: 0 10px;
+}
+
+.qr-section {
+    margin-top: 20px;
+}
+
+.app-download-section {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+}
+
+.bookerly-font {
+    font-family: 'Bookerly', serif;
 }
