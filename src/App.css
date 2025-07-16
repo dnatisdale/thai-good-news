@@ -1,58 +1,80 @@
 @import url('https://fonts.googleapis.com/css2?family=Playpen+Sans&display=swap');
 
-body {
-  font-family: 'Playpen Sans', sans-serif;
-  background: linear-gradient(45deg, red, orange, yellow, green, blue, purple);
-  background-size: 600% 600%;
-  animation: gradientShift 20s ease infinite;
-  color: black;
-  padding: 10px;
+body, .playpen-sans-thai {
+    font-family: 'Playpen Sans', cursive;
 }
 
-@keyframes gradientShift {
-  0% {background-position: 0% 50%;}
-  50% {background-position: 100% 50%;}
-  100% {background-position: 0% 50%;}
+.app-container {
+    padding: 20px;
 }
 
-.input-large {
-  font-size: 1.1rem;
-  padding: 10px;
-  margin: 5px;
+.vibrant-colors {
+    background: linear-gradient(135deg, red, orange, yellow, green, blue, purple);
+    min-height: 100vh;
+    color: black;
+}
+
+.input-section input {
+    margin: 5px;
+    padding: 12px;
+    font-size: 18px;
+}
+
+.input-section button {
+    margin: 5px;
+    padding: 12px 20px;
+    font-size: 18px;
+}
+
+.header-title {
+    font-size: 2em;
+    margin-bottom: 10px;
+}
+
+.category-section {
+    margin-bottom: 20px;
 }
 
 .url-item {
-  margin: 10px 0;
-  padding: 5px;
+    display: flex;
+    align-items: center;
+    margin: 5px 0;
+}
+
+.url-checkbox {
+    margin-right: 10px;
 }
 
 .black-link {
-  color: black;
-  text-decoration: underline;
+    color: black;
+    text-decoration: underline;
+    margin-right: 10px;
+}
+
+.small-font {
+    font-size: 0.85em;
 }
 
 .qr-code-small {
-  border: 1px solid white;
-  border-radius: 8px;
-  margin: 5px;
+    cursor: pointer;
+    border: 1px solid white;
+    border-radius: 8px;
+    margin-left: 10px;
 }
 
 .qr-modal {
-  position: fixed;
-  top: 0; left: 0; right: 0; bottom: 0;
-  background: rgba(0,0,0,0.8);
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
+    position: fixed;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background-color: rgba(0,0,0,0.8);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
 }
 
-.action-menu {
-  margin: 20px 0;
-  padding: 10px;
-  background: #fff;
-  border: 2px solid #000;
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
+.action-menu button {
+    margin: 5px;
+    padding: 8px 12px;
+    font-size: 16px;
 }

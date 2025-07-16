@@ -29,9 +29,7 @@ function App() {
 
   const handleAddUrl = () => {
     if (!newUrl || newUrl === 'https://' || !newCategory) return;
-
-    let sanitizedUrl = newUrl.replace(/\s+/g, '');
-    let processedUrl = sanitizedUrl.startsWith('https://') ? sanitizedUrl : 'https://' + sanitizedUrl;
+    let processedUrl = newUrl.trim().replace(/\s+/g, '').startsWith('https://') ? newUrl.trim().replace(/\s+/g, '') : 'https://' + newUrl.trim().replace(/\s+/g, '');
 
     setUrlList(prev => {
       const updated = { ...prev };
@@ -57,7 +55,8 @@ function App() {
   };
 
   const handleShare = () => {
-    alert('Sharing URLs: ' + selectedUrls.join(', '));
+    const mailtoLink = `mailto:?subject=Shared URLs&body=${encodeURIComponent(selectedUrls.join('\n'))}`;
+    window.location.href = mailtoLink;
   };
 
   const handleExport = () => {
@@ -117,8 +116,7 @@ function App() {
                 onChange={() => toggleUrlSelection(u)}
                 checked={selectedUrls.includes(u)}
               />
-              <a href={u} target="_blank" rel="noopener noreferrer" className="black-link playpen-sans-thai">{u}</a>
-              <br />
+              <a href={u} target="_blank" rel="noopener noreferrer" className="black-link playpen-sans-thai small-font">{u}</a>
               <QRCodeCanvas
                 value={u}
                 size={48}
