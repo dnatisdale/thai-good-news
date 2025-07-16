@@ -19,10 +19,10 @@ function App() {
   const filteredUrls = urls.filter(u => u.includes(searchTerm));
 
   return (
-    <div className="app-container">
-      <h1>ข่าวดี Thai: Good News</h1>
+    <div className="app-container" lang="auto">
+      <h1 lang="auto">ข่าวดี Thai: Good News</h1>
 
-      <div className="input-section">
+      <div className="input-section" lang="auto">
         <input
           type="text"
           value={newUrl}
@@ -33,7 +33,7 @@ function App() {
         <button onClick={addUrl}>Add URL</button>
       </div>
 
-      <div className="search-section">
+      <div className="search-section" lang="auto">
         <input
           type="text"
           placeholder="Search URLs"
@@ -43,9 +43,9 @@ function App() {
         />
       </div>
 
-      <h2>My URLs</h2>
+      <h2 lang="auto">My URLs</h2>
       {filteredUrls.map((url, idx) => (
-        <div key={idx} className="url-item">
+        <div key={idx} className="url-item" lang="auto">
           <input type="checkbox" className="url-checkbox" />
           <QRCodeCanvas
             value={url}
@@ -60,9 +60,9 @@ function App() {
       ))}
 
       {qrZoomUrl && (
-        <div className="qr-modal" onClick={() => setQrZoomUrl('')}>
+        <div className="qr-modal" onClick={() => setQrZoomUrl('')} lang="auto">
           <QRCodeCanvas value={qrZoomUrl} size={256} />
-          <p style={{ color: 'white' }}>Click anywhere to close</p>
+          <p>Click anywhere to close</p>
         </div>
       )}
     </div>
