@@ -29,7 +29,9 @@ function App() {
 
   const handleAddUrl = () => {
     if (!newUrl || newUrl === 'https://' || !newCategory) return;
-    let processedUrl = newUrl.trim().startsWith('https://') ? newUrl.trim() : 'https://' + newUrl.trim();
+
+    let sanitizedUrl = newUrl.replace(/\s+/g, '');
+    let processedUrl = sanitizedUrl.startsWith('https://') ? sanitizedUrl : 'https://' + sanitizedUrl;
 
     setUrlList(prev => {
       const updated = { ...prev };
@@ -52,6 +54,33 @@ function App() {
       setActionMenuVisible(updated.length > 0);
       return updated;
     });
+  };
+
+  const handleShare = () => {
+    alert('Sharing URLs: ' + selectedUrls.join(', '));
+  };
+
+  const handleExport = () => {
+    const csvContent = "data:text/csv;charset=utf-8," + selectedUrls.join("\n");
+    const encodedUri = encodeURI(csvContent);
+    const link = document.createElement("a");
+    link.setAttribute("href", encodedUri);
+    link.setAttribute("download", "exported_urls.csv");
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  };
+
+  const handleDelete = () => {
+    if (!window.confirm('Are you sure you want to delete the selected URLs?')) return;
+
+    const updatedUrlList = { ...urlList };
+    Object.keys(updatedUrlList).forEach(category => {
+      updatedUrlList[category] = updatedUrlList[category].filter(u => !selectedUrls.includes(u));
+    });
+    setUrlList(updatedUrlList);
+    setSelectedUrls([]);
+    setActionMenuVisible(false);
   };
 
   return (
@@ -80,37 +109,33 @@ function App() {
       {categories.map((cat, index) => (
         <div key={index} className="category-section">
           <h3 className="playpen-sans-thai">{cat}</h3>
-          <ul>
-            {urlList[cat]?.map((u, idx) => (
-              <li key={idx} className="url-item">
-                <div>
-                  <input
-                    type="checkbox"
-                    className="url-checkbox"
-                    onChange={() => toggleUrlSelection(u)}
-                    checked={selectedUrls.includes(u)}
-                  />
-                  <a href={u} target="_blank" rel="noopener noreferrer" className="black-link playpen-sans-thai">{u}</a>
-                  <br />
-                  <QRCodeCanvas
-                    value={u}
-                    size={48}
-                    className="qr-code-small"
-                    onClick={() => setQrZoomUrl(u)}
-                  />
-                </div>
-              </li>
-            ))}
-          </ul>
+          {urlList[cat]?.map((u, idx) => (
+            <div key={idx} className="url-item">
+              <input
+                type="checkbox"
+                className="url-checkbox"
+                onChange={() => toggleUrlSelection(u)}
+                checked={selectedUrls.includes(u)}
+              />
+              <a href={u} target="_blank" rel="noopener noreferrer" className="black-link playpen-sans-thai">{u}</a>
+              <br />
+              <QRCodeCanvas
+                value={u}
+                size={48}
+                className="qr-code-small"
+                onClick={() => setQrZoomUrl(u)}
+              />
+            </div>
+          ))}
         </div>
       ))}
 
       {actionMenuVisible && (
         <div className="action-menu playpen-sans-thai">
           <p>What would you like to do with the selected URLs?</p>
-          <button>Share (Email)</button>
-          <button>Export (CSV)</button>
-          <button>Delete</button>
+          <button onClick={handleShare}>Share (Email)</button>
+          <button onClick={handleExport}>Export (CSV)</button>
+          <button onClick={handleDelete}>Delete</button>
         </div>
       )}
 
@@ -126,7 +151,7 @@ function App() {
       {qrZoomUrl && (
         <div className="qr-modal" onClick={() => setQrZoomUrl('')}>
           <QRCodeCanvas value={qrZoomUrl} size={256} />
-          <p className="playpen-sans-thai">Click anywhere to close</p>
+          <p className="playpen-sans-thai" style={{ color: 'white' }}>Click anywhere to close</p>
         </div>
       )}
     </div>

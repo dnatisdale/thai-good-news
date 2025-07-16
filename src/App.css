@@ -1,40 +1,29 @@
+@import url('https://fonts.googleapis.com/css2?family=Playpen+Sans&display=swap');
+
 body {
-  margin: 0;
   font-family: 'Playpen Sans', sans-serif;
-  background: linear-gradient(135deg, #FF5733, #FFC300, #28B463, #3498DB, #8E44AD);
-  background-size: 400% 400%;
-  animation: gradientBG 15s ease infinite;
+  background: linear-gradient(45deg, red, orange, yellow, green, blue, purple);
+  background-size: 600% 600%;
+  animation: gradientShift 20s ease infinite;
   color: black;
+  padding: 10px;
 }
 
-@keyframes gradientBG {
-  0% { background-position: 0% 50%; }
-  50% { background-position: 100% 50%; }
-  100% { background-position: 0% 50%; }
-}
-
-.app-container {
-  padding: 20px;
-}
-
-.playpen-sans-thai {
-  font-family: 'Playpen Sans', sans-serif;
-}
-
-.input-section {
-  margin-bottom: 20px;
+@keyframes gradientShift {
+  0% {background-position: 0% 50%;}
+  50% {background-position: 100% 50%;}
+  100% {background-position: 0% 50%;}
 }
 
 .input-large {
-  font-size: 18px;
+  font-size: 1.1rem;
   padding: 10px;
-  margin-right: 10px;
+  margin: 5px;
 }
 
-button {
-  font-family: 'Playpen Sans', sans-serif;
-  padding: 10px 15px;
-  font-size: 16px;
+.url-item {
+  margin: 10px 0;
+  padding: 5px;
 }
 
 .black-link {
@@ -45,8 +34,7 @@ button {
 .qr-code-small {
   border: 1px solid white;
   border-radius: 8px;
-  margin-top: 5px;
-  cursor: pointer;
+  margin: 5px;
 }
 
 .qr-modal {
@@ -59,18 +47,12 @@ button {
   justify-content: center;
 }
 
-.category-section {
-  margin-bottom: 20px;
-}
-
-.url-item {
-  margin-bottom: 10px;
-}
-
 .action-menu {
-  margin-top: 20px;
-  background: white;
-  padding: 15px;
-  border: 1px solid #ccc;
-  border-radius: 8px;
+  margin: 20px 0;
+  padding: 10px;
+  background: #fff;
+  border: 2px solid #000;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
 }
