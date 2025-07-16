@@ -26,31 +26,29 @@ function App() {
   }, [urlList, categories, uploadHistory]);
 
   const handleAddUrl = () => {
-    if (!newUrl || !newCategory) return;
+    if (!newUrl || newUrl === 'https://' || !newCategory) return;
     let processedUrl = newUrl.trim().startsWith('https://') ? newUrl.trim() : 'https://' + newUrl.trim();
 
     setUrlList(prev => {
       const updated = { ...prev };
-      if (!updated[newCategory]) {
-        updated[newCategory] = [];
-      }
+      if (!updated[newCategory]) updated[newCategory] = [];
       updated[newCategory].push(processedUrl);
       return updated;
     });
 
-    if (!categories.includes(newCategory)) {
-      setCategories(prev => [...prev, newCategory]);
-    }
+    if (!categories.includes(newCategory)) setCategories(prev => [...prev, newCategory]);
+
+    setUploadHistory(prev => [...prev, { url: processedUrl, category: newCategory, timestamp: new Date().toISOString() }]);
 
     setNewUrl('https://');
     setNewCategory('');
   };
 
   return (
-    <div className="app-container playpen-sans-thai compact-layout">
+    <div className="app-container playpen-sans-thai vibrant-colors">
       <h1 className="header-title">ข่าวดี Thai: Good News</h1>
 
-      <div>
+      <div className="input-section">
         <input
           type="text"
           value={newUrl}
@@ -91,6 +89,15 @@ function App() {
           </ul>
         </div>
       ))}
+
+      <h2>Upload History</h2>
+      <ul>
+        {uploadHistory.map((record, idx) => (
+          <li key={idx}>
+            {record.url} (Category: {record.category}, Time: {new Date(record.timestamp).toLocaleString()})
+          </li>
+        ))}
+      </ul>
 
       {qrZoomUrl && (
         <div className="qr-modal" onClick={() => setQrZoomUrl('')}>
