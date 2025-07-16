@@ -87,14 +87,14 @@ function App() {
           value={newUrl}
           onChange={e => setNewUrl(e.target.value)}
           placeholder="Enter URL"
-          className="input-large"
+          className="input-large playpen-sans-thai"
         />
         <input
           type="text"
           value={newCategory}
           onChange={e => setNewCategory(e.target.value)}
           placeholder="Enter Category"
-          className="input-large"
+          className="input-large playpen-sans-thai"
         />
         <button onClick={handleAddUrl}>Add URL</button>
       </div>
@@ -120,8 +120,16 @@ function App() {
                   checked={selectedExportUrls.includes(u)}
                   onChange={() => setSelectedExportUrls(prev => prev.includes(u) ? prev.filter(x => x !== u) : [...prev, u])}
                 />
-                <a href={u} target="_blank" rel="noopener noreferrer" className="black-link">{u}</a>
-                <QRCodeCanvas value={u} size={48} style={{ border: '1px solid white', cursor: 'pointer' }} onClick={() => setQrZoomUrl(u)} />
+                <div>
+                  <a href={u} target="_blank" rel="noopener noreferrer" className="black-link">{u}</a>
+                  <br />
+                  <QRCodeCanvas 
+                    value={u} 
+                    size={48} 
+                    style={{ border: '1px solid white', borderRadius: '8px', cursor: 'pointer' }} 
+                    onClick={() => setQrZoomUrl(u)} 
+                  />
+                </div>
               </li>
             ))}
           </ul>

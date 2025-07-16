@@ -2,9 +2,9 @@ body {
   font-family: 'Playpen Sans', sans-serif;
   margin: 0;
   padding: 0;
-  background: linear-gradient(-45deg, #222831, #393E46, #393E46, #222831);
-  background-size: 400% 400%;
-  animation: gradientBG 15s ease infinite;
+  background: linear-gradient(-45deg, red, orange, yellow, green, blue, purple);
+  background-size: 600% 600%;
+  animation: gradientBG 20s ease infinite;
   color: white;
 }
 
@@ -17,7 +17,7 @@ body {
 .app-container {
   max-width: 800px;
   margin: 0 auto;
-  padding: 20px;
+  padding: 10px;
 }
 
 .input-large {
@@ -33,7 +33,7 @@ button {
   padding: 8px 12px;
 }
 
-h1, h2, h3 {
+h1, h2, h3, input, a, label, p {
   font-family: 'Playpen Sans', sans-serif;
 }
 
@@ -66,9 +66,19 @@ h1, h2, h3 {
 }
 
 .compact-layout {
-  padding: 10px;
+  padding: 8px;
 }
 
 .category-section {
-  margin-bottom: 20px;
+  margin-bottom: 12px;
+}
+
+a.black-link {
+  font-size: 16px;
+}
+
+.qr-code-small {
+  border: 1px solid white;
+  border-radius: 12px;
+  cursor: pointer;
 }
