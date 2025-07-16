@@ -1,54 +1,90 @@
-import React, { useState } from 'react';
-import QRCode from 'qrcode.react';
+import React, { useState, useEffect } from 'react';
+import { QRCodeCanvas } from 'qrcode.react';
 import './App.css';
 
 function App() {
     const [urls, setUrls] = useState([]);
-    const [newUrl, setNewUrl] = useState('');
-    const [zoomQr, setZoomQr] = useState(null);
+    const [inputUrl, setInputUrl] = useState('');
+    const [selectedUrls, setSelectedUrls] = useState([]);
 
     const handleAddUrl = () => {
-        if (!newUrl.trim()) return;
-        const cleanedUrl = newUrl.trim().replace(/\s+/g, '').replace(/^(?!https?:\/\/)/, 'https://');
-        setUrls([...urls, cleanedUrl]);
-        setNewUrl('');
+        let urlToAdd = inputUrl.trim();
+        if (!urlToAdd) return;
+
+        if (!urlToAdd.startsWith('https://')) {
+            urlToAdd = 'https://' + urlToAdd;
+        }
+
+        urlToAdd = urlToAdd.replace(/\s+/g, ''); // Remove any spaces within the URL
+
+        if (!urls.includes(urlToAdd)) {
+            setUrls([...urls, urlToAdd]);
+            setInputUrl('');
+        }
     };
 
-    const handleZoomQr = (url) => setZoomQr(url);
+    const handleCheckboxChange = (url) => {
+        setSelectedUrls((prevSelected) =>
+            prevSelected.includes(url)
+                ? prevSelected.filter((u) => u !== url)
+                : [...prevSelected, url]
+        );
+    };
+
+    const handleAction = (action) => {
+        if (selectedUrls.length === 0) return;
+
+        if (action === 'delete') {
+            setUrls(urls.filter((url) => !selectedUrls.includes(url)));
+            setSelectedUrls([]);
+        } else if (action === 'export') {
+            const csvContent = selectedUrls.join('\n');
+            const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+            const link = document.createElement('a');
+            link.href = URL.createObjectURL(blob);
+            link.download = 'exported_urls.csv';
+            link.click();
+        } else if (action === 'share') {
+            const mailtoLink = `mailto:?body=${encodeURIComponent(selectedUrls.join('\n'))}`;
+            window.location.href = mailtoLink;
+        }
+    };
 
     return (
-        <div className="container">
+        <div className="App">
             <h1>ข่าวดี Thai: Good News</h1>
-            <div>
+
+            <div className="input-group">
                 <input
                     type="text"
-                    value={newUrl}
-                    onChange={(e) => setNewUrl(e.target.value)}
+                    value={inputUrl}
+                    onChange={(e) => setInputUrl(e.target.value)}
                     placeholder="Enter URL"
                 />
                 <button onClick={handleAddUrl}>Add URL</button>
             </div>
 
-            <ul className="category-list">
+            <div className="actions">
+                <button onClick={() => handleAction('share')}>Share</button>
+                <button onClick={() => handleAction('export')}>Export</button>
+                <button onClick={() => handleAction('delete')}>Delete</button>
+            </div>
+
+            <ul className="url-list">
                 {urls.map((url, index) => (
                     <li key={index}>
-                        <input type="checkbox" /> {/* Placeholder for future actions */}
-                        <QRCode
-                            value={url}
-                            className="qr-small"
-                            onClick={() => handleZoomQr(url)}
+                        <input
+                            type="checkbox"
+                            checked={selectedUrls.includes(url)}
+                            onChange={() => handleCheckboxChange(url)}
                         />
-                        <div className="url-link">{url}</div>
+                        <a href={url} target="_blank" rel="noopener noreferrer">{url}</a>
+                        <div className="qr-container">
+                            <QRCodeCanvas value={url} size={50} />
+                        </div>
                     </li>
                 ))}
             </ul>
-
-            {zoomQr && (
-                <div>
-                    <QRCode value={zoomQr} className="zoomed-qr" />
-                    <div className="click-to-close" onClick={() => setZoomQr(null)}>Click anywhere to close</div>
-                </div>
-            )}
         </div>
     );
 }

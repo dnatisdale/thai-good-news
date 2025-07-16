@@ -1,86 +1,57 @@
-body {
+body, html {
+    font-family: sans-serif;
     margin: 0;
     padding: 0;
-    background: linear-gradient(135deg, #ffcccc, #ffe680, #ccffcc, #cce0ff, #e0ccff);
-    background-size: 400% 400%;
-    animation: gradientBG 15s ease infinite;
-    font-family: system-ui, sans-serif;
-    color: black;
 }
 
-@keyframes gradientBG {
-    0% {background-position: 0% 50%;}
-    50% {background-position: 100% 50%;}
-    100% {background-position: 0% 50%;}
-}
-
-.container {
-    width: 90%;
-    max-width: 800px;
-    margin: auto;
+.App {
     text-align: center;
+    padding: 20px;
 }
 
-input, select, button {
-    font-family: inherit;
+.input-group input {
     padding: 10px;
-    margin: 5px;
-    border: 1px solid #333;
-    border-radius: 5px;
+    font-size: 16px;
+    width: 250px;
 }
 
-.qr-small {
-    width: 80px;
-    height: 80px;
-    border: 1px solid white;
-    border-radius: 5px;
+.input-group button {
+    padding: 10px;
+    font-size: 16px;
+    margin-left: 5px;
+}
+
+.actions button {
+    padding: 8px 12px;
+    margin: 5px;
+    font-size: 14px;
     cursor: pointer;
 }
 
-.url-link {
-    font-size: 0.9rem;
-    color: black;
-    text-decoration: underline;
-}
-
-.category-list {
+.url-list {
     list-style-type: none;
     padding: 0;
 }
 
-.category-list li {
-    margin-bottom: 10px;
-}
-
-.button-action {
-    background-color: #333;
-    color: white;
-    border: none;
-    border-radius: 5px;
-    padding: 8px 12px;
-    cursor: pointer;
-}
-
-.button-action:hover {
-    background-color: #555;
-}
-
-.zoomed-qr {
-    width: 300px;
-    height: 300px;
-    border: 2px solid white;
-    border-radius: 5px;
-}
-
-.action-panel {
+.url-list li {
+    background: #f0f0f0;
+    margin: 8px 0;
+    padding: 10px;
+    border-radius: 8px;
     display: flex;
-    justify-content: center;
-    gap: 10px;
-    margin-top: 5px;
+    align-items: center;
+    justify-content: space-between;
 }
 
-.click-to-close {
-    color: white;
-    font-size: 0.9rem;
-    margin-top: 5px;
+.url-list a {
+    color: black;
+    text-decoration: underline;
+    font-size: 14px;
+}
+
+.qr-container {
+    margin-left: 10px;
+    border: 1px solid white;
+    border-radius: 6px;
+    padding: 4px;
 }
