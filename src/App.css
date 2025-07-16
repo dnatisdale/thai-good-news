@@ -1,43 +1,51 @@
-@import url('https://fonts.googleapis.com/css2?family=Playpen+Sans+Thai&display=swap');
-
-body, html {
+body {
+  font-family: 'Playpen Sans', sans-serif;
   margin: 0;
-  padding: 20px;
-  font-family: 'Playpen Sans Thai', sans-serif;
-  background: linear-gradient(135deg, #ffcccc, #ccffcc, #ccccff, #ffffcc);
-  background-size: 600% 600%;
-  animation: gradientBG 30s ease infinite;
+  padding: 0;
+  background: linear-gradient(-45deg, #222831, #393E46, #393E46, #222831);
+  background-size: 400% 400%;
+  animation: gradientBG 15s ease infinite;
+  color: white;
 }
 
 @keyframes gradientBG {
-  0% {background-position:0% 50%}
-  50% {background-position:100% 50%}
-  100% {background-position:0% 50%}
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
 }
 
 .app-container {
   max-width: 800px;
-  margin: auto;
+  margin: 0 auto;
+  padding: 20px;
 }
 
-.header-title {
-  text-align: center;
+.input-large {
+  font-size: 18px;
+  padding: 10px;
+  margin: 5px;
 }
 
-.button-group button, .playpen-sans-thai, button {
-  font-family: 'Playpen Sans Thai', sans-serif;
+button {
+  font-family: 'Playpen Sans', sans-serif;
+  font-size: 16px;
+  margin: 5px;
+  padding: 8px 12px;
 }
 
-.category-section {
-  border-bottom: 1px solid #ccc;
-  padding: 10px 0;
+h1, h2, h3 {
+  font-family: 'Playpen Sans', sans-serif;
+}
+
+.black-link {
+  color: black;
+  text-decoration: underline;
 }
 
 .url-item {
   display: flex;
   align-items: center;
   gap: 10px;
-  flex-wrap: wrap;
 }
 
 .qr-modal {
@@ -49,4 +57,18 @@ body, html {
   padding: 20px;
   border: 2px solid black;
   z-index: 1000;
+  text-align: center;
+  color: black;
+}
+
+.playpen-sans-thai {
+  font-family: 'Playpen Sans', sans-serif;
+}
+
+.compact-layout {
+  padding: 10px;
+}
+
+.category-section {
+  margin-bottom: 20px;
 }

@@ -9,7 +9,7 @@ function App() {
   const [selectedCategories, setSelectedCategories] = useState([]);
   const [uploadHistory, setUploadHistory] = useState([]);
   const [qrZoomUrl, setQrZoomUrl] = useState('');
-  const [newUrl, setNewUrl] = useState('');
+  const [newUrl, setNewUrl] = useState('https://');
   const [newCategory, setNewCategory] = useState('');
 
   useEffect(() => {
@@ -58,12 +58,14 @@ function App() {
   const handleAddUrl = () => {
     if (!newUrl || !newCategory) return;
 
+    let processedUrl = newUrl.startsWith('https://') ? newUrl : 'https://' + newUrl;
+
     setUrlList(prev => {
       const updated = { ...prev };
       if (!updated[newCategory]) {
         updated[newCategory] = [];
       }
-      updated[newCategory].push(newUrl);
+      updated[newCategory].push(processedUrl);
       return updated;
     });
 
@@ -71,12 +73,12 @@ function App() {
       setCategories(prev => [...prev, newCategory]);
     }
 
-    setNewUrl('');
+    setNewUrl('https://');
     setNewCategory('');
   };
 
   return (
-    <div className="app-container playpen-sans-thai">
+    <div className="app-container playpen-sans-thai compact-layout">
       <h1 className="header-title">ข่าวดี Thai: Good News</h1>
 
       <div>
@@ -85,12 +87,14 @@ function App() {
           value={newUrl}
           onChange={e => setNewUrl(e.target.value)}
           placeholder="Enter URL"
+          className="input-large"
         />
         <input
           type="text"
           value={newCategory}
           onChange={e => setNewCategory(e.target.value)}
           placeholder="Enter Category"
+          className="input-large"
         />
         <button onClick={handleAddUrl}>Add URL</button>
       </div>
@@ -116,7 +120,7 @@ function App() {
                   checked={selectedExportUrls.includes(u)}
                   onChange={() => setSelectedExportUrls(prev => prev.includes(u) ? prev.filter(x => x !== u) : [...prev, u])}
                 />
-                <a href={u} target="_blank" rel="noopener noreferrer">{u}</a>
+                <a href={u} target="_blank" rel="noopener noreferrer" className="black-link">{u}</a>
                 <QRCodeCanvas value={u} size={48} style={{ border: '1px solid white', cursor: 'pointer' }} onClick={() => setQrZoomUrl(u)} />
               </li>
             ))}
