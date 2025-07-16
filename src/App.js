@@ -1,29 +1,30 @@
 import React, { useState, useEffect } from 'react';
 import { QRCodeCanvas } from 'qrcode.react';
 import './App.css';
+import './fonts/PlaypenSans.css';
 
 function App() {
   const [url, setUrl] = useState('https://');
   const [category, setCategory] = useState('');
   const [categories, setCategories] = useState([]);
   const [urlList, setUrlList] = useState({});
-  const [selectedUrl, setSelectedUrl] = useState('');
   const [selectedExportUrls, setSelectedExportUrls] = useState([]);
+  const [uploadHistory, setUploadHistory] = useState([]);
 
   useEffect(() => {
     const storedData = localStorage.getItem('urlList');
     const storedCategories = localStorage.getItem('categories');
+    const storedHistory = localStorage.getItem('uploadHistory');
     if (storedData) setUrlList(JSON.parse(storedData));
     if (storedCategories) setCategories(JSON.parse(storedCategories));
+    if (storedHistory) setUploadHistory(JSON.parse(storedHistory));
   }, []);
 
   useEffect(() => {
     localStorage.setItem('urlList', JSON.stringify(urlList));
-  }, [urlList]);
-
-  useEffect(() => {
     localStorage.setItem('categories', JSON.stringify(categories));
-  }, [categories]);
+    localStorage.setItem('uploadHistory', JSON.stringify(uploadHistory));
+  }, [urlList, categories, uploadHistory]);
 
   const handleAddUrl = () => {
     if (url) {
@@ -47,6 +48,17 @@ function App() {
     }
   };
 
+  const handleDeleteCategory = (catToDelete) => {
+    if (window.confirm(`Are you sure you want to delete the category "${catToDelete}" and all its URLs?`)) {
+      setUrlList(prevList => {
+        const newList = { ...prevList };
+        delete newList[catToDelete];
+        return newList;
+      });
+      setCategories(prev => prev.filter(cat => cat !== catToDelete));
+    }
+  };
+
   const handleDeleteUrl = (cat, urlToDelete) => {
     setUrlList(prevList => {
       const updatedCategoryUrls = prevList[cat].filter(u => u !== urlToDelete);
@@ -55,24 +67,29 @@ function App() {
         newList[cat] = updatedCategoryUrls;
       } else {
         delete newList[cat];
+        setCategories(prev => prev.filter(c => c !== cat));
       }
       return newList;
     });
-    if (selectedUrl === urlToDelete) setSelectedUrl('');
   };
 
   const handleFileImport = (e) => {
-    const fileReader = new FileReader();
-    fileReader.onload = (event) => {
-      const lines = event.target.result.split('\n');
-      lines.forEach(line => {
-        const [cat, urlValue] = line.split(',').map(item => item.trim());
-        setCategory(cat || 'Uncategorized');
-        setUrl(urlValue);
-        handleAddUrl();
-      });
-    };
-    fileReader.readAsText(e.target.files[0]);
+    if (e.target.files.length) {
+      const file = e.target.files[0];
+      const reader = new FileReader();
+      reader.onload = (event) => {
+        const lines = event.target.result.split('\n');
+        lines.forEach(line => {
+          const [cat, urlValue] = line.split(',').map(item => item.trim());
+          setCategory(cat || 'Uncategorized');
+          setUrl(urlValue);
+          handleAddUrl();
+        });
+        const timestamp = new Date().toLocaleString();
+        setUploadHistory(prev => [...prev, { name: file.name, size: file.size, uploadedAt: timestamp }]);
+      };
+      reader.readAsText(file);
+    }
   };
 
   const toggleExportSelection = (url) => {
@@ -104,11 +121,7 @@ function App() {
   };
 
   return (
-    <div className="app-container dyslexic-font">
-      <div className="app-download-section">
-        <QRCodeCanvas value="https://thai-good-news.netlify.app" size={80} style={{ border: '1px solid white' }} />
-      </div>
-
+    <div className="app-container playpen-sans-font">
       <h1 className="header-title">ข่าวดี Thai: Good News</h1>
 
       <div className="form-section">
@@ -138,23 +151,19 @@ function App() {
       {categories.length === 0 ? (
         <p>No URLs stored yet.</p>
       ) : (
-        categories.map((cat, catIndex) => (
-          <div key={catIndex} className="category-section">
-            <h3>{cat}</h3>
+        categories.map((cat, index) => (
+          <div key={index} className="category-section">
+            <h3>{cat} <button onClick={() => handleDeleteCategory(cat)}>Delete Category</button></h3>
             <ul>
-              {(urlList[cat] || []).map((u, index) => (
-                <li key={index} className="url-item">
+              {urlList[cat]?.map((u, idx) => (
+                <li key={idx} className="url-item">
                   <input
                     type="checkbox"
                     checked={selectedExportUrls.includes(u)}
                     onChange={() => toggleExportSelection(u)}
                   />
-                  <div className="url-info">
-                    <span onClick={() => setSelectedUrl(u)} className="url-link">
-                      {u}
-                    </span>
-                    <QRCodeCanvas value={u} size={64} style={{ border: '1px solid white', marginTop: '5px' }} />
-                  </div>
+                  <a href={u} target="_blank" rel="noopener noreferrer">{u}</a>
+                  <QRCodeCanvas value={u} size={48} style={{ border: '1px solid white', marginLeft: '10px' }} />
                   <button onClick={() => handleDeleteUrl(cat, u)}>Delete</button>
                 </li>
               ))}
@@ -163,13 +172,12 @@ function App() {
         ))
       )}
 
-      {selectedUrl && (
-        <div className="qr-section">
-          <h2>QR Code for:</h2>
-          <p>{selectedUrl}</p>
-          <QRCodeCanvas value={selectedUrl} />
-        </div>
-      )}
+      <h2>Upload History</h2>
+      <ul>
+        {uploadHistory.map((file, idx) => (
+          <li key={idx}>{file.name} - {file.size} bytes - Uploaded at {file.uploadedAt}</li>
+        ))}
+      </ul>
     </div>
   );
 }
