@@ -8,9 +8,11 @@ function App() {
   const [categories, setCategories] = useState([]);
   const [urlList, setUrlList] = useState({});
   const [selectedExportUrls, setSelectedExportUrls] = useState([]);
+  const [selectedCategories, setSelectedCategories] = useState([]);
   const [uploadHistory, setUploadHistory] = useState([]);
   const [deferredPrompt, setDeferredPrompt] = useState(null);
   const [showHistory, setShowHistory] = useState(false);
+  const [qrZoomUrl, setQrZoomUrl] = useState('');
 
   useEffect(() => {
     const storedData = localStorage.getItem('urlList');
@@ -32,171 +34,71 @@ function App() {
     localStorage.setItem('uploadHistory', JSON.stringify(uploadHistory));
   }, [urlList, categories, uploadHistory]);
 
-  const handleAddUrl = () => {
-    if (url && url !== 'https://') {
-      const effectiveCategory = category || 'Uncategorized';
-      setUrlList(prevList => {
-        const categoryUrls = prevList[effectiveCategory] || [];
-        if (!categoryUrls.includes(url)) {
-          return {
-            ...prevList,
-            [effectiveCategory]: [...categoryUrls, url]
-          };
+  const handleDeleteSelected = () => {
+    const updatedUrlList = { ...urlList };
+
+    categories.forEach(category => {
+      if (updatedUrlList[category]) {
+        updatedUrlList[category] = updatedUrlList[category].filter(url => !selectedExportUrls.includes(url));
+        if (updatedUrlList[category].length === 0) {
+          delete updatedUrlList[category];
         }
-        return prevList;
-      });
-      if (category && !categories.includes(category)) {
-        setCategories(prev => [...prev, category]);
-      } else if (!category && !categories.includes('Uncategorized')) {
-        setCategories(prev => [...prev, 'Uncategorized']);
       }
-      setUrl('https://');
-    }
-  };
-
-  const handleInstallApp = () => {
-    if (deferredPrompt) {
-      deferredPrompt.prompt();
-      deferredPrompt.userChoice.then(() => setDeferredPrompt(null));
-    }
-  };
-
-  const handleDeleteCategory = (catToDelete) => {
-    if (window.confirm(`Are you sure you want to delete the category "${catToDelete}" and all its URLs?`)) {
-      setUrlList(prevList => {
-        const newList = { ...prevList };
-        delete newList[catToDelete];
-        return newList;
-      });
-      setCategories(prev => prev.filter(cat => cat !== catToDelete));
-    }
-  };
-
-  const handleDeleteUrl = (cat, urlToDelete) => {
-    setUrlList(prevList => {
-      const updatedCategoryUrls = prevList[cat].filter(u => u !== urlToDelete);
-      const newList = { ...prevList };
-      if (updatedCategoryUrls.length > 0) {
-        newList[cat] = updatedCategoryUrls;
-      } else {
-        delete newList[cat];
-        setCategories(prev => prev.filter(c => c !== cat));
-      }
-      return newList;
     });
+
+    selectedCategories.forEach(cat => {
+      delete updatedUrlList[cat];
+    });
+
+    setUrlList(updatedUrlList);
+    setCategories(Object.keys(updatedUrlList));
+    setSelectedExportUrls([]);
+    setSelectedCategories([]);
   };
 
-  const handleFileImport = (e) => {
-    if (e.target.files.length) {
-      const file = e.target.files[0];
-      const reader = new FileReader();
-      reader.onload = (event) => {
-        const lines = event.target.result.split('\n');
-        lines.forEach(line => {
-          const [cat, urlValue] = line.split(',').map(item => item.trim());
-          setCategory(cat || 'Uncategorized');
-          setUrl(urlValue);
-          handleAddUrl();
-        });
-        const timestamp = new Date().toLocaleString();
-        setUploadHistory(prev => [...prev, { name: file.name, size: file.size, uploadedAt: timestamp }]);
-      };
-      reader.readAsText(file);
-    }
-  };
-
-  const toggleExportSelection = (url) => {
-    setSelectedExportUrls(prev =>
-      prev.includes(url) ? prev.filter(u => u !== url) : [...prev, url]
+  const toggleCategorySelection = (category) => {
+    setSelectedCategories(prev =>
+      prev.includes(category) ? prev.filter(c => c !== category) : [...prev, category]
     );
-  };
-
-  const handleExportSelected = () => {
-    const dataStr = selectedExportUrls.join('\n');
-    const blob = new Blob([dataStr], { type: 'text/plain' });
-    const url = window.URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = 'selected_urls.txt';
-    a.click();
-    window.URL.revokeObjectURL(url);
-  };
-
-  const handleShareSelected = () => {
-    if (navigator.share) {
-      navigator.share({
-        title: 'Selected URLs',
-        text: selectedExportUrls.join('\n')
-      }).catch(err => console.error('Share failed:', err));
-    } else {
-      alert('Share is not supported on this device/browser.');
-    }
   };
 
   return (
     <div className="app-container playpen-sans-thai">
       <h1 className="header-title">ข่าวดี Thai: Good News</h1>
-      <div className="form-section">
-        <input
-          className="input-field"
-          type="text"
-          placeholder="Enter a URL"
-          value={url}
-          onChange={(e) => setUrl(e.target.value.startsWith('https://') ? e.target.value : 'https://' + e.target.value)}
-        />
-        <input
-          className="input-field"
-          type="text"
-          placeholder="Enter Category (optional)"
-          value={category}
-          onChange={(e) => setCategory(e.target.value)}
-        />
-        <div className="button-group">
-          <button onClick={handleAddUrl}>Add URL</button>
-          <input type="file" accept=".txt,.csv" onChange={handleFileImport} />
-          <button onClick={handleExportSelected}>Export Selected URLs</button>
-          <button onClick={handleShareSelected}>Share Selected URLs</button>
-          {deferredPrompt && <button onClick={handleInstallApp}>Install App</button>}
-        </div>
-      </div>
+
+      <button className="playpen-sans-thai" onClick={handleDeleteSelected}>Delete Selected</button>
 
       <h2>My URLs</h2>
-      {categories.length === 0 ? (
-        <p>No URLs stored yet.</p>
-      ) : (
-        categories.map((cat, index) => (
-          <div key={index} className="category-section">
-            <h3>{cat} <button onClick={() => handleDeleteCategory(cat)}>Delete Category</button></h3>
-            <ul>
-              {urlList[cat]?.map((u, idx) => (
-                <li key={idx} className="url-item">
-                  <input
-                    type="checkbox"
-                    checked={selectedExportUrls.includes(u)}
-                    onChange={() => toggleExportSelection(u)}
-                  />
-                  <a href={u} target="_blank" rel="noopener noreferrer">{u}</a>
-                  <QRCodeCanvas value={u} size={48} style={{ border: '1px solid white', marginLeft: '10px' }} />
-                  <button onClick={() => handleDeleteUrl(cat, u)}>Delete</button>
-                </li>
-              ))}
-            </ul>
-          </div>
-        ))
-      )}
-
-      <button onClick={() => setShowHistory(prev => !prev)}>
-        {showHistory ? 'Hide Upload History' : 'Show Upload History'}
-      </button>
-
-      {showHistory && (
-        <div>
-          <h2>Upload History</h2>
+      {categories.map((cat, index) => (
+        <div key={index} className="category-section">
+          <h3>
+            <input
+              type="checkbox"
+              checked={selectedCategories.includes(cat)}
+              onChange={() => toggleCategorySelection(cat)}
+            />
+            {cat}
+          </h3>
           <ul>
-            {uploadHistory.map((file, idx) => (
-              <li key={idx}>{file.name} - {file.size} bytes - Uploaded at {file.uploadedAt}</li>
+            {urlList[cat]?.map((u, idx) => (
+              <li key={idx} className="url-item">
+                <input
+                  type="checkbox"
+                  checked={selectedExportUrls.includes(u)}
+                  onChange={() => setSelectedExportUrls(prev => prev.includes(u) ? prev.filter(x => x !== u) : [...prev, u])}
+                />
+                <a href={u} target="_blank" rel="noopener noreferrer">{u}</a>
+                <QRCodeCanvas value={u} size={48} style={{ border: '1px solid white', cursor: 'pointer' }} onClick={() => setQrZoomUrl(u)} />
+              </li>
             ))}
           </ul>
+        </div>
+      ))}
+
+      {qrZoomUrl && (
+        <div className="qr-modal" onClick={() => setQrZoomUrl('')}>
+          <QRCodeCanvas value={qrZoomUrl} size={256} />
+          <p>Click anywhere to close</p>
         </div>
       )}
     </div>

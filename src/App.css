@@ -1,10 +1,4 @@
-/* App.css */
-
 @import url('https://fonts.googleapis.com/css2?family=Playpen+Sans+Thai&display=swap');
-
-.playpen-sans-thai {
-  font-family: 'Playpen Sans Thai', sans-serif;
-}
 
 body, html {
   margin: 0;
@@ -16,9 +10,9 @@ body, html {
 }
 
 @keyframes gradientBG {
-  0%{background-position:0% 50%}
-  50%{background-position:100% 50%}
-  100%{background-position:0% 50%}
+  0% {background-position:0% 50%}
+  50% {background-position:100% 50%}
+  100% {background-position:0% 50%}
 }
 
 .app-container {
@@ -40,6 +34,7 @@ body, html {
 .button-group button {
   margin: 5px;
   padding: 8px 12px;
+  font-family: 'Playpen Sans Thai', sans-serif;
 }
 
 .category-section {
@@ -58,3 +53,19 @@ body, html {
   border: 1px solid white;
 }
 
+.qr-modal {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background: white;
+  padding: 20px;
+  border: 2px solid black;
+  z-index: 1000;
+}
+
+.install-qr {
+  position: absolute;
+  top: 20px;
+  right: 20px;
+}
