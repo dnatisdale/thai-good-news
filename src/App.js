@@ -19,7 +19,7 @@ function App() {
   const filteredUrls = urls.filter(u => u.includes(searchTerm));
 
   return (
-    <div className="app-container playpen-sans vibrant-bg">
+    <div className="app-container">
       <h1>ข่าวดี Thai: Good News</h1>
 
       <div className="input-section">
@@ -46,22 +46,23 @@ function App() {
       <h2>My URLs</h2>
       {filteredUrls.map((url, idx) => (
         <div key={idx} className="url-item">
-          <a href={url} target="_blank" rel="noopener noreferrer" className="black-link small-font">
-            {url}
-          </a>
+          <input type="checkbox" className="url-checkbox" />
           <QRCodeCanvas
             value={url}
-            size={64}
+            size={48}
             className="qr-code-small"
             onClick={() => setQrZoomUrl(url)}
           />
+          <a href={url} target="_blank" rel="noopener noreferrer" className="black-link small-font">
+            {url}
+          </a>
         </div>
       ))}
 
       {qrZoomUrl && (
         <div className="qr-modal" onClick={() => setQrZoomUrl('')}>
           <QRCodeCanvas value={qrZoomUrl} size={256} />
-          <p>Click anywhere to close</p>
+          <p style={{ color: 'white' }}>Click anywhere to close</p>
         </div>
       )}
     </div>
