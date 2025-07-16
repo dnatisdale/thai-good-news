@@ -5,8 +5,6 @@ import './App.css';
 function App() {
   const [categories, setCategories] = useState([]);
   const [urlList, setUrlList] = useState({});
-  const [selectedExportUrls, setSelectedExportUrls] = useState([]);
-  const [selectedCategories, setSelectedCategories] = useState([]);
   const [uploadHistory, setUploadHistory] = useState([]);
   const [qrZoomUrl, setQrZoomUrl] = useState('');
   const [newUrl, setNewUrl] = useState('https://');
