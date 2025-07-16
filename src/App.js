@@ -3,15 +3,11 @@ import { QRCodeCanvas } from 'qrcode.react';
 import './App.css';
 
 function App() {
-  const [url, setUrl] = useState('https://');
-  const [category, setCategory] = useState('');
   const [categories, setCategories] = useState([]);
   const [urlList, setUrlList] = useState({});
   const [selectedExportUrls, setSelectedExportUrls] = useState([]);
   const [selectedCategories, setSelectedCategories] = useState([]);
   const [uploadHistory, setUploadHistory] = useState([]);
-  const [deferredPrompt, setDeferredPrompt] = useState(null);
-  const [showHistory, setShowHistory] = useState(false);
   const [qrZoomUrl, setQrZoomUrl] = useState('');
 
   useEffect(() => {
@@ -21,11 +17,6 @@ function App() {
     if (storedData) setUrlList(JSON.parse(storedData));
     if (storedCategories) setCategories(JSON.parse(storedCategories));
     if (storedHistory) setUploadHistory(JSON.parse(storedHistory));
-
-    window.addEventListener('beforeinstallprompt', (e) => {
-      e.preventDefault();
-      setDeferredPrompt(e);
-    });
   }, []);
 
   useEffect(() => {
