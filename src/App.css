@@ -1,14 +1,16 @@
-body {
+@import url('https://fonts.googleapis.com/css2?family=Playpen+Sans&display=swap');
+
+body, html {
   font-family: 'Playpen Sans', sans-serif;
-  margin: 0;
-  padding: 0;
-  background: linear-gradient(-45deg, red, orange, yellow, green, blue, purple);
+  background: linear-gradient(45deg, red, orange, yellow, green, blue, purple);
   background-size: 600% 600%;
-  animation: gradientBG 20s ease infinite;
-  color: white;
+  animation: gradientShift 15s ease infinite;
+  color: black;
+  margin: 0;
+  padding: 0 20px;
 }
 
-@keyframes gradientBG {
+@keyframes gradientShift {
   0% { background-position: 0% 50%; }
   50% { background-position: 100% 50%; }
   100% { background-position: 0% 50%; }
@@ -17,24 +19,27 @@ body {
 .app-container {
   max-width: 800px;
   margin: 0 auto;
+}
+
+h1, h2, h3 {
+  color: black;
+}
+
+input, button {
+  font-family: 'Playpen Sans', sans-serif;
+  font-size: 1.1rem;
   padding: 10px;
+  margin: 5px 0;
 }
 
 .input-large {
-  font-size: 18px;
-  padding: 10px;
-  margin: 5px;
+  height: 40px;
+  width: 100%;
+  font-size: 1.2rem;
 }
 
 button {
-  font-family: 'Playpen Sans', sans-serif;
-  font-size: 16px;
-  margin: 5px;
-  padding: 8px 12px;
-}
-
-h1, h2, h3, input, a, label, p {
-  font-family: 'Playpen Sans', sans-serif;
+  cursor: pointer;
 }
 
 .black-link {
@@ -42,43 +47,32 @@ h1, h2, h3, input, a, label, p {
   text-decoration: underline;
 }
 
+.qr-code-small {
+  border: 1px solid white;
+  border-radius: 8px;
+  margin-top: 5px;
+}
+
+.category-section {
+  margin-bottom: 20px;
+}
+
 .url-item {
-  display: flex;
-  align-items: center;
-  gap: 10px;
+  margin: 10px 0;
 }
 
 .qr-modal {
   position: fixed;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  background: white;
-  padding: 20px;
-  border: 2px solid black;
-  z-index: 1000;
-  text-align: center;
-  color: black;
-}
-
-.playpen-sans-thai {
-  font-family: 'Playpen Sans', sans-serif;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background: rgba(0,0,0,0.7);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  color: white;
 }
 
 .compact-layout {
-  padding: 8px;
-}
-
-.category-section {
-  margin-bottom: 12px;
-}
-
-a.black-link {
-  font-size: 16px;
-}
-
-.qr-code-small {
-  border: 1px solid white;
-  border-radius: 12px;
-  cursor: pointer;
+  padding-left: 10px;
+  padding-right: 10px;
 }

@@ -27,38 +27,10 @@ function App() {
     localStorage.setItem('uploadHistory', JSON.stringify(uploadHistory));
   }, [urlList, categories, uploadHistory]);
 
-  const handleDeleteSelected = () => {
-    const updatedUrlList = { ...urlList };
-
-    categories.forEach(category => {
-      if (updatedUrlList[category]) {
-        updatedUrlList[category] = updatedUrlList[category].filter(url => !selectedExportUrls.includes(url));
-        if (updatedUrlList[category].length === 0) {
-          delete updatedUrlList[category];
-        }
-      }
-    });
-
-    selectedCategories.forEach(cat => {
-      delete updatedUrlList[cat];
-    });
-
-    setUrlList(updatedUrlList);
-    setCategories(Object.keys(updatedUrlList));
-    setSelectedExportUrls([]);
-    setSelectedCategories([]);
-  };
-
-  const toggleCategorySelection = (category) => {
-    setSelectedCategories(prev =>
-      prev.includes(category) ? prev.filter(c => c !== category) : [...prev, category]
-    );
-  };
-
   const handleAddUrl = () => {
     if (!newUrl || !newCategory) return;
 
-    let processedUrl = newUrl.startsWith('https://') ? newUrl : 'https://' + newUrl;
+    let processedUrl = newUrl.trim().startsWith('https://') ? newUrl.trim() : 'https://' + newUrl.trim();
 
     setUrlList(prev => {
       const updated = { ...prev };
@@ -75,6 +47,20 @@ function App() {
 
     setNewUrl('https://');
     setNewCategory('');
+  };
+
+  const handleUrlAction = (url) => {
+    const action = window.prompt("Type 'delete' to remove this URL or 'share' to copy it:");
+    if (action === 'delete') {
+      const updatedUrlList = { ...urlList };
+      for (const cat in updatedUrlList) {
+        updatedUrlList[cat] = updatedUrlList[cat].filter(u => u !== url);
+      }
+      setUrlList(updatedUrlList);
+    } else if (action === 'share') {
+      navigator.clipboard.writeText(url);
+      alert('URL copied to clipboard!');
+    }
   };
 
   return (
@@ -99,35 +85,21 @@ function App() {
         <button onClick={handleAddUrl}>Add URL</button>
       </div>
 
-      <button className="playpen-sans-thai" onClick={handleDeleteSelected}>Delete Selected</button>
-
       <h2>My URLs</h2>
       {categories.map((cat, index) => (
         <div key={index} className="category-section">
-          <h3>
-            <input
-              type="checkbox"
-              checked={selectedCategories.includes(cat)}
-              onChange={() => toggleCategorySelection(cat)}
-            />
-            {cat}
-          </h3>
+          <h3>{cat}</h3>
           <ul>
             {urlList[cat]?.map((u, idx) => (
               <li key={idx} className="url-item">
-                <input
-                  type="checkbox"
-                  checked={selectedExportUrls.includes(u)}
-                  onChange={() => setSelectedExportUrls(prev => prev.includes(u) ? prev.filter(x => x !== u) : [...prev, u])}
-                />
                 <div>
                   <a href={u} target="_blank" rel="noopener noreferrer" className="black-link">{u}</a>
                   <br />
                   <QRCodeCanvas 
                     value={u} 
                     size={48} 
-                    style={{ border: '1px solid white', borderRadius: '8px', cursor: 'pointer' }} 
-                    onClick={() => setQrZoomUrl(u)} 
+                    className="qr-code-small"
+                    onClick={() => handleUrlAction(u)} 
                   />
                 </div>
               </li>
