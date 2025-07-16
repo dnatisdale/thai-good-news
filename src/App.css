@@ -25,15 +25,7 @@ body, html {
   text-align: center;
 }
 
-.input-field {
-  margin: 5px;
-  padding: 8px;
-  width: 90%;
-}
-
-.button-group button {
-  margin: 5px;
-  padding: 8px 12px;
+.button-group button, .playpen-sans-thai {
   font-family: 'Playpen Sans Thai', sans-serif;
 }
 
@@ -49,10 +41,6 @@ body, html {
   flex-wrap: wrap;
 }
 
-.qrcode {
-  border: 1px solid white;
-}
-
 .qr-modal {
   position: fixed;
   top: 50%;
@@ -62,10 +50,4 @@ body, html {
   padding: 20px;
   border: 2px solid black;
   z-index: 1000;
-}
-
-.install-qr {
-  position: absolute;
-  top: 20px;
-  right: 20px;
 }
