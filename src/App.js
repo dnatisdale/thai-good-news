@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { QRCodeCanvas } from 'qrcode.react';
 import './App.css';
-import './fonts/PlaypenSans.css';
 
 function App() {
   const [url, setUrl] = useState('https://');
@@ -10,6 +9,8 @@ function App() {
   const [urlList, setUrlList] = useState({});
   const [selectedExportUrls, setSelectedExportUrls] = useState([]);
   const [uploadHistory, setUploadHistory] = useState([]);
+  const [deferredPrompt, setDeferredPrompt] = useState(null);
+  const [showHistory, setShowHistory] = useState(false);
 
   useEffect(() => {
     const storedData = localStorage.getItem('urlList');
@@ -18,6 +19,11 @@ function App() {
     if (storedData) setUrlList(JSON.parse(storedData));
     if (storedCategories) setCategories(JSON.parse(storedCategories));
     if (storedHistory) setUploadHistory(JSON.parse(storedHistory));
+
+    window.addEventListener('beforeinstallprompt', (e) => {
+      e.preventDefault();
+      setDeferredPrompt(e);
+    });
   }, []);
 
   useEffect(() => {
@@ -27,7 +33,7 @@ function App() {
   }, [urlList, categories, uploadHistory]);
 
   const handleAddUrl = () => {
-    if (url) {
+    if (url && url !== 'https://') {
       const effectiveCategory = category || 'Uncategorized';
       setUrlList(prevList => {
         const categoryUrls = prevList[effectiveCategory] || [];
@@ -45,6 +51,13 @@ function App() {
         setCategories(prev => [...prev, 'Uncategorized']);
       }
       setUrl('https://');
+    }
+  };
+
+  const handleInstallApp = () => {
+    if (deferredPrompt) {
+      deferredPrompt.prompt();
+      deferredPrompt.userChoice.then(() => setDeferredPrompt(null));
     }
   };
 
@@ -121,9 +134,8 @@ function App() {
   };
 
   return (
-    <div className="app-container playpen-sans-font">
+    <div className="app-container playpen-sans-thai">
       <h1 className="header-title">ข่าวดี Thai: Good News</h1>
-
       <div className="form-section">
         <input
           className="input-field"
@@ -144,6 +156,7 @@ function App() {
           <input type="file" accept=".txt,.csv" onChange={handleFileImport} />
           <button onClick={handleExportSelected}>Export Selected URLs</button>
           <button onClick={handleShareSelected}>Share Selected URLs</button>
+          {deferredPrompt && <button onClick={handleInstallApp}>Install App</button>}
         </div>
       </div>
 
@@ -172,12 +185,20 @@ function App() {
         ))
       )}
 
-      <h2>Upload History</h2>
-      <ul>
-        {uploadHistory.map((file, idx) => (
-          <li key={idx}>{file.name} - {file.size} bytes - Uploaded at {file.uploadedAt}</li>
-        ))}
-      </ul>
+      <button onClick={() => setShowHistory(prev => !prev)}>
+        {showHistory ? 'Hide Upload History' : 'Show Upload History'}
+      </button>
+
+      {showHistory && (
+        <div>
+          <h2>Upload History</h2>
+          <ul>
+            {uploadHistory.map((file, idx) => (
+              <li key={idx}>{file.name} - {file.size} bytes - Uploaded at {file.uploadedAt}</li>
+            ))}
+          </ul>
+        </div>
+      )}
     </div>
   );
 }
