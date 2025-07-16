@@ -24,7 +24,7 @@ body, html {
   text-align: center;
 }
 
-.button-group button, .playpen-sans-thai {
+.button-group button, .playpen-sans-thai, button {
   font-family: 'Playpen Sans Thai', sans-serif;
 }
 
