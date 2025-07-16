@@ -1,57 +1,28 @@
-body, html {
-    font-family: sans-serif;
-    margin: 0;
-    padding: 0;
-}
-
 .App {
-    text-align: center;
-    padding: 20px;
+  font-family: sans-serif;
+  padding: 20px;
 }
 
-.input-group input {
-    padding: 10px;
-    font-size: 16px;
-    width: 250px;
+button {
+  margin: 5px;
 }
 
-.input-group button {
-    padding: 10px;
-    font-size: 16px;
-    margin-left: 5px;
+ul {
+  list-style-type: none;
+  padding: 0;
 }
 
-.actions button {
-    padding: 8px 12px;
-    margin: 5px;
-    font-size: 14px;
-    cursor: pointer;
+li {
+  margin: 10px 0;
 }
 
-.url-list {
-    list-style-type: none;
-    padding: 0;
+a {
+  color: black;
+  text-decoration: underline;
+  margin-right: 10px;
 }
 
-.url-list li {
-    background: #f0f0f0;
-    margin: 8px 0;
-    padding: 10px;
-    border-radius: 8px;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-}
-
-.url-list a {
-    color: black;
-    text-decoration: underline;
-    font-size: 14px;
-}
-
-.qr-container {
-    margin-left: 10px;
-    border: 1px solid white;
-    border-radius: 6px;
-    padding: 4px;
+input[type="text"] {
+  height: 30px;
+  font-size: 14px;
 }
