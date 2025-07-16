@@ -9,6 +9,8 @@ function App() {
   const [qrZoomUrl, setQrZoomUrl] = useState('');
   const [newUrl, setNewUrl] = useState('https://');
   const [newCategory, setNewCategory] = useState('');
+  const [selectedUrls, setSelectedUrls] = useState([]);
+  const [actionMenuVisible, setActionMenuVisible] = useState(false);
 
   useEffect(() => {
     const storedData = localStorage.getItem('urlList');
@@ -44,9 +46,17 @@ function App() {
     setNewCategory('');
   };
 
+  const toggleUrlSelection = (url) => {
+    setSelectedUrls(prev => {
+      const updated = prev.includes(url) ? prev.filter(u => u !== url) : [...prev, url];
+      setActionMenuVisible(updated.length > 0);
+      return updated;
+    });
+  };
+
   return (
     <div className="app-container playpen-sans-thai vibrant-colors">
-      <h1 className="header-title">ข่าวดี Thai: Good News</h1>
+      <h1 className="header-title playpen-sans-thai">ข่าวดี Thai: Good News</h1>
 
       <div className="input-section">
         <input
@@ -63,19 +73,24 @@ function App() {
           placeholder="Enter Category"
           className="input-large playpen-sans-thai"
         />
-        <button onClick={handleAddUrl}>Add URL</button>
+        <button className="playpen-sans-thai" onClick={handleAddUrl}>Add URL</button>
       </div>
 
-      <h2>My URLs</h2>
+      <h2 className="playpen-sans-thai">My URLs</h2>
       {categories.map((cat, index) => (
         <div key={index} className="category-section">
-          <h3>{cat}</h3>
+          <h3 className="playpen-sans-thai">{cat}</h3>
           <ul>
             {urlList[cat]?.map((u, idx) => (
               <li key={idx} className="url-item">
                 <div>
-                  <input type="checkbox" className="url-checkbox" />
-                  <a href={u} target="_blank" rel="noopener noreferrer" className="black-link">{u}</a>
+                  <input
+                    type="checkbox"
+                    className="url-checkbox"
+                    onChange={() => toggleUrlSelection(u)}
+                    checked={selectedUrls.includes(u)}
+                  />
+                  <a href={u} target="_blank" rel="noopener noreferrer" className="black-link playpen-sans-thai">{u}</a>
                   <br />
                   <QRCodeCanvas
                     value={u}
@@ -90,10 +105,19 @@ function App() {
         </div>
       ))}
 
-      <h2>Upload History</h2>
+      {actionMenuVisible && (
+        <div className="action-menu playpen-sans-thai">
+          <p>What would you like to do with the selected URLs?</p>
+          <button>Share (Email)</button>
+          <button>Export (CSV)</button>
+          <button>Delete</button>
+        </div>
+      )}
+
+      <h2 className="playpen-sans-thai">Upload History</h2>
       <ul>
         {uploadHistory.map((record, idx) => (
-          <li key={idx}>
+          <li key={idx} className="playpen-sans-thai">
             {record.url} (Category: {record.category}, Time: {new Date(record.timestamp).toLocaleString()})
           </li>
         ))}
@@ -102,7 +126,7 @@ function App() {
       {qrZoomUrl && (
         <div className="qr-modal" onClick={() => setQrZoomUrl('')}>
           <QRCodeCanvas value={qrZoomUrl} size={256} />
-          <p>Click anywhere to close</p>
+          <p className="playpen-sans-thai">Click anywhere to close</p>
         </div>
       )}
     </div>
