@@ -27,7 +27,6 @@ function App() {
 
   const handleAddUrl = () => {
     if (!newUrl || !newCategory) return;
-
     let processedUrl = newUrl.trim().startsWith('https://') ? newUrl.trim() : 'https://' + newUrl.trim();
 
     setUrlList(prev => {
@@ -45,20 +44,6 @@ function App() {
 
     setNewUrl('https://');
     setNewCategory('');
-  };
-
-  const handleUrlAction = (url) => {
-    const action = window.prompt("Type 'delete' to remove this URL or 'share' to copy it:");
-    if (action === 'delete') {
-      const updatedUrlList = { ...urlList };
-      for (const cat in updatedUrlList) {
-        updatedUrlList[cat] = updatedUrlList[cat].filter(u => u !== url);
-      }
-      setUrlList(updatedUrlList);
-    } else if (action === 'share') {
-      navigator.clipboard.writeText(url);
-      alert('URL copied to clipboard!');
-    }
   };
 
   return (
@@ -91,13 +76,14 @@ function App() {
             {urlList[cat]?.map((u, idx) => (
               <li key={idx} className="url-item">
                 <div>
+                  <input type="checkbox" className="url-checkbox" />
                   <a href={u} target="_blank" rel="noopener noreferrer" className="black-link">{u}</a>
                   <br />
-                  <QRCodeCanvas 
-                    value={u} 
-                    size={48} 
+                  <QRCodeCanvas
+                    value={u}
+                    size={48}
                     className="qr-code-small"
-                    onClick={() => handleUrlAction(u)} 
+                    onClick={() => setQrZoomUrl(u)}
                   />
                 </div>
               </li>
