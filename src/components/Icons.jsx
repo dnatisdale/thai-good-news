@@ -134,7 +134,6 @@ export const List = (props) => (
   </svg>
 );
 
-
 export const X = (props) => (
   <svg
     {...props}
@@ -334,7 +333,7 @@ export const ExternalLink = (props) => (
     xmlns="http://www.w3.org/2000/svg"
     fill="none"
     viewBox="0 0 24 24"
-    strokeWidth={2}
+    strokeWidth="2"
     stroke="currentColor"
     {...props}
   >
@@ -345,6 +344,7 @@ export const ExternalLink = (props) => (
     />
   </svg>
 );
+
 export const Qrcode = (props) => (
   <svg
     {...props}
@@ -618,7 +618,7 @@ export const FontSize = (props) => (
   >
     {/* Small "A" in the back */}
     <path d="M6 17 L8.5 10 L11 17 M6.8 15 L10.2 15" />
-    
+
     {/* Large "A" in the front */}
     <path d="M13 20 L17 7 L21 20 M14.2 16.5 L19.8 16.5" />
   </svg>
@@ -672,7 +672,11 @@ export const YouTube = (props) => (
     strokeLinejoin="round"
   >
     <path d="M22.54 6.42a2.78 2.78 0 0 0-1.94-2C18.88 4 12 4 12 4s-6.88 0-8.6.46a2.78 2.78 0 0 0-1.94 2A29 29 0 0 0 1 11.75a29 29 0 0 0 .46 5.33A2.78 2.78 0 0 0 3.4 19c1.72.46 8.6.46 8.6.46s6.88 0 8.6-.46a2.78 2.78 0 0 0 1.94-2 29 29 0 0 0 .46-5.25 29 29 0 0 0-.46-5.33z" />
-    <polygon points="9.75 15.02 15.5 11.75 9.75 8.48 9.75 15.02" fill="currentColor" stroke="none" />
+    <polygon
+      points="9.75 15.02 15.5 11.75 9.75 8.48 9.75 15.02"
+      fill="currentColor"
+      stroke="none"
+    />
   </svg>
 );
 
@@ -706,8 +710,15 @@ export const YouTubeColor = (props) => (
     strokeLinecap="round"
     strokeLinejoin="round"
   >
-    <path d="M22.54 6.42a2.78 2.78 0 0 0-1.94-2C18.88 4 12 4 12 4s-6.88 0-8.6.46a2.78 2.78 0 0 0-1.94 2A29 29 0 0 0 1 11.75a29 29 0 0 0 .46 5.33A2.78 2.78 0 0 0 3.4 19c1.72.46 8.6.46 8.6.46s6.88 0 8.6-.46a2.78 2.78 0 0 0 1.94-2 29 29 0 0 0 .46-5.25 29 29 0 0 0-.46-5.33z" stroke="#6B7280" />
-    <polygon points="9.75 15.02 15.5 11.75 9.75 8.48 9.75 15.02" fill="#CC3333" stroke="none" />
+    <path
+      d="M22.54 6.42a2.78 2.78 0 0 0-1.94-2C18.88 4 12 4 12 4s-6.88 0-8.6.46a2.78 2.78 0 0 0-1.94 2A29 29 0 0 0 1 11.75a29 29 0 0 0 .46 5.33A2.78 2.78 0 0 0 3.4 19c1.72.46 8.6.46 8.6.46s6.88 0 8.6-.46a2.78 2.78 0 0 0 1.94-2 29 29 0 0 0 .46-5.25 29 29 0 0 0-.46-5.33z"
+      stroke="#6B7280"
+    />
+    <polygon
+      points="9.75 15.02 15.5 11.75 9.75 8.48 9.75 15.02"
+      fill="#CC3333"
+      stroke="none"
+    />
   </svg>
 );
 
@@ -747,4 +758,3 @@ export const Folder = (props) => (
     <path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z" />
   </svg>
 );
-
