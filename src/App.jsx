@@ -2023,11 +2023,10 @@ export default function App() {
                           alert(t.link_copied || "Link copied to clipboard!");
                         }
                       }}
-                      className="bg-[#003366] hover:bg-[#002244] text-white text-xs font-semibold px-2 py-1 rounded flex items-center justify-center gap-1 transition-colors shadow-sm border border-white/20"
+                      className="bg-[#003366] hover:bg-[#002244] text-white text-xs font-semibold px-2 py-1 rounded flex items-center justify-center transition-colors shadow-sm border border-white/20 flex-1"
                       title={t.share_app || "Share App"}
                     >
-                      <ExternalLink className="w-3 h-3 flex-shrink-0" />
-                      <span>{t.share_app || "Share"}</span>
+                      <span>{t.share_app || "Share App"}</span>
                     </button>
 
                     <button
@@ -2062,11 +2061,10 @@ export default function App() {
                            alert(t.link_copied || "Copied to clipboard!");
                         }
                       }}
-                      className="bg-white/10 hover:bg-white/20 text-white text-xs font-semibold px-2 py-1 rounded flex items-center justify-center gap-1 transition-colors shadow-sm border border-white/20"
-                      title={t.copy_for_email || "Copy for Email"}
+                      className="bg-[#003366] hover:bg-[#002244] text-white text-xs font-semibold px-2 py-1 rounded flex items-center justify-center transition-colors shadow-sm border border-white/20 flex-1 whitespace-nowrap"
+                      title={t.copy_for_email || "Share via Email"}
                     >
-                      <Copy className="w-3 h-3 flex-shrink-0" />
-                      <span>{t.copy_for_email || "Email"}</span>
+                      <span>{t.copy_for_email || "Share via Email"}</span>
                     </button>
                   </div>
                 </div>
