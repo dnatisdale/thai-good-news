@@ -15,7 +15,9 @@ yarn-error.log
 /.cashe
 your_content_data_NEW.csv
 
+# Ignore PNGs by default...
 *.png
+# ...but DO track public icons (needed for Netlify deploy)
 !public/icons/*.png
 
 # Backups
