@@ -1,5 +1,5 @@
 import React from "react";
-import { ChevronLeft, ChevronRight, SignLanguage } from "../components/Icons";
+import { ChevronLeft, ChevronRight, SignLanguage, YouTube } from "../components/Icons";
 
 const SignLanguagePage = ({ lang, t, onBack, onForward, hasPrev, hasNext }) => {
   return (
@@ -58,6 +58,17 @@ const SignLanguagePage = ({ lang, t, onBack, onForward, hasPrev, hasNext }) => {
             ? "วิดีโอนี้สามารถรับชมแบบออฟไลน์ได้โดยไม่ต้องใช้อินเทอร์เน็ต" 
             : "This video is available for offline viewing without an internet connection."}
         </p>
+
+        {/* YouTube Link Button */}
+        <a
+          href="https://youtube.com/playlist?list=PLCIe_0TV6CK_N8rSr9kptzZqgxAofeIJf&si=vQIk7CsqbKpf-q_b"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="mt-6 w-full max-w-sm p-4 font-bold text-white text-lg rounded-xl shadow-lg flex items-center justify-center transition-all duration-200 bg-brand-red hover:bg-red-800 hover:scale-105 active:scale-95 hover:shadow-xl"
+        >
+          <YouTube className="w-6 h-6 mr-2" />
+          {t.watch_on_youtube || "Watch on YouTube"}
+        </a>
       </div>
     </div>
   );
