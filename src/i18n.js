@@ -188,7 +188,7 @@ export const i18n = {
     install_instructions:
       "To install, tap 'Share' then 'Add to Home Screen' (iOS) or use the browser menu (Android).", // NEW
     share_app_text:
-      "Check out this app for Good News messages in multiple languages!",
+      "Looking for a way to reach your neighbors for Christ? 🌏 The Thai Good News app is a great tool for sharing Jesus with people from different backgrounds. Even if you don't speak their language, you can use this app to let them hear the Good News clearly. Check out the over 100 languages available and start sharing today!",
     link_copied: "Link copied to clipboard!",
     copy_failed: "Could not copy link",
     please_select_messages:
@@ -444,7 +444,7 @@ export const i18n = {
 
     // Share App
     share_app: "แชร์แอป",
-    share_app_text: "ดูแอปนี้สำหรับข้อความข่าวดีในหลายภาษา!",
+    share_app_text: "กำลังมองหาวิธีนำพระคริสต์มาสู่เพื่อนบ้านของคุณอยู่หรือเปล่า? 🌏 แอป Thai Good News เป็นเครื่องมือที่ยอดเยี่ยมสำหรับการแบ่งปันเรื่องราวของพระเยซูกับผู้คนจากหลากหลายภูมิหลัง แม้ว่าคุณจะไม่พูดภาษาของพวกเขา คุณก็สามารถใช้แอปนี้เพื่อให้พวกเขาได้ยินข่าวดีได้อย่างชัดเจน ลองดูภาษาที่มีให้เลือกมากกว่า 100 ภาษา และเริ่มแบ่งปันได้เลยวันนี้!",
     link_copied: "คัดลอกลิงก์แล้ว!",
     copy_failed: "ไม่สามารถคัดลอกลิงก์ได้",
     please_select_messages:

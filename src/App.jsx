@@ -2004,13 +2004,12 @@ export default function App() {
                   <button
                     onClick={async (e) => {
                       e.stopPropagation(); // Prevent drawer close
-                      const appUrl = `${window.location.origin}/listen`;
+                      const urlString = `${window.location.origin}/listen`;
                       const shareData = {
                         title: t.app_name || "Thai: Good News",
-                        text:
-                          t.share_app_text ||
-                          "Check out this app for Good News messages in multiple languages!",
-                        url: appUrl,
+                        text: `${t.share_app_text || "Check out this app for Good News messages in multiple languages!"}\n\n${urlString}`,
+                        // Note: Intentionally omitting the `url` property to force
+                        // the share sheet to treat it as a single block of text where the URL sits at the end.
                       };
 
                       if (navigator.share) {
