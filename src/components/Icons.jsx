@@ -794,11 +794,15 @@ export const SignLanguage = (props) => (
     strokeLinecap="round"
     strokeLinejoin="round"
   >
-    {/* Hand graphic - Fingers and Palm */}
-    <path d="M18 11V6a2 2 0 0 0-4 0v4" />
-    <path d="M14 10V4a2 2 0 0 0-4 0v6" />
-    <path d="M10 10.5V5a2 2 0 0 0-4 0v9" />
-    <path d="M11.5 21H8a4 4 0 0 1-4-4v-6.5a2 2 0 0 1 4 0V15" />
-    <path d="M22 15v-1a2 2 0 0 0-4 0v2a4 4 0 0 1-4 4h-2.5" />
+    {/* Index finger */}
+    <path d="M7 13V4.5a1.5 1.5 0 0 1 3 0v8" />
+    {/* Middle finger tip */}
+    <path d="M10 12.5a1.5 1.5 0 0 0 3 0" />
+    {/* Ring finger tip */}
+    <path d="M13 11v1.5a1.5 1.5 0 0 0 3 0" />
+    {/* Pinky finger */}
+    <path d="M16 12.5V6.5a1.5 1.5 0 0 1 3 0V14" />
+    {/* Palm and Thumb */}
+    <path d="M19 14c0 4-2 7-7 7s-6.5-2-7-6.5l-2.5-2a1.5 1.5 0 0 1 2.12-2.12L7 13" />
   </svg>
 );
