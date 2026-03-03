@@ -1,5 +1,0 @@
-# Proxy audio downloads to avoid CORS and Lambda limits
-/api/proxy-audio/* https://api.globalrecordings.net/:splat 200
-
-# SPA fallback
-/* /index.html 200
