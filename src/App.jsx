@@ -23,6 +23,7 @@ import {
   Moon,
   Sun,
   Languages, // ✅ NEW
+  SignLanguage, // NEW
   MessageSquare, // NEW
   Music,
   Globe,
@@ -49,6 +50,7 @@ import NotesPage from "./pages/NotesPage";
 import MyLibraryPage from "./pages/MyLibraryPage";
 import ImportPage from "./pages/ImportPage";
 import FeedbackPage from "./pages/FeedbackPage";
+import SignLanguagePage from "./pages/SignLanguagePage";
 import SelectionBadge from "./components/SelectionBadge";
 import UpdateNotification from "./components/UpdateNotification";
 // import SettingsPage from "./pages/SettingsPage"; // REMOVED
@@ -1522,6 +1524,19 @@ export default function App() {
       );
       break;
 
+    case "SignLanguage": // NEW
+      PageContent = (
+        <SignLanguagePage
+          lang={lang}
+          t={t}
+          onBack={goBack}
+          onForward={goForward}
+          hasPrev={hasPrev}
+          hasNext={hasNext}
+        />
+      );
+      break;
+
     case "Feedback": // NEW
       PageContent = (
         <FeedbackPage
@@ -2042,6 +2057,7 @@ export default function App() {
                   icon: Music,
                   target: "SelectedContent",
                 },
+                { name: "Sign_Language", icon: SignLanguage, target: "SignLanguage" },
                 { name: "Feedback", icon: MessageSquare, target: "Feedback" },
                 {
                   name: "5fish Website",

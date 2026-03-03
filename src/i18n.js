@@ -118,6 +118,7 @@ export const i18n = {
     storage_used: "Storage Used",
     confirm_delete_track: "Delete this track?",
 
+    sign_language: "Sign Language", // NEW
     feedback: "Feedback", // NEW
     feedback_intro:
       "We value your feedback! Please let us know if you have any suggestions, questions, or issues.", // NEW
@@ -332,6 +333,7 @@ export const i18n = {
       "ฟีเจอร์บันทึกกำลังจะมาเร็วๆ นี้! คุณสามารถดูบันทึกที่บันทึกไว้ทั้งหมดได้ที่หน้าบันทึก",
     notes_page_tip: "หน้านี้พร้อมที่จะสร้างแล้ว!",
     pro_tip_button: "ทิปดี ๆ",
+    sign_language: "ภาษามือ", // NEW
     feedback: "ข้อเสนอแนะ", // NEW
     feedback_intro:
       "เราให้ความสำคัญกับความคิดเห็นของคุณ! โปรดแจ้งให้เราทราบหากคุณมีข้อเสนอแนะ คำถาม หรือปัญหาใดๆ", // NEW
