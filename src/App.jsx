@@ -2043,7 +2043,7 @@ export default function App() {
                           <p style="font-family: sans-serif; font-size: 16px; color: #333;">${textContent}</p>
                           <br/>
                           <p style="font-family: sans-serif; font-size: 16px; font-weight: bold;">
-                            <a href="${appUrl}" style="color: #0056b3; text-decoration: underline;">${t.open_app_button || "Open Thai Good News App"}</a>
+                            <a href="${appUrl}" style="color: #333333; text-decoration: underline;">${t.open_app_button || "Open Thai Good News App"}</a>
                           </p>
                           <br/>
                           <p style="font-size: 12px; color: #666; font-family: sans-serif;">${t.or_copy_link || "Or copy and paste this link:"} <br/><a href="${appUrl}" style="color: #666;">${appUrl}</a></p>
