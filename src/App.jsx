@@ -2032,37 +2032,19 @@ export default function App() {
                     <button
                       onClick={(e) => {
                         e.stopPropagation(); // Prevent drawer close
-                        const appUrl = `${window.location.origin}/listen`;
+                        // Explicit hardcoded URL for the App link
+                        const appUrl = "https://thai-good-news.netlify.app/listen";
+                        const emailSubject = encodeURIComponent(t.share_email_subject || "A great tool for sharing Jesus across language barriers! \uD83E\uDD1D\uD83C\uDFFC");
                         const textContent = t.share_app_text || "Check out this app for Good News messages in multiple languages!";
                         
-                        // Fallback text format (in case rich text fails)
-                        const plainText = `${textContent}\n\n${appUrl}`;
+                        const defaultSignature = `In HIS care!   ---\nSent via the Thai Good News App \uD83C\uDDF9\uD83C\uDDED\nTelling the story of Jesus in every language\u2014so everyone in Thailand has the opportunity to say \u201CYes\u201D to Jesus.\nPlease try the app today: ${appUrl}\nGlobalRecordingsUSA.org`;
+                        const signatureText = t.share_email_signature ? t.share_email_signature.replace("{{appUrl}}", appUrl) : defaultSignature;
                         
-                        // HTML format for Outlook / Email clients
-                        const htmlContent = `
-                          <p style="font-family: sans-serif; font-size: 16px; color: #333;">${textContent}</p>
-                          <br/>
-                          <p style="font-family: sans-serif; font-size: 16px; font-weight: bold;">
-                            <a href="${appUrl}" style="color: #333333; text-decoration: underline;">${t.open_app_button || "Open Thai Good News App"}</a>
-                          </p>
-                          <br/>
-                          <p style="font-size: 12px; color: #666; font-family: sans-serif;">${t.or_copy_link || "Or copy and paste this link:"} <br/><a href="${appUrl}" style="color: #666;">${appUrl}</a></p>
-                        `;
-
-                        try {
-                          // Try the modern Clipboard API
-                          const clipboardItem = new ClipboardItem({
-                            "text/plain": new Blob([plainText], { type: "text/plain" }),
-                            "text/html": new Blob([htmlContent], { type: "text/html" }),
-                          });
-                          navigator.clipboard.write([clipboardItem]).then(() => {
-                             alert(t.link_copied || "Copied to clipboard!");
-                          });
-                        } catch (err) {
-                          // Fallback to standard text copy if modern API fails
-                           navigator.clipboard.writeText(plainText);
-                           alert(t.link_copied || "Copied to clipboard!");
-                        }
+                        // Body format for mailto link
+                        const emailBody = encodeURIComponent(`${textContent}\n\n${signatureText}`);
+                        
+                        // Open default mail client
+                        window.location.href = `mailto:?subject=${emailSubject}&body=${emailBody}`;
                       }}
                       className="bg-[#003366] hover:bg-[#002244] text-white text-xs font-semibold px-2 py-1 rounded flex items-center justify-center transition-colors shadow-sm border border-white/20 flex-1 whitespace-nowrap"
                       title={t.copy_for_email || "Share via Email"}

@@ -200,6 +200,8 @@ export const i18n = {
     "5fish website": "5fish Website",
     watch_video: "Watch Video",
     watch_on_youtube: "Watch on YouTube",
+    share_email_subject: "A great tool for sharing Jesus across language barriers in Thailand! \uD83D\uDE4C\uD83C\uDFFC",
+    share_email_signature: "In HIS care!   ---\nSent via the Thai Good News App \uD83C\uDDF9\uD83C\uDDED\nTelling the story of Jesus in every language\u2014so everyone in Thailand has the opportunity to say \u201CYes\u201D to Jesus.\nPlease try the app today: {{appUrl}}\nGlobalRecordingsUSA.org",
 
     // Import Page
     import_content_title: "Import Content",
@@ -460,6 +462,8 @@ export const i18n = {
     "5fish website": "เว็บไซต์ 5fish",
     watch_video: "ดูวิดีโอ",
     watch_on_youtube: "ดูบน YouTube",
+    share_email_subject: "เครื่องมือดีๆ สำหรับการแบ่งปันเรื่องราวของพระเยซูข้ามกำแพงภาษาในประเทศไทย! \uD83D\uDE4C\uD83C\uDFFC",
+    share_email_signature: "ในความดูแลของพระองค์!   ---\nส่งผ่านแอป Thai Good News \uD83C\uDDF9\uD83C\uDDED\nบอกเล่าเรื่องราวของพระเยซูในทุกภาษา เพื่อให้ทุกคนในประเทศไทยมีโอกาสได้พบกับพระองค์\nโปรดลองใช้แอปวันนี้: {{appUrl}}\nGlobalRecordingsUSA.org",
 
     // Notes
     note_title_placeholder: "หัวข้อ",
