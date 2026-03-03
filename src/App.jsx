@@ -2041,9 +2041,12 @@ export default function App() {
                         // HTML format for Outlook / Email clients
                         const htmlContent = `
                           <p style="font-family: sans-serif; font-size: 16px; color: #333;">${textContent}</p>
-                          <a href="${appUrl}" style="display: inline-block; padding: 10px 15px; background-color: #CC3333; color: white; text-decoration: none; border-radius: 5px; font-weight: bold; font-family: sans-serif;">Open Thai Good News App</a>
-                          <br/><br/>
-                          <p style="font-size: 12px; color: #666; font-family: sans-serif;">Or copy and paste this link: <br/><a href="${appUrl}">${appUrl}</a></p>
+                          <br/>
+                          <p style="font-family: sans-serif; font-size: 16px; font-weight: bold;">
+                            <a href="${appUrl}" style="color: #0056b3; text-decoration: underline;">${t.open_app_button || "Open Thai Good News App"}</a>
+                          </p>
+                          <br/>
+                          <p style="font-size: 12px; color: #666; font-family: sans-serif;">${t.or_copy_link || "Or copy and paste this link:"} <br/><a href="${appUrl}" style="color: #666;">${appUrl}</a></p>
                         `;
 
                         try {
