@@ -4,36 +4,36 @@
   "description": "Sharing the story of Jesus in every language",
   "icons": [
     {
-      "src": "icons/android-chrome-512-512.png",
+      "src": "icons/android-chrome-512-512.png?v=2",
       "sizes": "512x512",
       "type": "image/png",
       "purpose": "any"
     },
     {
-      "src": "icons/favicon.ico",
+      "src": "icons/favicon.ico?v=2",
       "sizes": "64x64 32x32 24x24 16x16",
       "type": "image/x-icon"
     },
     {
-      "src": "icons/icon-192.png",
+      "src": "icons/icon-192.png?v=2",
       "type": "image/png",
       "sizes": "192x192",
       "purpose": "any"
     },
     {
-      "src": "icons/icon-192-maskable.png",
+      "src": "icons/icon-192-maskable.png?v=2",
       "type": "image/png",
       "sizes": "192x192",
       "purpose": "maskable"
     },
     {
-      "src": "icons/icon-512.png",
+      "src": "icons/icon-512.png?v=2",
       "type": "image/png",
       "sizes": "512x512",
       "purpose": "any"
     },
     {
-      "src": "icons/icon-512-maskable.png",
+      "src": "icons/icon-512-maskable.png?v=2",
       "type": "image/png",
       "sizes": "512x512",
       "purpose": "maskable"
