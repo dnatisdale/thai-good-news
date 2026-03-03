@@ -758,3 +758,47 @@ export const Folder = (props) => (
     <path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z" />
   </svg>
 );
+
+export const Deaf = (props) => (
+  <svg
+    {...props}
+    xmlns="http://www.w3.org/2000/svg"
+    width="24"
+    height="24"
+    viewBox="0 0 24 24"
+    fill="none"
+    stroke="currentColor"
+    strokeWidth="2"
+    strokeLinecap="round"
+    strokeLinejoin="round"
+  >
+    {/* Ear outline */}
+    <path d="M6 8.5a6.5 6.5 0 1 1 13 0c0 1.5-.5 3-2 4.5l-2 2A4 4 0 0 0 14 17.5v2" />
+    {/* Inner ear curve */}
+    <path d="M8.5 8.5c0-1.4 1.1-2.5 2.5-2.5" />
+    {/* Diagonal slash for "Deaf/Hard of Hearing" */}
+    <line x1="2" y1="2" x2="22" y2="22" />
+  </svg>
+);
+
+export const SignLanguage = (props) => (
+  <svg
+    {...props}
+    xmlns="http://www.w3.org/2000/svg"
+    width="24"
+    height="24"
+    viewBox="0 0 24 24"
+    fill="none"
+    stroke="currentColor"
+    strokeWidth="2"
+    strokeLinecap="round"
+    strokeLinejoin="round"
+  >
+    {/* Hand graphic - Fingers and Palm */}
+    <path d="M18 11V6a2 2 0 0 0-4 0v4" />
+    <path d="M14 10V4a2 2 0 0 0-4 0v6" />
+    <path d="M10 10.5V5a2 2 0 0 0-4 0v9" />
+    <path d="M11.5 21H8a4 4 0 0 1-4-4v-6.5a2 2 0 0 1 4 0V15" />
+    <path d="M22 15v-1a2 2 0 0 0-4 0v2a4 4 0 0 1-4 4h-2.5" />
+  </svg>
+);
