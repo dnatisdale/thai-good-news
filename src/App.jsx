@@ -1989,7 +1989,7 @@ export default function App() {
                   <button
                     onClick={async (e) => {
                       e.stopPropagation(); // Prevent drawer close
-                      const appUrl = window.location.origin;
+                      const appUrl = `${window.location.origin}/listen`;
                       const shareData = {
                         title: t.app_name || "Thai: Good News",
                         text:
@@ -2173,7 +2173,7 @@ export default function App() {
                     title="Click to enlarge"
                   >
                     <QRCodeSVG
-                      value={window.location.origin}
+                      value={`${window.location.origin}/listen`}
                       size={parseInt(fontSize || "16") * 3.5}
                       level="M"
                       includeMargin={false}
