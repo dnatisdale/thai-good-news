@@ -28,6 +28,7 @@ import {
   Music,
   Globe,
   List, // For language search bar toggle
+  Copy, // NEW
 } from "./components/Icons";
 
 import { staticContent } from "./data/staticContent";
@@ -2000,36 +2001,74 @@ export default function App() {
                     {t.app_name}
                   </h2>
 
-                  {/* 3. Share App Button with centered icon */}
-                  <button
-                    onClick={async (e) => {
-                      e.stopPropagation(); // Prevent drawer close
-                      const urlString = `${window.location.origin}/listen`;
-                      const shareData = {
-                        title: t.app_name || "Thai: Good News",
-                        text: `${t.share_app_text || "Check out this app for Good News messages in multiple languages!"}\n\n${urlString}`,
-                        // Note: Intentionally omitting the `url` property to force
-                        // the share sheet to treat it as a single block of text where the URL sits at the end.
-                      };
+                  {/* 3. Button Row: Native Share + Copy for Email */}
+                  <div className="flex gap-2">
+                    <button
+                      onClick={async (e) => {
+                        e.stopPropagation(); // Prevent drawer close
+                        const urlString = `${window.location.origin}/listen`;
+                        const shareData = {
+                          title: t.app_name || "Thai: Good News",
+                          text: `${t.share_app_text || "Check out this app for Good News messages in multiple languages!"}\n\n${urlString}`,
+                        };
 
-                      if (navigator.share) {
-                        try {
-                          await navigator.share(shareData);
-                        } catch (err) {
-                          console.error("Error sharing:", err);
+                        if (navigator.share) {
+                          try {
+                            await navigator.share(shareData);
+                          } catch (err) {
+                            console.error("Error sharing:", err);
+                          }
+                        } else {
+                          navigator.clipboard.writeText(shareData.text);
+                          alert(t.link_copied || "Link copied to clipboard!");
                         }
-                      } else {
-                        navigator.clipboard.writeText(appUrl);
-                        alert(t.link_copied || "Link copied to clipboard!");
-                      }
-                    }}
-                    className="bg-[#003366] hover:bg-[#002244] text-white text-xs font-semibold px-2.5 py-1 rounded flex items-center justify-center space-x-1 transition-colors shadow-sm border border-white/20"
-                    style={{ minWidth: "110px" }}
-                    title={t.share_app || "Share App"}
-                  >
-                    <ExternalLink className="w-3 h-3" />
-                    <span>{t.share_app || "Share App"}</span>
-                  </button>
+                      }}
+                      className="bg-[#003366] hover:bg-[#002244] text-white text-xs font-semibold px-2 py-1 rounded flex items-center justify-center gap-1 transition-colors shadow-sm border border-white/20"
+                      title={t.share_app || "Share App"}
+                    >
+                      <ExternalLink className="w-3 h-3 flex-shrink-0" />
+                      <span>{t.share_app || "Share"}</span>
+                    </button>
+
+                    <button
+                      onClick={(e) => {
+                        e.stopPropagation(); // Prevent drawer close
+                        const appUrl = `${window.location.origin}/listen`;
+                        const textContent = t.share_app_text || "Check out this app for Good News messages in multiple languages!";
+                        
+                        // Fallback text format (in case rich text fails)
+                        const plainText = `${textContent}\n\n${appUrl}`;
+                        
+                        // HTML format for Outlook / Email clients
+                        const htmlContent = `
+                          <p style="font-family: sans-serif; font-size: 16px; color: #333;">${textContent}</p>
+                          <a href="${appUrl}" style="display: inline-block; padding: 10px 15px; background-color: #CC3333; color: white; text-decoration: none; border-radius: 5px; font-weight: bold; font-family: sans-serif;">Open Thai Good News App</a>
+                          <br/><br/>
+                          <p style="font-size: 12px; color: #666; font-family: sans-serif;">Or copy and paste this link: <br/><a href="${appUrl}">${appUrl}</a></p>
+                        `;
+
+                        try {
+                          // Try the modern Clipboard API
+                          const clipboardItem = new ClipboardItem({
+                            "text/plain": new Blob([plainText], { type: "text/plain" }),
+                            "text/html": new Blob([htmlContent], { type: "text/html" }),
+                          });
+                          navigator.clipboard.write([clipboardItem]).then(() => {
+                             alert(t.link_copied || "Copied to clipboard!");
+                          });
+                        } catch (err) {
+                          // Fallback to standard text copy if modern API fails
+                           navigator.clipboard.writeText(plainText);
+                           alert(t.link_copied || "Copied to clipboard!");
+                        }
+                      }}
+                      className="bg-white/10 hover:bg-white/20 text-white text-xs font-semibold px-2 py-1 rounded flex items-center justify-center gap-1 transition-colors shadow-sm border border-white/20"
+                      title={t.copy_for_email || "Copy for Email"}
+                    >
+                      <Copy className="w-3 h-3 flex-shrink-0" />
+                      <span>{t.copy_for_email || "Email"}</span>
+                    </button>
+                  </div>
                 </div>
               </div>
 
