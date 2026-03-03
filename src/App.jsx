@@ -2057,12 +2057,7 @@ export default function App() {
                   icon: Music,
                   target: "SelectedContent",
                 },
-                {
-                  name: "Sign_Language",
-                  icon: SignLanguage,
-                  target: "SignLanguage",
-                  url: "https://youtube.com/playlist?list=PLCIe_0TV6CK_N8rSr9kptzZqgxAofeIJf&si=vQIk7CsqbKpf-q_b"
-                },
+                { name: "Sign_Language", icon: SignLanguage, target: "SignLanguage" },
                 { name: "Feedback", icon: MessageSquare, target: "Feedback" },
                 {
                   name: "5fish Website",
