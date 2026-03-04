@@ -29,6 +29,7 @@ import {
   Globe,
   List, // For language search bar toggle
   Copy, // NEW
+  Share2, // NEW
 } from "./components/Icons";
 
 import { staticContent } from "./data/staticContent";
@@ -2031,23 +2032,23 @@ export default function App() {
               {/* Navigation Items */}
               {[
                 { name: "Search", icon: Search, target: "Search" },
+                { name: "Sign_Language", icon: SignLanguage, target: "SignLanguage" },
                 { name: "Favorites", icon: Heart, target: "Favorites" },
-                { name: "My_Library", icon: Download, target: "MyLibrary" },
-                { name: "Import", icon: Upload, target: "Import" },
                 { name: "Notes", icon: Pen, target: "Notes" },
                 {
                   name: "Selected_Messages",
                   icon: Music,
                   target: "SelectedContent",
                 },
-                { name: "Sign_Language", icon: SignLanguage, target: "SignLanguage" },
+                { name: "My_Library", icon: Download, target: "MyLibrary" },
+                { name: "manage_downloads", icon: Settings, target: "StorageManagement" },
+                { name: "Import", icon: Upload, target: "Import" },
                 { name: "Feedback", icon: MessageSquare, target: "Feedback" },
                 {
                   name: "Share",
-                  icon: ExternalLink,
+                  icon: Share2,
                   target: "Share",
                 },
-                { name: "manage_downloads", icon: Settings, target: "StorageManagement" }, // 👈 CHANGED
               ].map((item) => {
                 // --- NEW: Logic to render a link or a button ---
                 if (item.url) {
