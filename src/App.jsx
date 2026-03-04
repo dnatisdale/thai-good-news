@@ -2143,7 +2143,14 @@ export default function App() {
                             : "text-gray-700 dark:text-gray-200"
                         }`}
                       />
-                      {t[item.name.toLowerCase()]}
+                      <div className="flex items-center">
+                        {t[item.name.toLowerCase()]}
+                        {item.target === "SignLanguage" && (
+                          <span className="comic-pow inline-flex items-center justify-center bg-[#FF8C00] text-white text-[9px] font-black italic px-2 py-1 ml-2 leading-none" style={{ minWidth: '42px', minHeight: '22px' }}>
+                            NEW
+                          </span>
+                        )}
+                      </div>
                     </div>
 
                     {/* Counter Badge */}
