@@ -185,7 +185,7 @@ export const i18n = {
     // Share App
     // Share App
     share: "Share",
-    share_app: "Share App",
+    share_app: "Share the Thai Good News App",
     copy_for_email: "Share via Email", // UPDATED
     open_app_button: "Open Thai Good News App", // NEW
     or_copy_link: "Or copy and paste this link:", // NEW
@@ -202,7 +202,7 @@ export const i18n = {
     watch_video: "Watch Video",
     watch_on_youtube: "Watch on YouTube",
     share_email_subject: "A great tool for sharing Jesus in Thailand (100+ languages) 🙌🏼🇹🇭",
-    share_email_body: "Greetings,\n\nA great tool for sharing Jesus in Thailand: Thai Good News. It lets someone hear the Good News in Thai and 100+ languages spoken in Thailand, even if you don’t speak their language.\n\nTry it here:\n{{appUrl}}\n\nQuestions/feedback: Kow-D@globalrecordings.net\n\nSent via the Thai Good News App 🇹🇭\nGlobal Recordings Network • 5fish.mobi",
+    share_email_body: "Greetings!\n\nA great tool for sharing Jesus in Thailand: Thai Good News. It lets someone hear the Good News in Thai and 100+ languages spoken in Thailand, even if you don’t speak their language.\n\nTry it here:\n{{appUrl}}\n\nQuestions/feedback: Kow-D@globalrecordings.net\n\nSent via the Thai Good News App 🇹🇭\nGlobal Recordings Network • 5fish.mobi",
     share_email_signature: "",
 
     // Import Page
@@ -453,7 +453,7 @@ export const i18n = {
     // Share App
     // Share App
     share: "แชร์",
-    share_app: "แชร์แอป",
+    share_app: "แชร์แอป Thai Good News",
     copy_for_email: "แชร์ผ่านอีเมล", // UPDATED
     open_app_button: "เปิดแอป Thai Good News", // NEW
     or_copy_link: "หรือคัดลอกและวางลิงก์นี้:", // NEW
@@ -466,7 +466,7 @@ export const i18n = {
     watch_video: "ดูวิดีโอ",
     watch_on_youtube: "ดูบน YouTube",
     share_email_subject: "เครื่องมือดีๆ สำหรับการแบ่งปันเรื่องราวของพระเยซูในประเทศไทย (กว่า 100 ภาษา) 🙌🏼🇹🇭",
-    share_email_body: "สวัสดีครับ,\n\nเครื่องมือดีๆ สำหรับการแบ่งปันเรื่องราวของพระเยซูในประเทศไทย: ไทยข่าวดี ช่วยให้ใครสักคนได้ยินข่าวดีในภาษาไทยและกว่า 100 ภาษาที่พูดในประเทศไทย แม้ว่าเราจะพูดภาษาเขาไม่ได้ก็ตาม\n\nลองใช้งานได้ที่นี่:\n{{appUrl}}\n\nคำถาม/ข้อเสนอแนะ: Kow-D@globalrecordings.net\n\nส่งผ่านแอป Thai Good News 🇹🇭\nGlobal Recordings Network • 5fish.mobi",
+    share_email_body: "สวัสดีครับ!\n\nเครื่องมือดีๆ สำหรับการแบ่งปันเรื่องราวของพระเยซูในประเทศไทย: ไทยข่าวดี ช่วยให้ใครสักคนได้ยินข่าวดีในภาษาไทยและกว่า 100 ภาษาที่พูดในประเทศไทย แม้ว่าเราจะพูดภาษาเขาไม่ได้ก็ตาม\n\nลองใช้งานได้ที่นี่:\n{{appUrl}}\n\nคำถาม/ข้อเสนอแนะ: Kow-D@globalrecordings.net\n\nส่งผ่านแอป Thai Good News 🇹🇭\nGlobal Recordings Network • 5fish.mobi",
     share_email_signature: "",
 
     // Notes

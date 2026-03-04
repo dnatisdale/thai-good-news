@@ -1,5 +1,6 @@
 import React from "react";
 import { ChevronLeft, ChevronRight, ExternalLink } from "../components/Icons";
+import fiveFishLogo from "../assets/5fish-trans-logo.png";
 
 const SharePage = ({ lang, t, onBack, onForward, hasPrev, hasNext }) => {
   const handleNativeShare = async () => {
@@ -26,7 +27,7 @@ const SharePage = ({ lang, t, onBack, onForward, hasPrev, hasNext }) => {
     const defaultSubject = "A great tool for sharing Jesus in Thailand (100+ languages) \uD83D\uDE4C\uD83C\uDFFC\uD83C\uDDF9\uD83C\uDDED";
     const emailSubject = encodeURIComponent(t.share_email_subject || defaultSubject);
     
-    const defaultBody = `Greetings,\n\nA great tool for sharing Jesus in Thailand: Thai Good News. It lets someone hear the Good News in Thai and 100+ languages spoken in Thailand, even if you don't speak their language.\n\nTry it here:\n${appUrl}\n\nQuestions/feedback: Kow-D@globalrecordings.net\n\nSent via the Thai Good News App \uD83C\uDDF9\uD83C\uDDED\nGlobal Recordings Network • 5fish.mobi`;
+    const defaultBody = `Greetings!\n\nA great tool for sharing Jesus in Thailand: Thai Good News. It lets someone hear the Good News in Thai and 100+ languages spoken in Thailand, even if you don't speak their language.\n\nTry it here:\n${appUrl}\n\nQuestions/feedback: Kow-D@globalrecordings.net\n\nSent via the Thai Good News App \uD83C\uDDF9\uD83C\uDDED\nGlobal Recordings Network • 5fish.mobi`;
     
     const emailBodyText = t.share_email_body ? t.share_email_body.replace("{{appUrl}}", appUrl) : defaultBody;
     const emailBody = encodeURIComponent(emailBodyText);
@@ -90,7 +91,7 @@ const SharePage = ({ lang, t, onBack, onForward, hasPrev, hasNext }) => {
           rel="noopener noreferrer"
           className="w-full bg-slate-200 dark:bg-slate-600 hover:bg-slate-300 dark:hover:bg-slate-500 text-gray-800 dark:text-white font-bold py-4 px-6 rounded-lg shadow-sm transition-colors flex items-center justify-center mt-8"
         >
-          <ExternalLink className="w-5 h-5 mr-3" />
+          <img src={fiveFishLogo} alt="5fish" className="w-8 h-8 mr-3 object-contain invert dark:invert-0" />
           <span className="text-lg">{t["5fish website"] || "5fish Website"}</span>
         </a>
       </div>
