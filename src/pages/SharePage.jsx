@@ -84,6 +84,26 @@ const SharePage = ({ lang, t, onBack, onForward, hasPrev, hasNext }) => {
           <span className="text-lg">{t.copy_for_email || "Share via Email"}</span>
         </button>
 
+        {/* LinkTree Button */}
+        <a
+          href="https://linktr.ee/Thai.Good.News"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="w-full bg-[#003366] hover:bg-[#002244] text-white font-bold py-4 px-6 rounded-lg shadow-md transition-colors flex items-center justify-center"
+        >
+          <span className="text-lg">Share on LinkTree</span>
+        </a>
+
+        {/* LINE Button */}
+        <a
+          href="https://line.me/R/ti/p/@391haoyo"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="w-full bg-[#00B900] hover:bg-[#009900] text-white font-bold py-4 px-6 rounded-lg shadow-md transition-colors flex items-center justify-center"
+        >
+          <span className="text-lg">Share on LINE</span>
+        </a>
+
         {/* 5fish Website Button */}
         <a
           href="https://5fish.mobi/"
