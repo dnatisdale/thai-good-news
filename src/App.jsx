@@ -2124,6 +2124,22 @@ export default function App() {
                 );
               })}
 
+              {/* --- Language Toggle --- */}
+              <button
+                onClick={() => {
+                  const newLang = lang === "th" ? "en" : "th";
+                  setLang(newLang);
+                  localStorage.setItem("appLang", newLang);
+                }}
+                className="w-full flex items-center justify-between p-2 rounded-lg font-semibold text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-[#004d99] transition-colors"
+                title={lang === "th" ? "Switch to English" : "เปลี่ยนเป็นภาษาไทย"}
+              >
+                <div className="flex items-center">
+                  <Globe className="w-6 h-6 mr-3" />
+                  {lang === "th" ? "English / ภาษาไทย" : "ภาษาไทย / English"}
+                </div>
+              </button>
+
               {/* --- Dark Mode Toggle --- */}
               <button
                 onClick={toggleTheme}
