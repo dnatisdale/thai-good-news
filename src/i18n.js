@@ -15,8 +15,8 @@ export const i18n = {
     // Navigation
     contents: "Contents",
     search: "Search",
-    favorites: "Favorites",
-    notes: "Notes",
+    favorites: "My Favorites",
+    notes: "My Notes",
     settings: "Settings",
     language_label: "Language",
     back_to_languages: "Back to Languages",
@@ -248,8 +248,8 @@ export const i18n = {
     // Navigation
     contents: "สารบัญ",
     search: "ค้นหา",
-    favorites: "รายการโปรด",
-    notes: "บันทึก",
+    favorites: "รายการโปรดของฉัน",
+    notes: "บันทึกของฉัน",
     settings: "ตั้งค่า",
     language_label: "ภาษา",
     back_to_languages: "กลับไปหน้าภาษา",

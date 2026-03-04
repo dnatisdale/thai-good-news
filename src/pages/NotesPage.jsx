@@ -87,7 +87,7 @@ const NotesPage = ({ lang, t, onBack, onForward, hasPrev, hasNext, userData, sav
       <div className="flex flex-col items-center mb-6">
         <h1 className="text-2xl font-bold text-gray-800 dark:text-white flex items-center mb-3">
           <Pen className="w-8 h-8 mr-3 text-brand-red dark:text-white" />
-          {t.my_notes || "My Notes"}
+          {t.notes || "My Notes"}
         </h1>
         {!isEditing && notes.length > 0 && (
           <button

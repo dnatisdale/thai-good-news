@@ -2041,7 +2041,7 @@ export default function App() {
                   target: "SelectedContent",
                 },
                 { name: "My_Library", icon: Download, target: "MyLibrary" },
-                { name: "manage_downloads", icon: Settings, target: "StorageManagement" },
+                { name: "storage_management", icon: Settings, target: "StorageManagement" },
                 { name: "Import", icon: Upload, target: "Import" },
                 { name: "Feedback", icon: MessageSquare, target: "Feedback" },
                 {

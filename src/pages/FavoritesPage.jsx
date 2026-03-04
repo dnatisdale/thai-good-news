@@ -121,7 +121,7 @@ const FavoritesPage = ({
       <div className="max-w-lg mx-auto">
         <h1 className="text-2xl font-bold text-gray-800 dark:text-white mb-6 flex items-center justify-center">
           <Heart className="w-8 h-8 mr-3 text-brand-red dark:text-white" />
-          {t.favorites}
+          {t.favorites || "My Favorites"}
         </h1>
 
         {/* =======================

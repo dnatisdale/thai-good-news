@@ -65,7 +65,7 @@ const SelectedContentPage = ({
           <div className="flex items-center gap-2 mb-2">
             <Music className="w-6 h-6 text-brand-red dark:text-white" />
             <h1 className="text-2xl font-bold mb-0 text-gray-800 dark:text-white">
-              {t.selected_content || "Selected Messages"}
+              {t.selected_messages || "Selected Messages"}
             </h1>
           </div>
           <p className="text-sm text-gray-500 dark:text-gray-300 font-semibold">
