@@ -2034,14 +2034,15 @@ export default function App() {
                         e.stopPropagation(); // Prevent drawer close
                         // Explicit hardcoded URL for the App link
                         const appUrl = "https://thai-good-news.netlify.app/listen";
-                        const emailSubject = encodeURIComponent(t.share_email_subject || "A great tool for sharing Jesus across language barriers! \uD83E\uDD1D\uD83C\uDFFC");
-                        const textContent = t.share_app_text || "Check out this app for Good News messages in multiple languages!";
+                        const defaultSubject = "A great tool for sharing Jesus in Thailand (100+ languages) \uD83D\uDE4C\uD83C\uDFFC\uD83C\uDDF9\uD83C\uDDED";
+                        const emailSubject = encodeURIComponent(t.share_email_subject || defaultSubject);
                         
-                        const defaultSignature = `In HIS care!   ---\nSent via the Thai Good News App \uD83C\uDDF9\uD83C\uDDED\nTelling the story of Jesus in every language\u2014so everyone in Thailand has the opportunity to say \u201CYes\u201D to Jesus.\nPlease try the app today: ${appUrl}\nGlobalRecordingsUSA.org`;
-                        const signatureText = t.share_email_signature ? t.share_email_signature.replace("{{appUrl}}", appUrl) : defaultSignature;
+                        const defaultBody = `Greetings,\n\nA great tool for sharing Jesus in Thailand: Thai Good News. It lets someone hear the Good News in Thai and 100+ languages spoken in Thailand, even if you don’t speak their language.\n\nTry it here:\n${appUrl}\n\nQuestions/feedback: Kow-D@globalrecordings.net\n\nSent via the Thai Good News App \uD83C\uDDF9\uD83C\uDDED\nGlobal Recordings Network • 5fish.mobi`;
                         
                         // Body format for mailto link
-                        const emailBody = encodeURIComponent(`${textContent}\n\n${signatureText}`);
+                        // Use translation if available, otherwise default
+                        const emailBodyText = t.share_email_body ? t.share_email_body.replace("{{appUrl}}", appUrl) : defaultBody;
+                        const emailBody = encodeURIComponent(emailBodyText);
                         
                         // Open default mail client
                         window.location.href = `mailto:?subject=${emailSubject}&body=${emailBody}`;

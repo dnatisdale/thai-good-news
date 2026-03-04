@@ -200,8 +200,9 @@ export const i18n = {
     "5fish website": "5fish Website",
     watch_video: "Watch Video",
     watch_on_youtube: "Watch on YouTube",
-    share_email_subject: "A great tool for sharing Jesus across language barriers in Thailand! \uD83D\uDE4C\uD83C\uDFFC",
-    share_email_signature: "In HIS care!   ---\nSent via the Thai Good News App \uD83C\uDDF9\uD83C\uDDED\nTelling the story of Jesus in every language\u2014so everyone in Thailand has the opportunity to say \u201CYes\u201D to Jesus.\nPlease try the app today: {{appUrl}}\nGlobalRecordingsUSA.org",
+    share_email_subject: "A great tool for sharing Jesus in Thailand (100+ languages) 🙌🏼🇹🇭",
+    share_email_body: "Greetings,\n\nA great tool for sharing Jesus in Thailand: Thai Good News. It lets someone hear the Good News in Thai and 100+ languages spoken in Thailand, even if you don’t speak their language.\n\nTry it here:\n{{appUrl}}\n\nQuestions/feedback: Kow-D@globalrecordings.net\n\nSent via the Thai Good News App 🇹🇭\nGlobal Recordings Network • 5fish.mobi",
+    share_email_signature: "",
 
     // Import Page
     import_content_title: "Import Content",
@@ -462,8 +463,9 @@ export const i18n = {
     "5fish website": "เว็บไซต์ 5fish",
     watch_video: "ดูวิดีโอ",
     watch_on_youtube: "ดูบน YouTube",
-    share_email_subject: "เครื่องมือดีๆ สำหรับการแบ่งปันเรื่องราวของพระเยซูข้ามกำแพงภาษาในประเทศไทย! \uD83D\uDE4C\uD83C\uDFFC",
-    share_email_signature: "ในความดูแลของพระองค์!   ---\nส่งผ่านแอป Thai Good News \uD83C\uDDF9\uD83C\uDDED\nบอกเล่าเรื่องราวของพระเยซูในทุกภาษา เพื่อให้ทุกคนในประเทศไทยมีโอกาสได้พบกับพระองค์\nโปรดลองใช้แอปวันนี้: {{appUrl}}\nGlobalRecordingsUSA.org",
+    share_email_subject: "เครื่องมือดีๆ สำหรับการแบ่งปันเรื่องราวของพระเยซูในประเทศไทย (กว่า 100 ภาษา) 🙌🏼🇹🇭",
+    share_email_body: "สวัสดีครับ,\n\nเครื่องมือดีๆ สำหรับการแบ่งปันเรื่องราวของพระเยซูในประเทศไทย: ไทยข่าวดี ช่วยให้ใครสักคนได้ยินข่าวดีในภาษาไทยและกว่า 100 ภาษาที่พูดในประเทศไทย แม้ว่าเราจะพูดภาษาเขาไม่ได้ก็ตาม\n\nลองใช้งานได้ที่นี่:\n{{appUrl}}\n\nคำถาม/ข้อเสนอแนะ: Kow-D@globalrecordings.net\n\nส่งผ่านแอป Thai Good News 🇹🇭\nGlobal Recordings Network • 5fish.mobi",
+    share_email_signature: "",
 
     // Notes
     note_title_placeholder: "หัวข้อ",
