@@ -2099,16 +2099,18 @@ export default function App() {
                   >
                     <div className="flex items-center">
                       <item.icon
-                        className={`mr-3 w-6 h-6 ${
+                        className={`mr-3 w-6 h-6 shrink-0 ${
                           currentPage.name === item.target
                             ? ""
                             : "text-gray-700 dark:text-gray-200"
                         }`}
                       />
-                      <div className="flex items-center">
-                        {t[item.name.toLowerCase()]}
+                      <div className="flex items-center whitespace-nowrap">
+                        <span className="text-sm sm:text-base">
+                          {t[item.name.toLowerCase()]}
+                        </span>
                         {item.target === "SignLanguage" && (
-                          <span className="comic-pow inline-flex items-center justify-center bg-[#FF8C00] text-white text-[9px] font-black italic px-2 py-1 ml-2 leading-none" style={{ minWidth: '42px', minHeight: '22px' }}>
+                          <span className="comic-pow shrink-0 inline-flex items-center justify-center bg-[#FF8C00] text-white text-[8px] font-black italic px-1 py-0.5 ml-1 leading-none" style={{ minWidth: '32px', minHeight: '16px' }}>
                             {lang === "th" ? "ใหม่" : "NEW"}
                           </span>
                         )}
