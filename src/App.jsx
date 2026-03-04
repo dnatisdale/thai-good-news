@@ -624,7 +624,7 @@ export default function App() {
   };
 
   // --- State Management ---
-  const initialLang = localStorage.getItem("appLang") || "en";
+  const initialLang = localStorage.getItem("appLang") || "th";
   const initialFontSize =
     localStorage.getItem("appFontSize") || DEFAULT_FONT_SIZE;
 
