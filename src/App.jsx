@@ -52,6 +52,7 @@ import MyLibraryPage from "./pages/MyLibraryPage";
 import ImportPage from "./pages/ImportPage";
 import FeedbackPage from "./pages/FeedbackPage";
 import SignLanguagePage from "./pages/SignLanguagePage";
+import SharePage from "./pages/SharePage"; // NEW
 import SelectionBadge from "./components/SelectionBadge";
 import UpdateNotification from "./components/UpdateNotification";
 // import SettingsPage from "./pages/SettingsPage"; // REMOVED
@@ -1551,6 +1552,19 @@ export default function App() {
       );
       break;
 
+    case "Share": // NEW
+      PageContent = (
+        <SharePage
+          lang={lang}
+          t={t}
+          onBack={goBack}
+          onForward={goForward}
+          hasPrev={hasPrev}
+          hasNext={hasNext}
+        />
+      );
+      break;
+
     default:
       PageContent = (
         <div className="p-4 pt-8 text-center text-red-500">
@@ -1994,65 +2008,12 @@ export default function App() {
                   />
                 </button>
 
-                {/* Title and Share Button Column */}
-                <div className="flex flex-col items-start justify-center gap-0.5">
+                {/* Title Column */}
+                <div className="flex flex-col items-start justify-center">
                   {/* 2. App Title */}
-                  <h2 className="text-base font-bold text-white leading-tight">
+                  <h2 className="text-2xl font-bold text-white leading-tight mt-1 mb-1">
                     {t.app_name}
                   </h2>
-
-                  {/* 3. Button Row: Native Share + Copy for Email */}
-                  <div className="flex gap-2">
-                    <button
-                      onClick={async (e) => {
-                        e.stopPropagation(); // Prevent drawer close
-                        const urlString = `${window.location.origin}/listen`;
-                        const shareData = {
-                          title: t.app_name || "Thai: Good News",
-                          text: `${t.share_app_text || "Check out this app for Good News messages in multiple languages!"}\n\n${urlString}`,
-                        };
-
-                        if (navigator.share) {
-                          try {
-                            await navigator.share(shareData);
-                          } catch (err) {
-                            console.error("Error sharing:", err);
-                          }
-                        } else {
-                          navigator.clipboard.writeText(shareData.text);
-                          alert(t.link_copied || "Link copied to clipboard!");
-                        }
-                      }}
-                      className="bg-[#003366] hover:bg-[#002244] text-white text-xs font-semibold px-2 py-1 rounded flex items-center justify-center transition-colors shadow-sm border border-white/20 flex-1"
-                      title={t.share_app || "Share App"}
-                    >
-                      <span>{t.share_app || "Share App"}</span>
-                    </button>
-
-                    <button
-                      onClick={(e) => {
-                        e.stopPropagation(); // Prevent drawer close
-                        // Explicit hardcoded URL for the App link
-                        const appUrl = "https://thai-good-news.netlify.app/listen";
-                        const defaultSubject = "A great tool for sharing Jesus in Thailand (100+ languages) \uD83D\uDE4C\uD83C\uDFFC\uD83C\uDDF9\uD83C\uDDED";
-                        const emailSubject = encodeURIComponent(t.share_email_subject || defaultSubject);
-                        
-                        const defaultBody = `Greetings,\n\nA great tool for sharing Jesus in Thailand: Thai Good News. It lets someone hear the Good News in Thai and 100+ languages spoken in Thailand, even if you don’t speak their language.\n\nTry it here:\n${appUrl}\n\nQuestions/feedback: Kow-D@globalrecordings.net\n\nSent via the Thai Good News App \uD83C\uDDF9\uD83C\uDDED\nGlobal Recordings Network • 5fish.mobi`;
-                        
-                        // Body format for mailto link
-                        // Use translation if available, otherwise default
-                        const emailBodyText = t.share_email_body ? t.share_email_body.replace("{{appUrl}}", appUrl) : defaultBody;
-                        const emailBody = encodeURIComponent(emailBodyText);
-                        
-                        // Open default mail client
-                        window.location.href = `mailto:?subject=${emailSubject}&body=${emailBody}`;
-                      }}
-                      className="bg-[#003366] hover:bg-[#002244] text-white text-xs font-semibold px-2 py-1 rounded flex items-center justify-center transition-colors shadow-sm border border-white/20 flex-1 whitespace-nowrap"
-                      title={t.copy_for_email || "Share via Email"}
-                    >
-                      <span>{t.copy_for_email || "Share via Email"}</span>
-                    </button>
-                  </div>
                 </div>
               </div>
 
@@ -2082,10 +2043,9 @@ export default function App() {
                 { name: "Sign_Language", icon: SignLanguage, target: "SignLanguage" },
                 { name: "Feedback", icon: MessageSquare, target: "Feedback" },
                 {
-                  name: "5fish Website",
+                  name: "Share",
                   icon: ExternalLink,
-                  target: "5fish",
-                  url: "https://5fish.mobi/",
+                  target: "Share",
                 },
                 { name: "manage_downloads", icon: Settings, target: "StorageManagement" }, // 👈 CHANGED
               ].map((item) => {
@@ -2230,17 +2190,10 @@ export default function App() {
 
               {/* Install Button removed from sidebar (moved to header) */}
 
-              {/* --- User ID at very bottom --- */}
+              {/* --- Bottom Information --- */}
               <div className="text-xs text-gray-500 dark:text-white dark:bg-[#374151] pt-2 space-y-2">
-                <p className="truncate text-center">
-                  {t.user_id || "User ID"}:
-                  <span className="font-mono text-gray-600 dark:text-white ml-1">
-                    {userId || "..."}
-                  </span>
-                </p>
-
                 {/* Build Information */}
-                <div className="text-center space-y-1 pt-2 border-t border-gray-200 dark:border-white">
+                <div className="text-center space-y-1">
                   <p className="text-gray-600 dark:text-white">
                     Build:{" "}
                     {new Date().toLocaleDateString("en-US", {

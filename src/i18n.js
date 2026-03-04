@@ -184,6 +184,7 @@ export const i18n = {
 
     // Share App
     // Share App
+    share: "Share",
     share_app: "Share App",
     copy_for_email: "Share via Email", // UPDATED
     open_app_button: "Open Thai Good News App", // NEW
@@ -451,6 +452,7 @@ export const i18n = {
 
     // Share App
     // Share App
+    share: "แชร์",
     share_app: "แชร์แอป",
     copy_for_email: "แชร์ผ่านอีเมล", // UPDATED
     open_app_button: "เปิดแอป Thai Good News", // NEW
