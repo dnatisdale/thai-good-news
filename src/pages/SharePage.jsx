@@ -35,6 +35,16 @@ const SharePage = ({ lang, t, onBack, onForward, hasPrev, hasNext }) => {
     window.location.href = `mailto:?subject=${emailSubject}&body=${emailBody}`;
   };
 
+  const handleCopyLink = () => {
+    const appUrl = "https://thai-good-news.netlify.app";
+    navigator.clipboard.writeText(appUrl)
+      .then(() => alert(t.link_copied || "Link copied to clipboard!"))
+      .catch((err) => {
+        console.error("Could not copy link:", err);
+        alert(t.copy_failed || "Could not copy link");
+      });
+  };
+
   return (
     <div className="p-4 pt-8 h-full overflow-y-auto">
       {/* Navigation Header */}
@@ -68,6 +78,14 @@ const SharePage = ({ lang, t, onBack, onForward, hasPrev, hasNext }) => {
       </h1>
 
       <div className="max-w-lg mx-auto space-y-4">
+        {/* Copy Link Button */}
+        <button
+          onClick={handleCopyLink}
+          className="w-full bg-[#003366] hover:bg-[#002244] text-white font-bold py-4 px-6 rounded-lg shadow-md transition-colors flex items-center justify-center"
+        >
+          <span className="text-lg">{t.copy_link || "Copy App Link"}</span>
+        </button>
+
         {/* Share App Button */}
         <button
           onClick={handleNativeShare}
