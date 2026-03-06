@@ -77,7 +77,7 @@ const SharePage = ({ lang, t, onBack, onForward, hasPrev, hasNext }) => {
         {t.share || "Share"}
       </h1>
 
-      <div className="max-w-lg mx-auto space-y-4">
+      <div className="max-w-lg mx-auto space-y-2">
         {/* Copy Link Button */}
         <button
           onClick={handleCopyLink}
