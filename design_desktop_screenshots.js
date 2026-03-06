@@ -10,8 +10,8 @@ const mobileFolders = [
 (async () => {
     const browser = await puppeteer.launch({ headless: 'new' });
     const page = await browser.newPage();
-    // 1440x900 @ 2x scaling for crisp quality
-    await page.setViewport({ width: 1440, height: 900, deviceScaleFactor: 2 });
+    // 1920x1080 @ 2x scaling for crisp quality (16:9 Aspect Ratio)
+    await page.setViewport({ width: 1920, height: 1080, deviceScaleFactor: 2 });
 
     for (const folderPair of mobileFolders) {
         console.log(`\nStarting composite generation for ${folderPair.dest}...`);
@@ -36,7 +36,7 @@ const mobileFolders = [
                     <style>
                         body {
                             margin: 0; padding: 0; 
-                            width: 1440px; height: 900px;
+                            width: 1920px; height: 1080px;
                             /* Gorgeous soft brand background */
                             background: linear-gradient(135deg, #e2e8f0 0%, #cbd5e1 100%);
                             display: flex; align-items: center; justify-content: center;
@@ -45,8 +45,8 @@ const mobileFolders = [
                         /* Subtle accent blob behind phone */
                         .blob {
                             position: absolute;
-                            width: 800px;
-                            height: 800px;
+                            width: 1000px;
+                            height: 1000px;
                             background: radial-gradient(circle, rgba(169, 27, 13, 0.15) 0%, rgba(169, 27, 13, 0) 70%);
                             z-index: 0;
                         }
@@ -55,7 +55,7 @@ const mobileFolders = [
                             position: relative;
                             width: 375px; 
                             height: 667px;
-                            transform: scale(1.15); /* Scale up cleanly */
+                            transform: scale(1.35); /* Scale up cleanly for the larger 1080p canvas */
                             border-radius: 36px;
                             z-index: 10;
                             /* Beautiful bezel + huge realistic shadow */
