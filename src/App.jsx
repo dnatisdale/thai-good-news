@@ -2060,8 +2060,10 @@ export default function App() {
                       rel="noopener noreferrer"
                       className="w-full flex items-center p-2 rounded-lg font-semibold text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-[#004d99] transition-colors"
                     >
-                      <item.icon className="mr-3 w-6 h-6" />
-                      {t[item.name.toLowerCase()]}
+                      <item.icon className="mr-3 w-6 h-6 shrink-0" />
+                      <span className="text-base whitespace-nowrap">
+                        {t[item.name.toLowerCase()]}
+                      </span>
                     </a>
                   );
                 }
@@ -2106,7 +2108,7 @@ export default function App() {
                         }`}
                       />
                       <div className="flex items-center whitespace-nowrap">
-                        <span className="text-sm sm:text-base">
+                        <span className="text-base">
                           {t[item.name.toLowerCase()]}
                         </span>
                         {item.target === "SignLanguage" && (
@@ -2138,8 +2140,10 @@ export default function App() {
                 title={lang === "th" ? "Switch to English" : "เปลี่ยนเป็นภาษาไทย"}
               >
                 <div className="flex items-center">
-                  <Globe className="w-6 h-6 mr-3" />
-                  {lang === "th" ? "English / ภาษาไทย" : "ภาษาไทย / English"}
+                  <Globe className="w-6 h-6 mr-3 shrink-0" />
+                  <span className="text-base whitespace-nowrap">
+                    {lang === "th" ? "English / ภาษาไทย" : "ภาษาไทย / English"}
+                  </span>
                 </div>
               </button>
 
@@ -2150,13 +2154,15 @@ export default function App() {
               >
                 <div className="flex items-center">
                   {theme === "dark" ? (
-                    <Sun className="w-6 h-6 mr-3" />
+                    <Sun className="w-6 h-6 mr-3 shrink-0" />
                   ) : (
-                    <Moon className="w-6 h-6 mr-3" />
+                    <Moon className="w-6 h-6 mr-3 shrink-0" />
                   )}
-                  {theme === "dark"
-                    ? t.light_mode || "Light Mode"
-                    : t.dark_mode || "Dark Mode"}
+                  <span className="text-base whitespace-nowrap">
+                    {theme === "dark"
+                      ? t.light_mode || "Light Mode"
+                      : t.dark_mode || "Dark Mode"}
+                  </span>
                 </div>
               </button>
             </nav>
