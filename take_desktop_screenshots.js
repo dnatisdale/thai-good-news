@@ -28,7 +28,7 @@ const pages_th = [
     { text: 'แชร์', name: '11_Share' }
 ];
 
-// Set exactly 1920x1080 (16:9 Desktop Size)
+// 16:9 Desktop Size
 const desktopViewport = { width: 1920, height: 1080, deviceScaleFactor: 1 };
 
 const scenarios = [
@@ -56,7 +56,7 @@ const delay = (time) => new Promise(r => setTimeout(r, time));
             localStorage.setItem('appLang', lang);
         }, scenario.lang);
         await page.goto('http://127.0.0.1:3000', { waitUntil: 'domcontentloaded' });
-        await delay(5000); 
+        await delay(3000); 
 
         // Always hide install banner for these
         await page.evaluate(() => {
@@ -75,20 +75,27 @@ const delay = (time) => new Promise(r => setTimeout(r, time));
         async function openSidebar() {
             try {
                 await page.evaluate(() => {
+                    // Try to find the visible "Open Sidebar Menu" button
+                    const buttons = Array.from(document.querySelectorAll('button[aria-label="Open Sidebar Menu"]'));
+                    const visibleButton = buttons.find(b => b.offsetParent !== null && b.offsetWidth > 0);
+                    if (visibleButton) {
+                        visibleButton.click();
+                        return true;
+                    }
+                    
+                    // Fallback to SVGs if aria-label changes
                     const svgs = document.querySelectorAll('svg');
                     for (let svg of svgs) {
                         if (svg.classList.contains('lucide-menu') || svg.innerHTML.includes('M4 6h16M4 12h16m-7 6h7')) {
                             const btn = svg.closest('button');
-                            if (btn && btn.offsetWidth > 0) {
+                            if (btn && btn.offsetParent !== null && btn.offsetWidth > 0) {
                                 btn.click();
                                 return true;
                             }
                         }
                     }
-                    const btn = document.querySelector('header button');
-                    if (btn && btn.offsetWidth > 0) btn.click();
                 });
-                await delay(1000); 
+                await delay(1200); // Give drawer time to slide in
             } catch (e) {
                  console.log("  Error opening sidebar", e.message);
             }
@@ -101,7 +108,7 @@ const delay = (time) => new Promise(r => setTimeout(r, time));
                     for (let svg of svgs) {
                         if (svg.innerHTML.includes('M6 18L18 6M6 6l12 12')) {
                             const btn = svg.closest('button');
-                            if (btn && btn.offsetWidth > 0) {
+                            if (btn && btn.offsetParent !== null && btn.offsetWidth > 0) {
                                 btn.click();
                                 return true;
                             }
@@ -110,7 +117,7 @@ const delay = (time) => new Promise(r => setTimeout(r, time));
                     const backdrop = document.querySelector('div.bg-black\\/50');
                     if (backdrop) backdrop.click();
                 });
-                await delay(1000);
+                await delay(1200);
             } catch (e) {}
         }
 
@@ -132,10 +139,11 @@ const delay = (time) => new Promise(r => setTimeout(r, time));
                     const target = interactables.find(el => {
                         if (!el.innerText) return false;
                         const elText = el.innerText.trim();
+                        // Either exact match or includes it
                         return elText === text || elText.includes(text);
                     });
                     
-                    if (target && target.offsetWidth > 0) {
+                    if (target && target.offsetParent !== null) {
                         target.click();
                         return true;
                     }
@@ -143,7 +151,7 @@ const delay = (time) => new Promise(r => setTimeout(r, time));
                 }, targetText);
                 
                 if (clicked) {
-                    await delay(2000);
+                    await delay(1500); // UI transition
                     
                     await takeScreenshot(name);
 
