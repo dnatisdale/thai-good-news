@@ -127,9 +127,9 @@ const SharePage = ({ lang, t, onBack, onForward, hasPrev, hasNext }) => {
           href="https://5fish.mobi/"
           target="_blank"
           rel="noopener noreferrer"
-          className="w-full bg-slate-200 dark:bg-slate-600 hover:bg-slate-300 dark:hover:bg-slate-500 text-gray-800 dark:text-white font-bold py-4 px-6 rounded-lg shadow-sm transition-colors flex items-center justify-center mt-8"
+          className="w-full bg-brand-red hover:bg-brand-red-dark text-white font-bold py-4 px-6 rounded-lg shadow-md transition-colors flex items-center justify-center mt-8"
         >
-          <img src={fiveFishLogo} alt="5fish" className="w-8 h-8 mr-3 object-contain invert dark:invert-0" />
+          <img src={fiveFishLogo} alt="5fish" className="w-8 h-8 mr-3 object-contain brightness-0 invert" />
           <span className="text-lg">{t["5fish website"] || "5fish Website"}</span>
         </a>
       </div>
