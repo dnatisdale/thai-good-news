@@ -797,3 +797,22 @@ export const SignLanguage = (props) => (
     <path d="M 19 14 c 0 4 -2 7 -7 7 s -6.5 -2 -7 -6.5 l -2.5 -2 a 1.5 1.5 0 0 1 2.12 -2.12 L 7 13 V 5 a 1.5 1.5 0 0 1 3 0 V 14 V 11.5 a 1.5 1.5 0 0 1 3 0 V 14 V 11.5 a 1.5 1.5 0 0 1 3 0 V 14 V 7 a 1.5 1.5 0 0 1 3 0 V 14 Z" />
   </svg>
 );
+
+export const PdfFile = (props) => (
+  <svg
+    {...props}
+    xmlns="http://www.w3.org/2000/svg"
+    width="24"
+    height="24"
+    viewBox="0 0 24 24"
+    fill="none"
+    stroke="currentColor"
+    strokeWidth="2"
+    strokeLinecap="round"
+    strokeLinejoin="round"
+  >
+    <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
+    <polyline points="14 2 14 8 20 8" />
+    <text x="5" y="16" fontSize="7" fontWeight="bold" stroke="none" fill="currentColor" fontFamily="sans-serif">PDF</text>
+  </svg>
+);

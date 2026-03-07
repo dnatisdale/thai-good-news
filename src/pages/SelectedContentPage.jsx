@@ -1,6 +1,6 @@
 import React from "react";
-import { Share2, Download, ChevronLeft, ChevronRight, Music } from "../components/Icons";
-import { Copy } from "lucide-react";
+import { Share2, Download, ChevronLeft, ChevronRight, Music, PdfFile } from "../components/Icons";
+import { Copy, Printer } from "lucide-react";
 import ContentCard from "../components/ContentCard";
 import { getFilteredMessages } from "../utils/filterLogic";
 
@@ -101,7 +101,7 @@ const SelectedContentPage = ({
               onClick={onDownload}
               className="aspect-square bg-brand-red-dark text-white p-6 rounded-lg flex flex-col items-center justify-center shadow hover:bg-brand-red transition-all duration-200 hover:scale-105 active:scale-95 hover:shadow-lg"
             >
-              <Download className="w-10 h-10 mb-2" />
+              <Printer className="w-10 h-10 mb-2" />
               <span className="text-base font-medium text-center leading-tight">
                 {t.print_word || "Print"}
               </span>
@@ -111,7 +111,7 @@ const SelectedContentPage = ({
               onClick={onDownloadPDF}
               className="aspect-square bg-brand-red-dark text-white p-6 rounded-lg flex flex-col items-center justify-center shadow hover:bg-brand-red transition-all duration-200 hover:scale-105 active:scale-95 hover:shadow-lg"
             >
-              <Download className="w-10 h-10 mb-2" />
+              <PdfFile className="w-10 h-10 mb-2" />
               <span className="text-base font-medium text-center leading-tight">
                 PDF
               </span>
