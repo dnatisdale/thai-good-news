@@ -74,7 +74,7 @@ const SharePage = ({ lang, t, onBack, onForward, hasPrev, hasNext }) => {
       {/* Title */}
       <h1 className="text-2xl font-bold text-gray-800 dark:text-white mb-6 flex items-center justify-center">
         <ExternalLink className="w-8 h-8 mr-3 text-brand-red dark:text-white" />
-        {t.share || "Share"}
+        {t.share_this_app || "Share this App"}
       </h1>
 
       <div className="max-w-lg mx-auto space-y-2">
@@ -91,7 +91,7 @@ const SharePage = ({ lang, t, onBack, onForward, hasPrev, hasNext }) => {
           onClick={handleNativeShare}
           className="w-full bg-[#003366] hover:bg-[#002244] text-white font-bold py-4 px-6 rounded-lg shadow-md transition-colors flex items-center justify-center"
         >
-          <span className="text-lg">{t.share_app || "Share App"}</span>
+          <span className="text-lg">{t.share_this_app || "Share this App"}</span>
         </button>
 
         {/* Share via Email Button */}

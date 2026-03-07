@@ -2045,7 +2045,7 @@ export default function App() {
                 { name: "Import", icon: Upload, target: "Import" },
                 { name: "Feedback", icon: MessageSquare, target: "Feedback" },
                 {
-                  name: "Share",
+                  name: "Share_This_App",
                   icon: Share2,
                   target: "Share",
                 },
