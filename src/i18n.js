@@ -197,7 +197,7 @@ export const i18n = {
       "Looking for a way to reach your neighbors for Christ? 🌏 The Thai Good News app is a great tool for sharing Jesus with people from different backgrounds. Even if you don't speak their language, you can use this app to let them hear the Good News clearly. Check out the over 100 languages available and start sharing today!",
     link_copied: "Link copied to clipboard!",
     copy_failed: "Could not copy link",
-    copy_link: "Copy App Link",
+    copy_link: "Copy App URL Link",
     please_select_messages:
       "📋 Please select some messages first!\n\nTap the checkboxes next to messages to add them to your selection.",
     "5fish website": "5fish Website",
@@ -464,7 +464,7 @@ export const i18n = {
     share_app_text: "กำลังมองหาวิธีนำพระคริสต์มาสู่เพื่อนบ้านของคุณอยู่หรือเปล่า? 🌏 แอป Thai Good News เป็นเครื่องมือที่ยอดเยี่ยมสำหรับการแบ่งปันเรื่องราวของพระเยซูกับผู้คนจากหลากหลายภูมิหลัง แม้ว่าคุณจะไม่พูดภาษาของพวกเขา คุณก็สามารถใช้แอปนี้เพื่อให้พวกเขาได้ยินข่าวดีได้อย่างชัดเจน ลองดูภาษาที่มีให้เลือกมากกว่า 100 ภาษา และเริ่มแบ่งปันได้เลยวันนี้!",
     link_copied: "คัดลอกลิงก์แล้ว!",
     copy_failed: "ไม่สามารถคัดลอกลิงก์ได้",
-    copy_link: "คัดลอกลิงก์แอป",
+    copy_link: "คัดลอกลิงก์ URL แอป",
     please_select_messages:
       "📋 กรุณาเลือกข้อความก่อน!\n\nแตะช่องทำเครื่องหมายข้างข้อความเพื่อเพิ่มลงในรายการที่เลือก",
     "5fish website": "เว็บไซต์ 5fish",

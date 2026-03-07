@@ -81,7 +81,7 @@ const SharePage = ({ lang, t, onBack, onForward, hasPrev, hasNext }) => {
           onClick={handleCopyLink}
           className="w-full bg-[#003366] hover:bg-[#002244] text-white font-bold py-4 px-6 rounded-lg shadow-md transition-colors flex items-center justify-center"
         >
-          <span className="text-lg">{t.copy_link || "Copy App Link"}</span>
+          <span className="text-lg">{t.copy_link || "Copy App URL Link"}</span>
         </button>
 
         {/* Share App Button */}
