@@ -109,7 +109,7 @@ const SharePage = ({ lang, t, onBack, onForward, hasPrev, hasNext }) => {
           rel="noopener noreferrer"
           className="w-full bg-[#003366] hover:bg-[#002244] text-white font-bold py-4 px-6 rounded-lg shadow-md transition-colors flex items-center justify-center"
         >
-          <span className="text-lg">Share on LinkTree</span>
+          <span className="text-lg">{t.share_on_linktree || "Share on LinkTree"}</span>
         </a>
 
         {/* LINE Button */}
@@ -119,7 +119,7 @@ const SharePage = ({ lang, t, onBack, onForward, hasPrev, hasNext }) => {
           rel="noopener noreferrer"
           className="w-full bg-[#00B900] hover:bg-[#009900] text-white font-bold py-4 px-6 rounded-lg shadow-md transition-colors flex items-center justify-center"
         >
-          <span className="text-lg">Share on LINE</span>
+          <span className="text-lg">{t.share_on_line || "Share on LINE"}</span>
         </a>
 
         {/* 5fish Website Button */}
