@@ -1,7 +1,5 @@
 import React from "react";
-import { ChevronLeft, ChevronRight, ExternalLink } from "../components/Icons";
-import fiveFishLogo from "../assets/5fish-trans-logo.png";
-
+import { ChevronLeft, ChevronRight, ExternalLink, Share2 } from "../components/Icons";
 const SharePage = ({ lang, t, onBack, onForward, hasPrev, hasNext }) => {
   const handleNativeShare = async () => {
     const urlString = `${window.location.origin}/listen`;
