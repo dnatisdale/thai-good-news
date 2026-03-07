@@ -1,12 +1,17 @@
 {
+  "id": "/",
   "short_name": "TGN",
   "name": "Thai Good News",
   "description": "Sharing the story of Jesus in every language",
+  "lang": "en",
+  "dir": "ltr",
   "start_url": "/",
   "scope": "/",
   "display": "standalone",
+  "orientation": "any",
   "theme_color": "#000000",
   "background_color": "#000000",
+  "categories": ["education", "lifestyle", "entertainment"],
   "icons": [
     {
       "src": "/icons/favicon.ico",
@@ -36,6 +41,90 @@
       "sizes": "512x512",
       "type": "image/png",
       "purpose": "maskable"
+    }
+  ],
+  "shortcuts": [
+    {
+      "name": "Home",
+      "short_name": "Home",
+      "description": "Go to the main screen",
+      "url": "/",
+      "icons": [
+        {
+          "src": "/icons/icon-192.png",
+          "sizes": "192x192"
+        }
+      ]
+    },
+    {
+      "name": "Share the App",
+      "short_name": "Share",
+      "description": "Share the Good News app with others",
+      "url": "/share",
+      "icons": [
+        {
+          "src": "/icons/icon-192.png",
+          "sizes": "192x192"
+        }
+      ]
+    }
+  ],
+  "screenshots": [
+    {
+      "src": "/screenshots/mobile-home-en.png",
+      "sizes": "750x1334",
+      "type": "image/png",
+      "form_factor": "narrow",
+      "label": "Home screen - English"
+    },
+    {
+      "src": "/screenshots/mobile-home-th.png",
+      "sizes": "750x1334",
+      "type": "image/png",
+      "form_factor": "narrow",
+      "label": "Home screen - Thai"
+    },
+    {
+      "src": "/screenshots/mobile-search-en.png",
+      "sizes": "750x1334",
+      "type": "image/png",
+      "form_factor": "narrow",
+      "label": "Search feature - English"
+    },
+    {
+      "src": "/screenshots/mobile-search-th.png",
+      "sizes": "750x1334",
+      "type": "image/png",
+      "form_factor": "narrow",
+      "label": "Search feature - Thai"
+    },
+    {
+      "src": "/screenshots/mobile-notes-en.png",
+      "sizes": "750x1334",
+      "type": "image/png",
+      "form_factor": "narrow",
+      "label": "My Notes - English"
+    },
+    {
+      "src": "/screenshots/desktop-home-en.png",
+      "sizes": "1920x1080",
+      "type": "image/png",
+      "form_factor": "wide",
+      "label": "Home screen desktop - English"
+    },
+    {
+      "src": "/screenshots/desktop-home-th.png",
+      "sizes": "1920x1080",
+      "type": "image/png",
+      "form_factor": "wide",
+      "label": "Home screen desktop - Thai"
+    },
+    {
+      "src": "/screenshots/desktop-search-en.png",
+      "sizes": "1920x1080",
+      "type": "image/png",
+      "form_factor": "wide",
+      "label": "Search feature desktop - English"
     }
   ]
 }
