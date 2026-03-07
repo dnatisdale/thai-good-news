@@ -185,7 +185,7 @@ export const i18n = {
     // Share App
     // Share App
     share: "Share",
-    share_this_app: "Share this App",
+    share_app_menu: "Share App",
     share_app: "Share the Thai Good News App",
     copy_for_email: "Share via Email", // UPDATED
     open_app_button: "Open Thai Good News App", // NEW
@@ -201,6 +201,7 @@ export const i18n = {
     please_select_messages:
       "📋 Please select some messages first!\n\nTap the checkboxes next to messages to add them to your selection.",
     "5fish website": "5fish Website",
+    share_5fish: "Share 5fish.mobi",
     watch_video: "Watch Video",
     watch_on_youtube: "Watch on YouTube",
     share_email_subject: "A great tool for sharing Jesus in Thailand (100+ languages) 🙌🏼🇹🇭",
@@ -455,7 +456,7 @@ export const i18n = {
     // Share App
     // Share App
     share: "แชร์",
-    share_this_app: "แชร์แอปนี้",
+    share_app_menu: "แชร์แอป",
     share_app: "แชร์แอป Thai Good News",
     copy_for_email: "แชร์ผ่านอีเมล", // UPDATED
     open_app_button: "เปิดแอป Thai Good News", // NEW
@@ -467,6 +468,7 @@ export const i18n = {
     please_select_messages:
       "📋 กรุณาเลือกข้อความก่อน!\n\nแตะช่องทำเครื่องหมายข้างข้อความเพื่อเพิ่มลงในรายการที่เลือก",
     "5fish website": "เว็บไซต์ 5fish",
+    share_5fish: "แชร์ 5fish.mobi",
     watch_video: "ดูวิดีโอ",
     watch_on_youtube: "ดูบน YouTube",
     share_email_subject: "เครื่องมือดีๆ สำหรับการแบ่งปันเรื่องราวของพระเยซูในประเทศไทย (กว่า 100 ภาษา) 🙌🏼🇹🇭",

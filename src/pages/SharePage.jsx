@@ -74,7 +74,7 @@ const SharePage = ({ lang, t, onBack, onForward, hasPrev, hasNext }) => {
       {/* Title */}
       <h1 className="text-2xl font-bold text-gray-800 dark:text-white mb-6 flex items-center justify-center">
         <ExternalLink className="w-8 h-8 mr-3 text-brand-red dark:text-white" />
-        {t.share_this_app || "Share this App"}
+        {t.share_app_menu || "Share App"}
       </h1>
 
       <div className="max-w-lg mx-auto space-y-2">
@@ -91,7 +91,7 @@ const SharePage = ({ lang, t, onBack, onForward, hasPrev, hasNext }) => {
           onClick={handleNativeShare}
           className="w-full bg-[#003366] hover:bg-[#002244] text-white font-bold py-4 px-6 rounded-lg shadow-md transition-colors flex items-center justify-center"
         >
-          <span className="text-lg">{t.share_this_app || "Share this App"}</span>
+          <span className="text-lg">{t.share_app_menu || "Share App"}</span>
         </button>
 
         {/* Share via Email Button */}
@@ -123,15 +123,20 @@ const SharePage = ({ lang, t, onBack, onForward, hasPrev, hasNext }) => {
         </a>
 
         {/* 5fish Website Button */}
-        <a
-          href="https://5fish.mobi/"
-          target="_blank"
-          rel="noopener noreferrer"
+        <button
+          onClick={() => {
+            navigator.clipboard.writeText("https://5fish.mobi")
+              .then(() => alert(t.link_copied || "Link copied to clipboard!"))
+              .catch((err) => {
+                console.error("Could not copy link:", err);
+                alert(t.copy_failed || "Could not copy link");
+              });
+          }}
           className="w-full bg-brand-red hover:bg-brand-red-dark text-white font-bold py-4 px-6 rounded-lg shadow-md transition-colors flex items-center justify-center mt-8"
         >
-          <img src={fiveFishLogo} alt="5fish" className="w-8 h-8 mr-3 object-contain brightness-0 invert" />
-          <span className="text-lg">{t["5fish website"] || "5fish Website"}</span>
-        </a>
+          <Share2 className="w-6 h-6 mr-3 text-white" />
+          <span className="text-lg">{t.share_5fish || "Share 5fish.mobi"}</span>
+        </button>
       </div>
     </div>
   );
