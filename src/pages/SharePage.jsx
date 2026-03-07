@@ -1,5 +1,7 @@
 import React from "react";
 import { ChevronLeft, ChevronRight, ExternalLink, Share2 } from "../components/Icons";
+import fiveFishLogo from "../assets/5fish-trans-logo.png";
+
 const SharePage = ({ lang, t, onBack, onForward, hasPrev, hasNext }) => {
   const handleNativeShare = async () => {
     const urlString = `${window.location.origin}/listen`;
@@ -130,9 +132,9 @@ const SharePage = ({ lang, t, onBack, onForward, hasPrev, hasNext }) => {
                 alert(t.copy_failed || "Could not copy link");
               });
           }}
-          className="w-full bg-brand-red hover:bg-brand-red-dark text-white font-bold py-4 px-6 rounded-lg shadow-md transition-colors flex items-center justify-center mt-8"
+          className="w-full bg-slate-200 dark:bg-slate-600 hover:bg-slate-300 dark:hover:bg-slate-500 text-gray-800 dark:text-white font-bold py-4 px-6 rounded-lg shadow-sm transition-colors flex items-center justify-center mt-8"
         >
-          <Share2 className="w-6 h-6 mr-3 text-white" />
+          <img src={fiveFishLogo} alt="5fish" className="w-8 h-8 mr-3 object-contain invert dark:invert-0" />
           <span className="text-lg">{t.share_5fish || "Share 5fish.mobi"}</span>
         </button>
       </div>
