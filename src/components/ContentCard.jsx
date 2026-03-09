@@ -80,8 +80,17 @@ const ContentCard = ({
   };
 
   // 3) Format duration as H:MM:SS or MM:SS
-  const formatDuration = (seconds) => {
-    if (!seconds || isNaN(seconds)) return null;
+  const formatDuration = (input) => {
+    if (!input) return null;
+
+    // If it's already a formatted string like "57:45" or "1:23:45", return as-is
+    if (typeof input === "string" && /^\d+:\d{2}(:\d{2})?$/.test(input)) {
+      return input;
+    }
+
+    // If it's not a number, we can't format it
+    const seconds = Number(input);
+    if (isNaN(seconds)) return null;
 
     const hours = Math.floor(seconds / 3600);
     const mins = Math.floor((seconds % 3600) / 60);
