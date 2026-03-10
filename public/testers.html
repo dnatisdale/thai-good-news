@@ -1,0 +1,401 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Thai Good News — Tester Feedback</title>
+    <meta name="description" content="Tester feedback page for the Thai Good News (TGN) app. Help us improve by sharing your experience." />
+    <meta name="robots" content="noindex, nofollow" />
+
+    <style>
+      :root{
+        --bg: #0b0b0c;
+        --card: rgba(255,255,255,0.06);
+        --card2: rgba(255,255,255,0.08);
+        --text: rgba(255,255,255,0.92);
+        --muted: rgba(255,255,255,0.72);
+        --faint: rgba(255,255,255,0.55);
+        --border: rgba(255,255,255,0.12);
+        --shadow: 0 10px 30px rgba(0,0,0,0.35);
+        --radius: 18px;
+        --maxw: 860px;
+        --accent: #CC3333;
+        --accent-glow: rgba(204,51,51,0.25);
+      }
+
+      * { box-sizing: border-box; }
+      body{
+        margin:0;
+        font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+        background: radial-gradient(1200px 500px at 20% -10%, var(--accent-glow), transparent 60%),
+                    radial-gradient(900px 450px at 95% 0%, rgba(255,255,255,0.06), transparent 55%),
+                    var(--bg);
+        color: var(--text);
+        line-height: 1.6;
+      }
+
+      .wrap{ max-width: var(--maxw); margin: 0 auto; padding: 28px 18px 56px; }
+
+      /* Top bar */
+      .topbar{
+        background: rgba(0,0,0,0.25);
+        border: 1px solid var(--border);
+        border-radius: 22px;
+        box-shadow: var(--shadow);
+        padding: 22px 18px;
+        display:flex;
+        gap:14px;
+        align-items:center;
+        justify-content:space-between;
+        flex-wrap: wrap;
+      }
+
+      .brand{
+        display:flex; gap:12px; align-items:center;
+        min-width: 240px;
+      }
+
+      .logo{
+        width:44px; height:44px;
+        border-radius: 50%;
+        border: 2px solid var(--accent);
+        background: linear-gradient(135deg, rgba(204,51,51,0.20), rgba(255,255,255,0.03));
+        display:grid; place-items:center;
+        font-weight: 800;
+        font-size: 13px;
+        color: var(--accent);
+        letter-spacing: 0.5px;
+      }
+
+      .titleblock h1{
+        font-size: 20px;
+        margin:0;
+        letter-spacing: 0.2px;
+      }
+
+      .titleblock .sub{
+        margin-top: 2px;
+        color: var(--muted);
+        font-size: 13px;
+      }
+
+      .pill{
+        padding: 8px 14px;
+        border-radius: 999px;
+        background: rgba(204,51,51,0.15);
+        border: 1px solid rgba(204,51,51,0.3);
+        color: #ff8888;
+        font-size: 12px;
+        font-weight: 600;
+        white-space: nowrap;
+        letter-spacing: 0.3px;
+        text-transform: uppercase;
+      }
+
+      /* Grid */
+      .grid{
+        margin-top: 18px;
+        display:grid;
+        gap: 14px;
+      }
+
+      .card{
+        background: var(--card);
+        border: 1px solid var(--border);
+        border-radius: var(--radius);
+        box-shadow: var(--shadow);
+        padding: 20px 18px;
+      }
+
+      .card h2{
+        margin:0 0 10px;
+        font-size: 17px;
+        letter-spacing: 0.2px;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+      }
+
+      .card h2 .icon{ font-size: 20px; }
+
+      .card p{ margin: 0 0 12px; color: var(--muted); }
+      .card p:last-child{ margin-bottom: 0; }
+
+      /* Welcome card */
+      .welcome{
+        background: linear-gradient(135deg, rgba(204,51,51,0.12), rgba(0,0,0,0.25));
+        border: 1px solid rgba(204,51,51,0.25);
+      }
+
+      .welcome p{
+        font-size: 15px;
+        color: var(--text);
+      }
+
+      .welcome .greeting{
+        font-size: 17px;
+        font-weight: 600;
+        color: white;
+        margin-bottom: 14px;
+      }
+
+      .welcome .signature{
+        margin-top: 16px;
+        padding-top: 14px;
+        border-top: 1px solid rgba(255,255,255,0.1);
+        font-size: 14px;
+        color: var(--muted);
+      }
+
+      .welcome .signature strong{
+        color: white;
+        font-weight: 600;
+      }
+
+      /* Checklist */
+      ol{
+        margin: 10px 0 0;
+        padding-left: 20px;
+        color: var(--muted);
+        counter-reset: step;
+        list-style: none;
+      }
+
+      ol li{
+        margin: 10px 0;
+        counter-increment: step;
+        position: relative;
+        padding-left: 8px;
+      }
+
+      ol li::before{
+        content: counter(step);
+        position: absolute;
+        left: -24px;
+        top: 0;
+        width: 22px; height: 22px;
+        border-radius: 50%;
+        background: rgba(204,51,51,0.2);
+        border: 1px solid rgba(204,51,51,0.4);
+        color: #ff8888;
+        font-size: 12px;
+        font-weight: 700;
+        display: grid;
+        place-items: center;
+      }
+
+      ul{
+        margin: 10px 0 0;
+        padding-left: 18px;
+        color: var(--muted);
+        list-style: none;
+      }
+
+      ul li{
+        margin: 8px 0;
+        padding-left: 4px;
+        position: relative;
+      }
+
+      ul li::before{
+        content: "▸";
+        position: absolute;
+        left: -14px;
+        color: var(--accent);
+        font-weight: 700;
+      }
+
+      /* Callout */
+      .callout{
+        background: var(--card2);
+        border: 1px solid var(--border);
+        border-radius: var(--radius);
+        padding: 14px 16px;
+        color: var(--muted);
+        font-size: 14px;
+      }
+
+      /* CTA section */
+      .cta-grid{
+        display: grid;
+        gap: 10px;
+        grid-template-columns: 1fr 1fr;
+        margin-top: 14px;
+      }
+
+      @media (max-width: 540px){
+        .cta-grid{ grid-template-columns: 1fr; }
+      }
+
+      .cta-btn{
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+        padding: 14px 18px;
+        border-radius: 14px;
+        border: 1px solid var(--border);
+        background: var(--card);
+        color: white;
+        font-size: 15px;
+        font-weight: 600;
+        text-decoration: none;
+        transition: all 0.2s ease;
+        cursor: pointer;
+      }
+
+      .cta-btn:hover{
+        background: rgba(255,255,255,0.10);
+        border-color: rgba(255,255,255,0.25);
+        transform: translateY(-1px);
+        box-shadow: 0 6px 20px rgba(0,0,0,0.3);
+      }
+
+      .cta-btn.primary{
+        background: linear-gradient(135deg, #CC3333, #991f1f);
+        border-color: rgba(204,51,51,0.5);
+      }
+
+      .cta-btn.primary:hover{
+        background: linear-gradient(135deg, #dd4444, #aa2222);
+        border-color: rgba(204,51,51,0.7);
+      }
+
+      .cta-btn .icon{ font-size: 18px; }
+
+      /* Footer */
+      .footer{
+        margin-top: 22px;
+        color: var(--faint);
+        font-size: 12px;
+        text-align: center;
+        line-height: 1.7;
+      }
+
+      a{ color: rgba(255,255,255,0.9); text-decoration: underline; }
+      a:hover{ opacity: 0.85; }
+      .email{ font-weight: 650; }
+
+      /* Emphasis */
+      strong{ color: white; font-weight: 600; }
+    </style>
+  </head>
+
+  <body>
+    <div class="wrap">
+
+      <!-- Top Bar -->
+      <div class="topbar">
+        <div class="brand">
+          <div class="logo">TGN</div>
+          <div class="titleblock">
+            <h1>Tester Feedback</h1>
+            <div class="sub">Thai Good News (TGN) — Google Play Console</div>
+          </div>
+        </div>
+        <div class="pill">Closed Testing</div>
+      </div>
+
+      <div class="grid">
+
+        <!-- Welcome Card -->
+        <div class="card welcome">
+          <p class="greeting">Hello, and thank you for being part of this review! 👋</p>
+          <p>
+            My name is <strong>Dan Tisdale</strong>, and I'm the developer behind the
+            <strong>Thai Good News</strong> app — a project of
+            <strong>Global Recordings Network (GRN)</strong>.
+          </p>
+          <p>
+            This app provides access to GRN's audio recordings of the Gospel message
+            in over <strong>100 languages spoken in Thailand</strong>.
+            Whether you're a missionary, a church leader, or simply someone who wants
+            to share Jesus with people from different backgrounds — this app puts the
+            tools in your hands, even if you don't speak their language.
+          </p>
+          <p>
+            I'd love your honest feedback on the new and improved version. Your input is
+            invaluable in helping us make this app the best it can be before public release.
+          </p>
+          <div class="signature">
+            With gratitude,<br />
+            <strong>Dan Tisdale</strong><br />
+            Global Recordings Network — Thailand
+          </div>
+        </div>
+
+        <!-- What to Test -->
+        <div class="card">
+          <h2><span class="icon">🔍</span> What We'd Like You to Evaluate</h2>
+          <p>Please spend some time exploring the app and consider the following areas:</p>
+          <ol>
+            <li><strong>Features &amp; Functionality</strong> — Do the core features work as expected? Try browsing languages, playing audio, searching, saving favorites, and downloading for offline use.</li>
+            <li><strong>User Experience</strong> — Is the app intuitive and easy to navigate? Does everything feel polished and responsive?</li>
+            <li><strong>Content &amp; Presentation</strong> — Is the information presented clearly in both English and Thai? Are there any typos or translation issues?</li>
+            <li><strong>Missing Features</strong> — Is there something you expected to find but didn't? What "should" be in the app but isn't?</li>
+            <li><strong>Unnecessary Features</strong> — Does anything feel redundant or like overkill? Would removing it improve the experience?</li>
+            <li><strong>Performance</strong> — Does the app load quickly? Does audio playback work smoothly? How does it handle offline mode?</li>
+          </ol>
+        </div>
+
+        <!-- Key Features -->
+        <div class="card">
+          <h2><span class="icon">✨</span> Key Features to Explore</h2>
+          <ul>
+            <li><strong>Language Finder</strong> — Browse and search 100+ languages in Thai or English</li>
+            <li><strong>Audio Player</strong> — Listen to Gospel recordings with full playback controls</li>
+            <li><strong>Offline Support</strong> — Download messages for use without internet</li>
+            <li><strong>Search</strong> — Find content by language, title, or scripture reference</li>
+            <li><strong>Favorites &amp; Notes</strong> — Save messages and write personal notes</li>
+            <li><strong>QR Code Cards</strong> — Generate and print shareable QR cards for outreach</li>
+            <li><strong>Sign Language Video</strong> — Thai Bible Sign Language with offline viewing</li>
+            <li><strong>Share</strong> — Share via email, LINE, clipboard, or native device sharing</li>
+            <li><strong>Import Content</strong> — Add new recordings from the GRN database</li>
+            <li><strong>Dark Mode</strong> — Toggle between light and dark themes</li>
+            <li><strong>Bilingual Interface</strong> — Switch between English and Thai instantly</li>
+          </ul>
+        </div>
+
+        <!-- How to Send Feedback -->
+        <div class="card">
+          <h2><span class="icon">📬</span> How to Send Your Feedback</h2>
+          <p>
+            Please share your thoughts — whether it's a quick impression, a detailed report,
+            or anything in between. Every piece of feedback helps us improve.
+          </p>
+          <p>Send your feedback directly to:</p>
+          <div class="callout" style="text-align:center; font-size:16px;">
+            📧&nbsp;&nbsp;<span class="email"><a href="mailto:Kow-D@globalrecordings.net?subject=Thai%20Good%20News%20App%20—%20Tester%20Feedback">Kow-D@globalrecordings.net</a></span>
+          </div>
+          <p style="margin-top:14px; font-size:14px;">
+            When writing your feedback, feel free to include:<br />
+            <strong>What you liked</strong>, <strong>what you didn't like</strong>,
+            <strong>what seemed missing</strong>, <strong>what felt like overkill</strong>,
+            and any <strong>bugs or issues</strong> you encountered.
+          </p>
+        </div>
+
+        <!-- Action Buttons -->
+        <div class="card">
+          <h2><span class="icon">🚀</span> Get Started</h2>
+          <p>Open the app and start exploring, then send us your feedback when you're ready.</p>
+          <div class="cta-grid">
+            <a href="https://thai-good-news.netlify.app" target="_blank" rel="noopener noreferrer" class="cta-btn primary">
+              <span class="icon">📱</span> Open the App
+            </a>
+            <a href="mailto:Kow-D@globalrecordings.net?subject=Thai%20Good%20News%20App%20—%20Tester%20Feedback" class="cta-btn">
+              <span class="icon">✉️</span> Send Feedback
+            </a>
+          </div>
+        </div>
+
+        <!-- Footer -->
+        <div class="footer">
+          This page is intended for invited testers participating in the Google Play Console closed testing program.<br />
+          © Thai Good News (TGN) · Global Recordings Network · <a href="https://globalrecordings.net" target="_blank" rel="noopener noreferrer">globalrecordings.net</a> · <a href="https://5fish.mobi" target="_blank" rel="noopener noreferrer">5fish.mobi</a>
+        </div>
+
+      </div>
+    </div>
+  </body>
+</html>
