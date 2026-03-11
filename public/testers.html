@@ -3,399 +3,694 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>Thai Good News — Tester Feedback</title>
-    <meta name="description" content="Tester feedback page for the Thai Good News (TGN) app. Help us improve by sharing your experience." />
+    <title>Thai Good News — Tester Feedback Form</title>
+    <meta name="description" content="Tester feedback form for the Thai Good News (TGN) app." />
     <meta name="robots" content="noindex, nofollow" />
 
     <style>
-      :root{
-        --bg: #0b0b0c;
-        --card: rgba(255,255,255,0.06);
-        --card2: rgba(255,255,255,0.08);
-        --text: rgba(255,255,255,0.92);
-        --muted: rgba(255,255,255,0.72);
-        --faint: rgba(255,255,255,0.55);
-        --border: rgba(255,255,255,0.12);
-        --shadow: 0 10px 30px rgba(0,0,0,0.35);
-        --radius: 18px;
-        --maxw: 860px;
+      /* ============================================
+         SCREEN STYLES (dark theme for viewing)
+         ============================================ */
+      :root {
+        --bg: #f8f8f8;
+        --card-bg: #ffffff;
+        --text: #1a1a1a;
+        --muted: #555;
+        --border: #d0d0d0;
         --accent: #CC3333;
-        --accent-glow: rgba(204,51,51,0.25);
+        --accent-light: #fef2f2;
+        --line: #ccc;
       }
 
-      * { box-sizing: border-box; }
-      body{
-        margin:0;
-        font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
-        background: radial-gradient(1200px 500px at 20% -10%, var(--accent-glow), transparent 60%),
-                    radial-gradient(900px 450px at 95% 0%, rgba(255,255,255,0.06), transparent 55%),
-                    var(--bg);
+      * { box-sizing: border-box; margin: 0; padding: 0; }
+
+      body {
+        font-family: "Segoe UI", system-ui, -apple-system, Arial, sans-serif;
+        background: var(--bg);
         color: var(--text);
-        line-height: 1.6;
+        line-height: 1.45;
+        font-size: 11.5pt;
       }
 
-      .wrap{ max-width: var(--maxw); margin: 0 auto; padding: 28px 18px 56px; }
+      .form-wrap {
+        max-width: 8.5in;
+        margin: 0 auto;
+        padding: 0.15in;
+      }
 
-      /* Top bar */
-      .topbar{
-        background: rgba(0,0,0,0.25);
+      /* --- PAGE --- */
+      .page {
+        background: var(--card-bg);
+        padding: 0.45in 0.5in 0.35in;
+        margin-bottom: 16px;
         border: 1px solid var(--border);
-        border-radius: 22px;
-        box-shadow: var(--shadow);
-        padding: 22px 18px;
-        display:flex;
-        gap:14px;
-        align-items:center;
-        justify-content:space-between;
-        flex-wrap: wrap;
+        border-radius: 4px;
+        page-break-after: always;
+        position: relative;
       }
+      .page:last-child { page-break-after: auto; margin-bottom: 0; }
 
-      .brand{
-        display:flex; gap:12px; align-items:center;
-        min-width: 240px;
-      }
-
-      .logo{
-        width:44px; height:44px;
-        border-radius: 50%;
-        border: 2px solid var(--accent);
-        background: linear-gradient(135deg, rgba(204,51,51,0.20), rgba(255,255,255,0.03));
-        display:grid; place-items:center;
-        font-weight: 800;
-        font-size: 13px;
-        color: var(--accent);
-        letter-spacing: 0.5px;
-      }
-
-      .titleblock h1{
-        font-size: 20px;
-        margin:0;
-        letter-spacing: 0.2px;
-      }
-
-      .titleblock .sub{
-        margin-top: 2px;
-        color: var(--muted);
-        font-size: 13px;
-      }
-
-      .pill{
-        padding: 8px 14px;
-        border-radius: 999px;
-        background: rgba(204,51,51,0.15);
-        border: 1px solid rgba(204,51,51,0.3);
-        color: #ff8888;
-        font-size: 12px;
-        font-weight: 600;
-        white-space: nowrap;
-        letter-spacing: 0.3px;
-        text-transform: uppercase;
-      }
-
-      /* Grid */
-      .grid{
-        margin-top: 18px;
-        display:grid;
-        gap: 14px;
-      }
-
-      .card{
-        background: var(--card);
-        border: 1px solid var(--border);
-        border-radius: var(--radius);
-        box-shadow: var(--shadow);
-        padding: 20px 18px;
-      }
-
-      .card h2{
-        margin:0 0 10px;
-        font-size: 17px;
-        letter-spacing: 0.2px;
+      /* --- HEADER --- */
+      .form-header {
         display: flex;
         align-items: center;
-        gap: 8px;
+        justify-content: space-between;
+        border-bottom: 2.5px solid var(--accent);
+        padding-bottom: 8px;
+        margin-bottom: 10px;
       }
 
-      .card h2 .icon{ font-size: 20px; }
-
-      .card p{ margin: 0 0 12px; color: var(--muted); }
-      .card p:last-child{ margin-bottom: 0; }
-
-      /* Welcome card */
-      .welcome{
-        background: linear-gradient(135deg, rgba(204,51,51,0.12), rgba(0,0,0,0.25));
-        border: 1px solid rgba(204,51,51,0.25);
-      }
-
-      .welcome p{
-        font-size: 15px;
-        color: var(--text);
-      }
-
-      .welcome .greeting{
-        font-size: 17px;
-        font-weight: 600;
-        color: white;
-        margin-bottom: 14px;
-      }
-
-      .welcome .signature{
-        margin-top: 16px;
-        padding-top: 14px;
-        border-top: 1px solid rgba(255,255,255,0.1);
-        font-size: 14px;
-        color: var(--muted);
-      }
-
-      .welcome .signature strong{
-        color: white;
-        font-weight: 600;
-      }
-
-      /* Checklist */
-      ol{
-        margin: 10px 0 0;
-        padding-left: 20px;
-        color: var(--muted);
-        counter-reset: step;
-        list-style: none;
-      }
-
-      ol li{
-        margin: 10px 0;
-        counter-increment: step;
-        position: relative;
-        padding-left: 8px;
-      }
-
-      ol li::before{
-        content: counter(step);
-        position: absolute;
-        left: -24px;
-        top: 0;
-        width: 22px; height: 22px;
-        border-radius: 50%;
-        background: rgba(204,51,51,0.2);
-        border: 1px solid rgba(204,51,51,0.4);
-        color: #ff8888;
-        font-size: 12px;
-        font-weight: 700;
-        display: grid;
-        place-items: center;
-      }
-
-      ul{
-        margin: 10px 0 0;
-        padding-left: 18px;
-        color: var(--muted);
-        list-style: none;
-      }
-
-      ul li{
-        margin: 8px 0;
-        padding-left: 4px;
-        position: relative;
-      }
-
-      ul li::before{
-        content: "▸";
-        position: absolute;
-        left: -14px;
-        color: var(--accent);
-        font-weight: 700;
-      }
-
-      /* Callout */
-      .callout{
-        background: var(--card2);
-        border: 1px solid var(--border);
-        border-radius: var(--radius);
-        padding: 14px 16px;
-        color: var(--muted);
-        font-size: 14px;
-      }
-
-      /* CTA section */
-      .cta-grid{
-        display: grid;
+      .form-header .brand {
+        display: flex;
+        align-items: center;
         gap: 10px;
-        grid-template-columns: 1fr 1fr;
-        margin-top: 14px;
       }
 
-      @media (max-width: 540px){
-        .cta-grid{ grid-template-columns: 1fr; }
+      .form-header .logo-circle {
+        width: 36px; height: 36px;
+        border: 2px solid var(--accent);
+        border-radius: 50%;
+        display: grid; place-items: center;
+        font-weight: 800; font-size: 11px;
+        color: var(--accent);
+        flex-shrink: 0;
       }
 
-      .cta-btn{
+      .form-header h1 {
+        font-size: 16pt;
+        font-weight: 700;
+        color: var(--text);
+        line-height: 1.2;
+      }
+
+      .form-header .subtitle {
+        font-size: 9pt;
+        color: var(--muted);
+        margin-top: 1px;
+      }
+
+      .form-header .badge {
+        font-size: 8pt;
+        font-weight: 700;
+        color: var(--accent);
+        border: 1.5px solid var(--accent);
+        border-radius: 999px;
+        padding: 3px 10px;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        white-space: nowrap;
+      }
+
+      /* --- INTRO --- */
+      .intro {
+        background: var(--accent-light);
+        border: 1px solid #f0d0d0;
+        border-radius: 6px;
+        padding: 8px 12px;
+        margin-bottom: 12px;
+        font-size: 10pt;
+        color: #333;
+        line-height: 1.5;
+      }
+      .intro strong { color: var(--text); }
+
+      /* --- SECTIONS --- */
+      .section {
+        margin-bottom: 10px;
+      }
+
+      .section-title {
+        font-size: 11.5pt;
+        font-weight: 700;
+        color: var(--accent);
+        border-bottom: 1px solid #e0e0e0;
+        padding-bottom: 3px;
+        margin-bottom: 7px;
         display: flex;
         align-items: center;
-        justify-content: center;
-        gap: 8px;
-        padding: 14px 18px;
-        border-radius: 14px;
-        border: 1px solid var(--border);
-        background: var(--card);
+        gap: 6px;
+      }
+
+      .section-title .num {
+        background: var(--accent);
         color: white;
-        font-size: 15px;
+        width: 20px; height: 20px;
+        border-radius: 50%;
+        display: inline-grid; place-items: center;
+        font-size: 10pt;
+        font-weight: 700;
+        flex-shrink: 0;
+      }
+
+      /* --- SCALE ROW --- */
+      .scale-item {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 4px 0;
+        border-bottom: 1px dotted #e8e8e8;
+        gap: 8px;
+      }
+      .scale-item:last-child { border-bottom: none; }
+
+      .scale-label {
+        flex: 1;
+        font-size: 10pt;
+        color: var(--text);
+        min-width: 0;
+      }
+
+      .scale-bubbles {
+        display: flex;
+        gap: 4px;
+        flex-shrink: 0;
+      }
+
+      .bubble {
+        width: 20px; height: 20px;
+        border: 1.5px solid #999;
+        border-radius: 50%;
+        display: grid; place-items: center;
+        font-size: 7.5pt;
+        color: #888;
         font-weight: 600;
-        text-decoration: none;
-        transition: all 0.2s ease;
-        cursor: pointer;
       }
 
-      .cta-btn:hover{
-        background: rgba(255,255,255,0.10);
-        border-color: rgba(255,255,255,0.25);
-        transform: translateY(-1px);
-        box-shadow: 0 6px 20px rgba(0,0,0,0.3);
+      .scale-ends {
+        display: flex;
+        justify-content: space-between;
+        font-size: 7.5pt;
+        color: #999;
+        padding: 0 0 2px;
+        margin-top: -1px;
+      }
+      .scale-ends span:first-child { margin-left: 0; }
+      .scale-ends span:last-child { margin-right: 0; }
+
+      /* --- CHECKBOX ROW --- */
+      .check-row {
+        display: flex;
+        align-items: flex-start;
+        gap: 7px;
+        padding: 3px 0;
+        font-size: 10pt;
       }
 
-      .cta-btn.primary{
-        background: linear-gradient(135deg, #CC3333, #991f1f);
-        border-color: rgba(204,51,51,0.5);
+      .checkbox {
+        width: 15px; height: 15px;
+        border: 1.5px solid #999;
+        border-radius: 3px;
+        flex-shrink: 0;
+        margin-top: 1px;
       }
 
-      .cta-btn.primary:hover{
-        background: linear-gradient(135deg, #dd4444, #aa2222);
-        border-color: rgba(204,51,51,0.7);
+      /* --- WRITE-IN LINES --- */
+      .write-area {
+        margin-top: 5px;
       }
 
-      .cta-btn .icon{ font-size: 18px; }
+      .write-line {
+        border-bottom: 1px solid var(--line);
+        height: 22px;
+        width: 100%;
+      }
 
-      /* Footer */
-      .footer{
-        margin-top: 22px;
-        color: var(--faint);
-        font-size: 12px;
+      .write-line.tall {
+        height: 26px;
+      }
+
+      .write-label {
+        font-size: 9pt;
+        color: var(--muted);
+        margin-bottom: 2px;
+        font-style: italic;
+      }
+
+      /* --- TWO COLUMNS --- */
+      .two-col {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 6px 18px;
+      }
+
+      /* --- OPT OUT --- */
+      .opt-out {
+        border: 1.5px solid #ccc;
+        border-radius: 6px;
+        padding: 7px 12px;
+        margin-top: 10px;
+        background: #fafafa;
+      }
+
+      .opt-out .check-row {
+        font-size: 10pt;
+        font-weight: 500;
+      }
+
+      /* --- FOOTER --- */
+      .form-footer {
+        margin-top: 8px;
+        padding-top: 6px;
+        border-top: 1px solid #ddd;
+        font-size: 8pt;
+        color: #999;
         text-align: center;
-        line-height: 1.7;
+        line-height: 1.5;
       }
 
-      a{ color: rgba(255,255,255,0.9); text-decoration: underline; }
-      a:hover{ opacity: 0.85; }
-      .email{ font-weight: 650; }
+      .form-footer a {
+        color: #999;
+        text-decoration: none;
+      }
 
-      /* Emphasis */
-      strong{ color: white; font-weight: 600; }
+      /* --- PAGE 2 header --- */
+      .page2-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        border-bottom: 2.5px solid var(--accent);
+        padding-bottom: 6px;
+        margin-bottom: 10px;
+      }
+
+      .page2-header h2 {
+        font-size: 13pt;
+        color: var(--text);
+      }
+
+      .page2-header .page-num {
+        font-size: 9pt;
+        color: var(--muted);
+      }
+
+      /* --- INFO FIELD --- */
+      .info-field {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        margin-bottom: 6px;
+        font-size: 10pt;
+      }
+
+      .info-field .field-label {
+        font-weight: 600;
+        color: var(--text);
+        white-space: nowrap;
+      }
+
+      .info-field .field-line {
+        flex: 1;
+        border-bottom: 1px solid var(--line);
+        height: 20px;
+      }
+
+      /* --- PRINT BUTTON (screen only) --- */
+      .print-bar {
+        text-align: center;
+        padding: 12px;
+        margin-bottom: 10px;
+      }
+
+      .print-btn {
+        background: var(--accent);
+        color: white;
+        border: none;
+        padding: 12px 28px;
+        border-radius: 8px;
+        font-size: 14pt;
+        font-weight: 700;
+        cursor: pointer;
+        transition: background 0.2s;
+      }
+      .print-btn:hover { background: #aa2222; }
+
+      .print-hint {
+        font-size: 10pt;
+        color: var(--muted);
+        margin-top: 6px;
+      }
+
+      /* ============================================
+         PRINT STYLES
+         ============================================ */
+      @media print {
+        body { background: white; font-size: 11pt; }
+        .form-wrap { padding: 0; max-width: none; }
+        .page {
+          border: none;
+          border-radius: 0;
+          padding: 0.4in 0.5in 0.3in;
+          margin: 0;
+          box-shadow: none;
+        }
+        .print-bar { display: none !important; }
+        .bubble { border-color: #666; }
+        .checkbox { border-color: #666; }
+        .scale-item { border-bottom-color: #ddd; }
+      }
+
+      @page {
+        size: Letter;
+        margin: 0.25in;
+      }
     </style>
   </head>
 
   <body>
-    <div class="wrap">
 
-      <!-- Top Bar -->
-      <div class="topbar">
-        <div class="brand">
-          <div class="logo">TGN</div>
-          <div class="titleblock">
-            <h1>Tester Feedback</h1>
-            <div class="sub">Thai Good News (TGN) — Google Play Console</div>
-          </div>
-        </div>
-        <div class="pill">Closed Testing</div>
-      </div>
-
-      <div class="grid">
-
-        <!-- Welcome Card -->
-        <div class="card welcome">
-          <p class="greeting">Hello, and thank you for being part of this review! 👋</p>
-          <p>
-            My name is <strong>Dan Tisdale</strong>, and I'm the developer behind the
-            <strong>Thai Good News</strong> app — a project of
-            <strong>Global Recordings Network (GRN)</strong>.
-          </p>
-          <p>
-            This app provides access to GRN's audio recordings of the Gospel message
-            in over <strong>100 languages spoken in Thailand</strong>.
-            Whether you're a missionary, a church leader, or simply someone who wants
-            to share Jesus with people from different backgrounds — this app puts the
-            tools in your hands, even if you don't speak their language.
-          </p>
-          <p>
-            I'd love your honest feedback on the new and improved version. Your input is
-            invaluable in helping us make this app the best it can be before public release.
-          </p>
-          <div class="signature">
-            With gratitude,<br />
-            <strong>Dan Tisdale</strong><br />
-            Global Recordings Network — Thailand
-          </div>
-        </div>
-
-        <!-- What to Test -->
-        <div class="card">
-          <h2><span class="icon">🔍</span> What We'd Like You to Evaluate</h2>
-          <p>Please spend some time exploring the app and consider the following areas:</p>
-          <ol>
-            <li><strong>Features &amp; Functionality</strong> — Do the core features work as expected? Try browsing languages, playing audio, searching, saving favorites, and downloading for offline use.</li>
-            <li><strong>User Experience</strong> — Is the app intuitive and easy to navigate? Does everything feel polished and responsive?</li>
-            <li><strong>Content &amp; Presentation</strong> — Is the information presented clearly in both English and Thai? Are there any typos or translation issues?</li>
-            <li><strong>Missing Features</strong> — Is there something you expected to find but didn't? What "should" be in the app but isn't?</li>
-            <li><strong>Unnecessary Features</strong> — Does anything feel redundant or like overkill? Would removing it improve the experience?</li>
-            <li><strong>Performance</strong> — Does the app load quickly? Does audio playback work smoothly? How does it handle offline mode?</li>
-          </ol>
-        </div>
-
-        <!-- Key Features -->
-        <div class="card">
-          <h2><span class="icon">✨</span> Key Features to Explore</h2>
-          <ul>
-            <li><strong>Language Finder</strong> — Browse and search 100+ languages in Thai or English</li>
-            <li><strong>Audio Player</strong> — Listen to Gospel recordings with full playback controls</li>
-            <li><strong>Offline Support</strong> — Download messages for use without internet</li>
-            <li><strong>Search</strong> — Find content by language, title, or scripture reference</li>
-            <li><strong>Favorites &amp; Notes</strong> — Save messages and write personal notes</li>
-            <li><strong>QR Code Cards</strong> — Generate and print shareable QR cards for outreach</li>
-            <li><strong>Sign Language Video</strong> — Thai Bible Sign Language with offline viewing</li>
-            <li><strong>Share</strong> — Share via email, LINE, clipboard, or native device sharing</li>
-            <li><strong>Import Content</strong> — Add new recordings from the GRN database</li>
-            <li><strong>Dark Mode</strong> — Toggle between light and dark themes</li>
-            <li><strong>Bilingual Interface</strong> — Switch between English and Thai instantly</li>
-          </ul>
-        </div>
-
-        <!-- How to Send Feedback -->
-        <div class="card">
-          <h2><span class="icon">📬</span> How to Send Your Feedback</h2>
-          <p>
-            Please share your thoughts — whether it's a quick impression, a detailed report,
-            or anything in between. Every piece of feedback helps us improve.
-          </p>
-          <p>Send your feedback directly to:</p>
-          <div class="callout" style="text-align:center; font-size:16px;">
-            📧&nbsp;&nbsp;<span class="email"><a href="mailto:Kow-D@globalrecordings.net?subject=Thai%20Good%20News%20App%20—%20Tester%20Feedback">Kow-D@globalrecordings.net</a></span>
-          </div>
-          <p style="margin-top:14px; font-size:14px;">
-            When writing your feedback, feel free to include:<br />
-            <strong>What you liked</strong>, <strong>what you didn't like</strong>,
-            <strong>what seemed missing</strong>, <strong>what felt like overkill</strong>,
-            and any <strong>bugs or issues</strong> you encountered.
-          </p>
-        </div>
-
-        <!-- Action Buttons -->
-        <div class="card">
-          <h2><span class="icon">🚀</span> Get Started</h2>
-          <p>Open the app and start exploring, then send us your feedback when you're ready.</p>
-          <div class="cta-grid">
-            <a href="https://thai-good-news.netlify.app" target="_blank" rel="noopener noreferrer" class="cta-btn primary">
-              <span class="icon">📱</span> Open the App
-            </a>
-            <a href="mailto:Kow-D@globalrecordings.net?subject=Thai%20Good%20News%20App%20—%20Tester%20Feedback" class="cta-btn">
-              <span class="icon">✉️</span> Send Feedback
-            </a>
-          </div>
-        </div>
-
-        <!-- Footer -->
-        <div class="footer">
-          This page is intended for invited testers participating in the Google Play Console closed testing program.<br />
-          © Thai Good News (TGN) · Global Recordings Network · <a href="https://globalrecordings.net" target="_blank" rel="noopener noreferrer">globalrecordings.net</a> · <a href="https://5fish.mobi" target="_blank" rel="noopener noreferrer">5fish.mobi</a>
-        </div>
-
-      </div>
+    <!-- PRINT BUTTON (screen only) -->
+    <div class="print-bar">
+      <button class="print-btn" onclick="window.print()">🖨️ Print This Form</button>
+      <div class="print-hint">Print it out, fill it in, snap a photo, and email it to <strong>Kow-D@globalrecordings.net</strong></div>
     </div>
+
+    <div class="form-wrap">
+
+      <!-- ==================== PAGE 1 ==================== -->
+      <div class="page">
+
+        <!-- Header -->
+        <div class="form-header">
+          <div class="brand">
+            <div class="logo-circle">TGN</div>
+            <div>
+              <h1>Thai Good News — Tester Feedback</h1>
+              <div class="subtitle">Global Recordings Network Thailand (GRNT) · Google Play Console</div>
+            </div>
+          </div>
+          <div class="badge">Page 1 of 2</div>
+        </div>
+
+        <!-- Intro -->
+        <div class="intro">
+          Hi! <strong>Dan Tisdale</strong> here from <strong>GRNT</strong>.
+          Thank you for taking the time to review the <strong>Thai Good News</strong> app.
+          This app helps people hear the Gospel in <strong>100+ languages spoken in Thailand</strong>
+          through audio recordings from Global Recordings Network.
+          Your honest feedback — whether quick or detailed — is greatly appreciated!
+          <br /><br />
+          📱 <strong>Try the app:</strong> <a href="https://thai-good-news.netlify.app" target="_blank"><strong>thai-good-news.netlify.app</strong></a>
+          &nbsp;&nbsp;|&nbsp;&nbsp;
+          📧 <strong>Email feedback to:</strong> <a href="mailto:Kow-D@globalrecordings.net"><strong>Kow-D@globalrecordings.net</strong></a>
+        </div>
+
+        <!-- Tester Info -->
+        <div class="section">
+          <div class="info-field">
+            <span class="field-label">Name (optional):</span>
+            <span class="field-line"></span>
+          </div>
+          <div class="info-field">
+            <span class="field-label">Date:</span>
+            <span class="field-line"></span>
+            <span class="field-label" style="margin-left:12px;">Device:</span>
+            <span class="field-line"></span>
+          </div>
+        </div>
+
+        <!-- Section 1: Overall Rating -->
+        <div class="section">
+          <div class="section-title"><span class="num">1</span> Overall Impression  <span style="font-weight:400; font-size:9pt; color:#999;">(circle one number per row)</span></div>
+          <div class="scale-ends" style="padding-left: calc(100% - 232px);">
+            <span>Poor</span>
+            <span style="margin-left:auto;">Excellent</span>
+          </div>
+
+          <div class="scale-item">
+            <span class="scale-label">Overall experience with the app</span>
+            <div class="scale-bubbles">
+              <div class="bubble">1</div><div class="bubble">2</div><div class="bubble">3</div>
+              <div class="bubble">4</div><div class="bubble">5</div><div class="bubble">6</div>
+              <div class="bubble">7</div><div class="bubble">8</div><div class="bubble">9</div>
+              <div class="bubble">10</div>
+            </div>
+          </div>
+          <div class="scale-item">
+            <span class="scale-label">Ease of navigation / user-friendliness</span>
+            <div class="scale-bubbles">
+              <div class="bubble">1</div><div class="bubble">2</div><div class="bubble">3</div>
+              <div class="bubble">4</div><div class="bubble">5</div><div class="bubble">6</div>
+              <div class="bubble">7</div><div class="bubble">8</div><div class="bubble">9</div>
+              <div class="bubble">10</div>
+            </div>
+          </div>
+          <div class="scale-item">
+            <span class="scale-label">Visual design &amp; appearance</span>
+            <div class="scale-bubbles">
+              <div class="bubble">1</div><div class="bubble">2</div><div class="bubble">3</div>
+              <div class="bubble">4</div><div class="bubble">5</div><div class="bubble">6</div>
+              <div class="bubble">7</div><div class="bubble">8</div><div class="bubble">9</div>
+              <div class="bubble">10</div>
+            </div>
+          </div>
+          <div class="scale-item">
+            <span class="scale-label">Audio playback quality &amp; controls</span>
+            <div class="scale-bubbles">
+              <div class="bubble">1</div><div class="bubble">2</div><div class="bubble">3</div>
+              <div class="bubble">4</div><div class="bubble">5</div><div class="bubble">6</div>
+              <div class="bubble">7</div><div class="bubble">8</div><div class="bubble">9</div>
+              <div class="bubble">10</div>
+            </div>
+          </div>
+          <div class="scale-item">
+            <span class="scale-label">Speed &amp; performance</span>
+            <div class="scale-bubbles">
+              <div class="bubble">1</div><div class="bubble">2</div><div class="bubble">3</div>
+              <div class="bubble">4</div><div class="bubble">5</div><div class="bubble">6</div>
+              <div class="bubble">7</div><div class="bubble">8</div><div class="bubble">9</div>
+              <div class="bubble">10</div>
+            </div>
+          </div>
+          <div class="scale-item">
+            <span class="scale-label">Usefulness for ministry / outreach</span>
+            <div class="scale-bubbles">
+              <div class="bubble">1</div><div class="bubble">2</div><div class="bubble">3</div>
+              <div class="bubble">4</div><div class="bubble">5</div><div class="bubble">6</div>
+              <div class="bubble">7</div><div class="bubble">8</div><div class="bubble">9</div>
+              <div class="bubble">10</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Section 2: Feature Ratings -->
+        <div class="section">
+          <div class="section-title"><span class="num">2</span> Feature Ratings  <span style="font-weight:400; font-size:9pt; color:#999;">(circle one per row)</span></div>
+          <div class="scale-ends" style="padding-left: calc(100% - 134px);">
+            <span>Didn't Use</span>
+            <span>Poor</span>
+            <span style="margin-left:auto;">Great</span>
+          </div>
+
+          <div class="scale-item">
+            <span class="scale-label">Language Finder / browsing languages</span>
+            <div class="scale-bubbles">
+              <div class="bubble" style="border-style:dashed;font-size:7pt;">N/A</div>
+              <div class="bubble">1</div><div class="bubble">2</div><div class="bubble">3</div>
+              <div class="bubble">4</div><div class="bubble">5</div>
+            </div>
+          </div>
+          <div class="scale-item">
+            <span class="scale-label">Search (finding languages / messages)</span>
+            <div class="scale-bubbles">
+              <div class="bubble" style="border-style:dashed;font-size:7pt;">N/A</div>
+              <div class="bubble">1</div><div class="bubble">2</div><div class="bubble">3</div>
+              <div class="bubble">4</div><div class="bubble">5</div>
+            </div>
+          </div>
+          <div class="scale-item">
+            <span class="scale-label">Favorites (saving languages / messages)</span>
+            <div class="scale-bubbles">
+              <div class="bubble" style="border-style:dashed;font-size:7pt;">N/A</div>
+              <div class="bubble">1</div><div class="bubble">2</div><div class="bubble">3</div>
+              <div class="bubble">4</div><div class="bubble">5</div>
+            </div>
+          </div>
+          <div class="scale-item">
+            <span class="scale-label">My Notes (personal notes feature)</span>
+            <div class="scale-bubbles">
+              <div class="bubble" style="border-style:dashed;font-size:7pt;">N/A</div>
+              <div class="bubble">1</div><div class="bubble">2</div><div class="bubble">3</div>
+              <div class="bubble">4</div><div class="bubble">5</div>
+            </div>
+          </div>
+          <div class="scale-item">
+            <span class="scale-label">Offline downloads / My Library</span>
+            <div class="scale-bubbles">
+              <div class="bubble" style="border-style:dashed;font-size:7pt;">N/A</div>
+              <div class="bubble">1</div><div class="bubble">2</div><div class="bubble">3</div>
+              <div class="bubble">4</div><div class="bubble">5</div>
+            </div>
+          </div>
+          <div class="scale-item">
+            <span class="scale-label">Share App (sharing via email, LINE, etc.)</span>
+            <div class="scale-bubbles">
+              <div class="bubble" style="border-style:dashed;font-size:7pt;">N/A</div>
+              <div class="bubble">1</div><div class="bubble">2</div><div class="bubble">3</div>
+              <div class="bubble">4</div><div class="bubble">5</div>
+            </div>
+          </div>
+          <div class="scale-item">
+            <span class="scale-label">QR Code cards (generating / printing)</span>
+            <div class="scale-bubbles">
+              <div class="bubble" style="border-style:dashed;font-size:7pt;">N/A</div>
+              <div class="bubble">1</div><div class="bubble">2</div><div class="bubble">3</div>
+              <div class="bubble">4</div><div class="bubble">5</div>
+            </div>
+          </div>
+          <div class="scale-item">
+            <span class="scale-label">Sign Language Video</span>
+            <div class="scale-bubbles">
+              <div class="bubble" style="border-style:dashed;font-size:7pt;">N/A</div>
+              <div class="bubble">1</div><div class="bubble">2</div><div class="bubble">3</div>
+              <div class="bubble">4</div><div class="bubble">5</div>
+            </div>
+          </div>
+          <div class="scale-item">
+            <span class="scale-label">Dark Mode / Light Mode toggle</span>
+            <div class="scale-bubbles">
+              <div class="bubble" style="border-style:dashed;font-size:7pt;">N/A</div>
+              <div class="bubble">1</div><div class="bubble">2</div><div class="bubble">3</div>
+              <div class="bubble">4</div><div class="bubble">5</div>
+            </div>
+          </div>
+          <div class="scale-item">
+            <span class="scale-label">English / Thai language switch</span>
+            <div class="scale-bubbles">
+              <div class="bubble" style="border-style:dashed;font-size:7pt;">N/A</div>
+              <div class="bubble">1</div><div class="bubble">2</div><div class="bubble">3</div>
+              <div class="bubble">4</div><div class="bubble">5</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Section 3: Quick Questions -->
+        <div class="section">
+          <div class="section-title"><span class="num">3</span> Quick Questions  <span style="font-weight:400; font-size:9pt; color:#999;">(check all that apply)</span></div>
+
+          <div style="font-size:10pt; font-weight:600; margin-bottom:4px;">Would you recommend this app to others?</div>
+          <div class="two-col" style="margin-bottom:8px;">
+            <div class="check-row"><div class="checkbox"></div> Yes, definitely</div>
+            <div class="check-row"><div class="checkbox"></div> Yes, with improvements</div>
+            <div class="check-row"><div class="checkbox"></div> Maybe / Not sure</div>
+            <div class="check-row"><div class="checkbox"></div> No</div>
+          </div>
+
+          <div style="font-size:10pt; font-weight:600; margin-bottom:4px;">Did you encounter any bugs or errors?</div>
+          <div class="two-col" style="margin-bottom:4px;">
+            <div class="check-row"><div class="checkbox"></div> No bugs found</div>
+            <div class="check-row"><div class="checkbox"></div> Yes (please describe on page 2)</div>
+          </div>
+        </div>
+
+        <div class="form-footer">
+          Thai Good News · Global Recordings Network Thailand (GRNT) · Page 1 of 2
+        </div>
+
+      </div><!-- /page 1 -->
+
+
+      <!-- ==================== PAGE 2 ==================== -->
+      <div class="page">
+
+        <div class="page2-header">
+          <h2>Thai Good News — Tester Feedback <span style="font-weight:400; color:#999;">(continued)</span></h2>
+          <div class="page-num">Page 2 of 2</div>
+        </div>
+
+        <!-- Section 4: What's Missing -->
+        <div class="section">
+          <div class="section-title"><span class="num">4</span> What's Missing?  <span style="font-weight:400; font-size:9pt; color:#999;">(check any that apply, or write in your own)</span></div>
+          <div class="two-col">
+            <div class="check-row"><div class="checkbox"></div> More languages needed</div>
+            <div class="check-row"><div class="checkbox"></div> Better onboarding / tutorial</div>
+            <div class="check-row"><div class="checkbox"></div> Playlist / queue feature</div>
+            <div class="check-row"><div class="checkbox"></div> Push notifications</div>
+            <div class="check-row"><div class="checkbox"></div> User accounts / sync across devices</div>
+            <div class="check-row"><div class="checkbox"></div> Social media integration</div>
+            <div class="check-row"><div class="checkbox"></div> Video content for more languages</div>
+            <div class="check-row"><div class="checkbox"></div> Nothing — it's great as-is!</div>
+          </div>
+          <div class="write-area" style="margin-top:6px;">
+            <div class="write-label">Other ideas or features you'd like to see:</div>
+            <div class="write-line"></div>
+            <div class="write-line"></div>
+          </div>
+        </div>
+
+        <!-- Section 5: What Felt Like Overkill -->
+        <div class="section">
+          <div class="section-title"><span class="num">5</span> Anything Feel Unnecessary or Overkill?  <span style="font-weight:400; font-size:9pt; color:#999;">(check any)</span></div>
+          <div class="two-col">
+            <div class="check-row"><div class="checkbox"></div> Import Content feature</div>
+            <div class="check-row"><div class="checkbox"></div> QR Code printing</div>
+            <div class="check-row"><div class="checkbox"></div> Selected Messages page</div>
+            <div class="check-row"><div class="checkbox"></div> Too many sharing options</div>
+            <div class="check-row"><div class="checkbox"></div> Storage Management page</div>
+            <div class="check-row"><div class="checkbox"></div> Nothing — keep everything!</div>
+          </div>
+          <div class="write-area" style="margin-top:6px;">
+            <div class="write-label">Comments:</div>
+            <div class="write-line"></div>
+          </div>
+        </div>
+
+        <!-- Section 6: Bug Reports -->
+        <div class="section">
+          <div class="section-title"><span class="num">6</span> Bug Reports or Issues</div>
+          <div class="write-area">
+            <div class="write-label">Describe any bugs, errors, or unexpected behavior you encountered:</div>
+            <div class="write-line tall"></div>
+            <div class="write-line tall"></div>
+            <div class="write-line tall"></div>
+          </div>
+        </div>
+
+        <!-- Section 7: Open Feedback -->
+        <div class="section">
+          <div class="section-title"><span class="num">7</span> Open Feedback</div>
+
+          <div class="write-area">
+            <div class="write-label">What did you like most about the app?</div>
+            <div class="write-line tall"></div>
+            <div class="write-line tall"></div>
+          </div>
+
+          <div class="write-area" style="margin-top:6px;">
+            <div class="write-label">What did you like least?</div>
+            <div class="write-line tall"></div>
+            <div class="write-line tall"></div>
+          </div>
+
+          <div class="write-area" style="margin-top:6px;">
+            <div class="write-label">Any other comments, suggestions, or thoughts?</div>
+            <div class="write-line tall"></div>
+            <div class="write-line tall"></div>
+            <div class="write-line tall"></div>
+          </div>
+        </div>
+
+        <!-- Opt-Out -->
+        <div class="opt-out">
+          <div class="check-row" style="font-size:10pt;">
+            <div class="checkbox"></div>
+            <span><strong>I prefer not to participate</strong> in this feedback process at this time. (No worries at all — thank you for considering it!)</span>
+          </div>
+        </div>
+
+        <!-- Submit Reminder -->
+        <div style="text-align:center; margin-top:10px; font-size:10pt; color: var(--muted); line-height:1.6;">
+          <strong>Thank you for your time!</strong> When complete, please:<br/>
+          📸 Take a photo of this form &nbsp;→&nbsp; 📧 Email to
+          <a href="mailto:Kow-D@globalrecordings.net?subject=Thai%20Good%20News%20—%20Tester%20Feedback%20Form" style="color:var(--accent); font-weight:700;">Kow-D@globalrecordings.net</a>
+        </div>
+
+        <div class="form-footer">
+          Thai Good News · Global Recordings Network Thailand (GRNT) · Page 2 of 2
+        </div>
+
+      </div><!-- /page 2 -->
+
+    </div><!-- /form-wrap -->
+
   </body>
 </html>
