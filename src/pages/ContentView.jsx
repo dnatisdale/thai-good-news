@@ -76,6 +76,7 @@ const shareQRCard = (item, lang, qrCodeUrl) => {
       .share({
         title: title,
         text: text,
+        url: qrCodeUrl,
       })
       .then(() => {
         // Shared successfully

@@ -12,6 +12,13 @@
   "theme_color": "#000000",
   "background_color": "#000000",
   "categories": ["education", "lifestyle", "entertainment"],
+  "related_applications": [
+    {
+      "platform": "play",
+      "url": "https://play.google.com/store/apps/details?id=your.package.id",
+      "id": "your.package.id"
+    }
+  ],
   "icons": [
     {
       "src": "/icons/favicon.ico",
