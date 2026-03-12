@@ -19,6 +19,8 @@ your_content_data_NEW.csv
 *.png
 # ...but DO track public icons (needed for Netlify deploy)
 !public/icons/*.png
+# ...and DO track public screenshots (needed for PWA manifest)
+!public/screenshots/*.png
 
 # Backups
 backups/
