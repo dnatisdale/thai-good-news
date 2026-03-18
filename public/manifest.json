@@ -1,7 +1,7 @@
 {
   "id": "/",
   "short_name": "TGN",
-  "name": "ข่าวดี Thai: Good News",
+  "name": "ข่าวดี Thai — Good News",
   "description": "Sharing the story of Jesus in every language",
   "lang": "en",
   "dir": "ltr",
@@ -13,7 +13,14 @@
   "background_color": "#000000",
   "categories": ["education", "lifestyle", "entertainment"],
   "display_override": ["window-controls-overlay", "standalone", "minimal-ui"],
-  "prefer_related_applications": false,
+  "prefer_related_applications": true,
+  "related_applications": [
+    {
+      "platform": "play",
+      "url": "https://play.google.com/store/apps/details?id=app.netlify.thai_good_news.twa",
+      "id": "app.netlify.thai_good_news.twa"
+    }
+  ],
   "launch_handler": {
     "client_mode": "focus-existing"
   },

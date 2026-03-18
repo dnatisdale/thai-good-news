@@ -70,7 +70,7 @@ const shareQRCard = (item, lang, qrCodeUrl) => {
   }
 
   if (navigator.share) {
-    const title = lang === "th" ? "ข่าวดี" : "Thai: Good News";
+    const title = lang === "th" ? "ข่าวดี" : "Thai — Good News";
 
     navigator
       .share({

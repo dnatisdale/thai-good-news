@@ -7,7 +7,7 @@ const SharePage = ({ lang, t, onBack, onForward, hasPrev, hasNext }) => {
     const urlString = `${window.location.origin}/listen`;
     const shareText = t.share_app_text || "Check out this app for Good News messages in multiple languages!";
     const shareData = {
-      title: t.app_name || "Thai: Good News",
+      title: t.app_name || "Thai — Good News",
       text: shareText,
       url: urlString,
     };

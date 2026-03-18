@@ -331,8 +331,8 @@ export default function App() {
 
     const isThai = lang === "th";
     const shareTitle = isThai
-      ? "ข่าวดี: รายการที่เลือก"
-      : "Thai: Good News - Selected List";
+      ? "ข่าวดี — รายการที่เลือก"
+      : "Thai — Good News - Selected List";
 
     try {
       if (navigator.share) {
