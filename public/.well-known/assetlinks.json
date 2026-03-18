@@ -1,0 +1,12 @@
+[
+  {
+    "relation": ["delegate_permission/common.handle_all_urls"],
+    "target": {
+      "namespace": "android_app",
+      "package_name": "net.dantisdale.thaigoodnews",
+      "sha256_cert_fingerprints": [
+        "67:98:A0:1A:14:A4:E0:D7:05:9F:A2:EF:94:82:57:5B:33:D4:8E:7C:10:B0:08:76:79:E1:4E:3D:AD:E6:F7:35"
+      ]
+    }
+  }
+]
