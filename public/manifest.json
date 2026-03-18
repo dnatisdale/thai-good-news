@@ -17,8 +17,8 @@
   "related_applications": [
     {
       "platform": "play",
-      "url": "https://play.google.com/store/apps/details?id=app.netlify.thai_good_news.twa",
-      "id": "app.netlify.thai_good_news.twa"
+      "url": "https://play.google.com/store/apps/details?id=net.dantisdale.thaigoodnews",
+      "id": "net.dantisdale.thaigoodnews"
     }
   ],
   "launch_handler": {
