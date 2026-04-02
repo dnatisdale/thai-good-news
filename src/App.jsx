@@ -2221,15 +2221,10 @@ export default function App() {
                 <div className="text-center space-y-1">
                   <p className="text-gray-600 dark:text-white">
                     Build:{" "}
-                    {new Date().toLocaleDateString("en-US", {
-                      year: "numeric",
-                      month: "short",
-                      day: "numeric",
-                    })}{" "}
-                    {new Date().toLocaleTimeString("en-US", {
-                      hour: "2-digit",
-                      minute: "2-digit",
-                    })}
+                    {process.env.REACT_APP_BUILD_DATE || "local dev"}
+                    {process.env.REACT_APP_VERSION && (
+                      <span className="ml-1 opacity-60">(v{process.env.REACT_APP_VERSION})</span>
+                    )}
                   </p>
                   <p className="text-gray-600 dark:text-white flex items-center justify-center gap-2">
                     {
