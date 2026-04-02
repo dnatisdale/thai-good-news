@@ -22,6 +22,7 @@ your_content_data_NEW.csv
 # ...and DO track public screenshots (needed for PWA manifest)
 !public/screenshots/*.png
 
+
 # Backups
 backups/
 
