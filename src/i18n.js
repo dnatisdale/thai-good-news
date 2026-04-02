@@ -320,6 +320,9 @@ export const i18n = {
     // Favorites
     no_favorites: "คุณยังไม่ได้เพิ่มรายการโปรด",
     favorite_tip: "แตะไอคอนหัวใจในหน้ารายละเอียดข้อความเพื่อบันทึก",
+    favorite_languages: "ภาษาโปรด",
+    no_favorite_languages: "ยังไม่มีภาษาโปรด",
+    favorite_messages: "ข้อความโปรด",
 
     // Share & Export
     share_this_message: "แชร์ข้อความนี้",
