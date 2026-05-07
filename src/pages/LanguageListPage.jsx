@@ -118,20 +118,20 @@ const LanguageListPage = ({
     // Second pass: Add smart padding for centering + locking
     return rawRows.map((letters, index) => {
       let placeholders = 0;
-      
+
       // If not the first row, check parity against previous row
       // Same parity (Even/Even or Odd/Odd) causes stacking (bad).
       // Different parity (Even/Odd) causes interlocking (good).
       if (index > 0) {
         const prevLength = rawRows[index - 1].length;
         const currentLength = letters.length;
-        
-        if ((prevLength % 2) === (currentLength % 2)) {
-           // Same parity -> Add 1 placeholder to shift center by 0.5
-           placeholders = 1;
+
+        if (prevLength % 2 === currentLength % 2) {
+          // Same parity -> Add 1 placeholder to shift center by 0.5
+          placeholders = 1;
         }
       }
-      
+
       return { letters, placeholders, isMajor: index % 2 === 0 };
     });
   }, [alphabet, major, minor]);
@@ -230,8 +230,8 @@ const LanguageListPage = ({
         <div className="sticky top-0 z-30 bg-gray-100 dark:bg-[#374151] pb-6 pt-2 px-1 shadow-lg border-b border-gray-200 dark:border-gray-600 rounded-b-xl">
           <div className="flex flex-col items-center">
             {honeycombRows.map((row, rowIndex) => (
-              <div 
-                key={rowIndex} 
+              <div
+                key={rowIndex}
                 className="flex justify-center gap-[1px] -mb-3.5 w-full"
                 style={{ zIndex: 30 - rowIndex }}
               >
@@ -258,14 +258,15 @@ const LanguageListPage = ({
                     {letter}
                   </button>
                 ))}
-                
+
                 {/* Invisible Placeholders to maintain alignment */}
-                {row.placeholders > 0 && Array.from({ length: row.placeholders }).map((_, i) => (
-                  <div 
-                    key={`placeholder-${i}`} 
-                    className="w-12 h-12 invisible"
-                  />
-                ))}
+                {row.placeholders > 0 &&
+                  Array.from({ length: row.placeholders }).map((_, i) => (
+                    <div
+                      key={`placeholder-${i}`}
+                      className="w-12 h-12 invisible"
+                    />
+                  ))}
               </div>
             ))}
           </div>
@@ -275,7 +276,7 @@ const LanguageListPage = ({
       {/* Scrollable Language Cards Container with Letter Headers */}
       <div
         ref={scrollContainerRef}
-        className="flex-1 overflow-y-auto px-4 relative"
+        className="flex-1 overflow-y-auto px-1 sm:px-4 relative"
       >
         {Object.keys(groupedByLetter).length > 0 ? (
           Object.entries(groupedByLetter).map(([letter, languages]) => (
@@ -283,9 +284,9 @@ const LanguageListPage = ({
               {/* Sticky Letter Header */}
               <div
                 id={`letter-header-${letter}`}
-                className="sticky top-0 bg-gray-100 dark:bg-[#374151] py-1 z-20 -mx-4 px-4 scroll-mt-24"
+                className="sticky top-0 bg-gray-100 dark:bg-[#374151] py-1 z-20 -mx-1 px-1 sm:-mx-4 sm:px-4 scroll-mt-24"
               >
-                <h2 className="text-2xl font-bold text-[#003366] dark:text-white ml-4">
+                <h2 className="text-2xl font-bold text-[#003366] dark:text-white ml-2 sm:ml-4">
                   {letter}
                 </h2>
               </div>
@@ -309,7 +310,7 @@ const LanguageListPage = ({
                     }
                     selectionState={getLanguageIndeterminateState(
                       group,
-                      selectedPrograms
+                      selectedPrograms,
                     )}
                     onToggle={() =>
                       onToggleLanguage(group.stableKey, group.messages)

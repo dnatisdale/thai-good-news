@@ -23,6 +23,8 @@ your_content_data_NEW.csv
 !public/screenshots/*.png
 
 .firebase/
+*.zip
+make-upload-zip.bat
 
 # Backups
 backups/

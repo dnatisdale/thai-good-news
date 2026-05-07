@@ -1,5 +1,12 @@
-import React from "react";
-import { Share2, Volume2, Heart, Download, YouTubeColor, ExternalLink } from "./Icons";
+import React, { useState } from "react";
+import {
+  Volume2,
+  Heart,
+  Download,
+  YouTubeColor,
+  ExternalLink,
+  Qrcode,
+} from "./Icons";
 import { i18n } from "../i18n";
 
 const ACCENT_COLOR_CLASS = "text-brand-red";
@@ -12,49 +19,65 @@ const LanguageCard = ({
   onShowQrForLanguage,
   selectionState,
   onToggle,
-  // 👇 Hover state
   setHovering,
-  // 👇 Audio playback props
   onPlayLanguage,
   isPlayingLanguage,
   isFavorite,
   onToggleFavorite,
-  sampleUrl, // 👇 NEW: Sample URL for download
-  // 👇 NEW: external GRN/5fish URL
+  sampleUrl,
   externalUrl,
-  languageVideoUrl, // 👇 NEW: YouTube URL for the language
-  searchQuery, // 👇 NEW: Search query for highlighting
-  id, // 👇 NEW: ID for A-Z navigation scrolling
+  languageVideoUrl,
+  searchQuery,
+  id,
 }) => {
-  // Helper to highlight text
+  const [isExpanded, setIsExpanded] = useState(false);
+
   const highlightText = (text, query) => {
     if (!query || !text) return text;
-    
-    const parts = text.split(new RegExp(`(${query})`, 'gi'));
-    return parts.map((part, index) => 
+
+    const parts = text.split(new RegExp(`(${query})`, "gi"));
+
+    return parts.map((part, index) =>
       part.toLowerCase() === query.toLowerCase() ? (
-        <span key={index} className="bg-yellow-200 dark:bg-yellow-900 text-black dark:text-white rounded px-0.5">
+        <span
+          key={index}
+          className="bg-yellow-200 dark:bg-yellow-900 text-black dark:text-white rounded px-0.5"
+        >
           {part}
         </span>
       ) : (
         part
-      )
+      ),
     );
   };
 
+  const messageWord =
+    messageCount === 1
+      ? lang === "en"
+        ? "message"
+        : "ข้อความ"
+      : lang === "en"
+        ? "messages"
+        : "ข้อความ";
+
+  const mainButtonClass =
+    "w-10 h-10 flex items-center justify-center rounded-full bg-gray-200 dark:bg-white text-gray-600 dark:text-gray-600 transition-all shrink-0";
+
+  const extraButtonLabelClass =
+    "text-[11px] font-semibold text-gray-600 dark:text-gray-200 mt-1";
 
   return (
     <div
       id={id}
       onMouseEnter={() => setHovering && setHovering(true)}
       onMouseLeave={() => setHovering && setHovering(false)}
-      className="bg-white dark:bg-[#374151] p-2 mb-1 rounded-xl shadow-md border-b-4 border-brand-red cursor-pointer card-hover transition-colors"
+      className="bg-white dark:bg-[#374151] px-2 py-3 mb-1 rounded-xl shadow-md border-b-4 border-brand-red card-hover transition-colors"
     >
-      {/* MAIN ROW */}
-      <div className="flex items-center gap-1.5">
-        {/* Checkbox */}
+      {/* TOP ROW */}
+      <div className="flex items-start gap-1.5">
+        {/* CHECKBOX */}
         <div
-          className="pr-1 flex items-center shrink-0"
+          className="pt-2 shrink-0"
           onClick={(e) => {
             e.stopPropagation();
             onToggle();
@@ -73,110 +96,49 @@ const LanguageCard = ({
           />
         </div>
 
-        {/* TEXT AREA – takes all remaining width */}
-        <div onClick={() => onSelect(languageName)} className="flex-1 min-w-0">
+        {/* LANGUAGE TEXT */}
+        <div
+          onClick={() => onSelect(languageName)}
+          className="flex-1 min-w-0 pt-1 cursor-pointer"
+        >
           <h3
-            className={`text-xl font-bold ${ACCENT_COLOR_CLASS} dark:text-white`}
+            className={`text-xl font-bold leading-tight ${ACCENT_COLOR_CLASS} dark:text-white`}
           >
             {highlightText(languageName, searchQuery)}
           </h3>
 
           <p className="text-xs text-gray-500 dark:text-gray-300 mt-0.5 whitespace-nowrap overflow-hidden text-ellipsis">
             {lang === "en" ? "Tap to view" : "แตะเพื่อดู"} ({messageCount}{" "}
-            {messageCount === 1
-              ? lang === "en"
-                ? "message"
-                : "ข้อความ"
-              : lang === "en"
-              ? "messages"
-              : "ข้อความ"}
-            )
+            {messageWord})
           </p>
         </div>
 
-        {/* ICONS – fixed width, don't squeeze text */}
-        <div className="grid grid-cols-3 md:flex items-center gap-2 shrink-0">
-          {/* External Link Button - Row 2 on mobile, position 1 on desktop */}
-          {externalUrl && (
-            <a
-              href={externalUrl}
-              target="_blank"
-              rel="noopener noreferrer"
-              onClick={(e) => e.stopPropagation()}
-              className="p-1 md:p-2 rounded-full bg-gray-200 dark:bg-white text-gray-600 dark:text-gray-600 hover:bg-blue-500 hover:text-white transition-all"
-              style={{ gridRow: '2' }}
-              title={
-                i18n[lang].open_language_on_grn ||
-                "Open this language on GRN / 5fish"
-              }
-            >
-              <ExternalLink className="w-6 h-6" />
-            </a>
-          )}
-
-          {/* Download Button - Row 2 on mobile, position 2 on desktop */}
-          {sampleUrl && (
-            <a
-              href={sampleUrl}
-              download
-              onClick={(e) => e.stopPropagation()}
-              className="p-1 md:p-2 rounded-full bg-gray-200 dark:bg-white text-gray-600 dark:text-gray-600 hover:bg-green-500 hover:text-white transition-all"
-              style={{ gridRow: '2' }}
-              title="Download Sample"
-            >
-              <Download className="w-6 h-6" />
-            </a>
-          )}
-
-          {/* YouTube Button - Row 2 on mobile, position 3 on desktop */}
-          {languageVideoUrl ? (
-            <a
-              href={languageVideoUrl}
-              target="_blank"
-              rel="noopener noreferrer"
-              onClick={(e) => e.stopPropagation()}
-              className="p-1 md:p-2 rounded-full bg-gray-200 dark:bg-white hover:bg-gray-300 transition-all"
-              style={{ gridRow: '2' }}
-              title={lang === "en" ? "Watch Video" : "ดูวิดีโอ"}
-            >
-              <YouTubeColor className="w-6 h-6" />
-            </a>
-          ) : (
-            <div
-              className="p-1 md:p-2 rounded-full bg-gray-200 dark:bg-white cursor-not-allowed"
-              style={{ gridRow: '2' }}
-              title={lang === "en" ? "No video available" : "ไม่มีวิดีโอ"}
-            >
-              <YouTubeColor className="w-6 h-6" />
-            </div>
-          )}
-
-          {/* Play Button - Row 1 on mobile, position 4 on desktop */}
+        {/* ALWAYS-VISIBLE BUTTONS */}
+        <div className="flex items-start gap-1.5 shrink-0">
+          {/* LISTEN */}
           <button
             onClick={(e) => {
               e.stopPropagation();
               onPlayLanguage && onPlayLanguage();
             }}
-            className={`p-1 md:p-2 rounded-full transition-all ${
+            className={`${mainButtonClass} ${
               isPlayingLanguage
                 ? "bg-amber-100 dark:bg-amber-100 text-amber-600 dark:text-amber-600 animate-pulse"
-                : "bg-gray-200 dark:bg-white text-gray-600 dark:text-gray-600 hover:bg-amber-500 hover:text-white"
+                : "hover:bg-amber-500 hover:text-white"
             }`}
-            style={{ gridRow: '1' }}
             title={lang === "en" ? "Listen to sample" : "ฟังตัวอย่าง"}
           >
             <Volume2 className="w-6 h-6" />
           </button>
 
-          {/* Favorite Heart Button - Row 1 on mobile, position 5 on desktop */}
+          {/* FAVORITE */}
           {onToggleFavorite && (
             <button
               onClick={(e) => {
                 e.stopPropagation();
                 onToggleFavorite();
               }}
-              className="group p-1 md:p-2 rounded-full bg-gray-200 dark:bg-white hover:bg-brand-red transition-all"
-              style={{ gridRow: '1' }}
+              className={`${mainButtonClass} group hover:bg-brand-red`}
               title={isFavorite ? "Remove from Favorites" : "Add to Favorites"}
             >
               <Heart
@@ -184,7 +146,7 @@ const LanguageCard = ({
                 style={{
                   fill: isFavorite ? "#CC3333" : "none",
                   color: "#CC3333",
-                  strokeWidth: "2"
+                  strokeWidth: "2",
                 }}
                 onMouseEnter={(e) => {
                   if (isFavorite) {
@@ -206,20 +168,122 @@ const LanguageCard = ({
             </button>
           )}
 
-          {/* Share Button - Row 1 on mobile, position 6 on desktop */}
+          {/* QR SHARE */}
           <button
             onClick={(e) => {
               e.stopPropagation();
               onShowQrForLanguage(languageName);
             }}
-            className="p-1 md:p-2 rounded-full bg-gray-200 dark:bg-white text-gray-600 dark:text-gray-600 hover:bg-brand-red hover:text-white transition-colors"
-            style={{ gridRow: '1' }}
+            className={`${mainButtonClass} hover:bg-brand-red hover:text-white`}
             title={i18n[lang].share_language_qr || "Share Language QR"}
           >
-            <Share2 className="w-6 h-6" />
+            <Qrcode className="w-6 h-6" />
+          </button>
+
+          {/* PLAIN CARET — NO CIRCLE */}
+          <button
+            onClick={(e) => {
+              e.stopPropagation();
+              setIsExpanded((currentValue) => !currentValue);
+            }}
+            className="pt-1 px-0.5 text-3xl leading-none text-gray-500 dark:text-gray-200 hover:text-brand-red dark:hover:text-white transition-colors"
+            title={
+              isExpanded
+                ? lang === "en"
+                  ? "Hide extra buttons"
+                  : "ซ่อนปุ่มเพิ่มเติม"
+                : lang === "en"
+                  ? "Show extra buttons"
+                  : "แสดงปุ่มเพิ่มเติม"
+            }
+            aria-expanded={isExpanded}
+          >
+            {isExpanded ? "⌃" : "⌄"}
           </button>
         </div>
       </div>
+
+      {/* HIDDEN EXTRA BUTTONS */}
+      {isExpanded && (
+        <div className="mt-3 ml-8 mr-1 rounded-xl bg-gray-50 dark:bg-[#4b5563] px-3 py-3">
+          <div className="flex justify-end gap-5">
+            {/* OPEN */}
+            {externalUrl && (
+              <a
+                href={externalUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                onClick={(e) => e.stopPropagation()}
+                className="flex flex-col items-center"
+                title={
+                  i18n[lang].open_language_on_grn ||
+                  "Open this language on GRN / 5fish"
+                }
+              >
+                <span
+                  className={`${mainButtonClass} hover:bg-blue-500 hover:text-white`}
+                >
+                  <ExternalLink className="w-6 h-6" />
+                </span>
+                <span className={extraButtonLabelClass}>
+                  {lang === "en" ? "Open" : "เปิด"}
+                </span>
+              </a>
+            )}
+
+            {/* DOWNLOAD */}
+            {sampleUrl && (
+              <a
+                href={sampleUrl}
+                download
+                onClick={(e) => e.stopPropagation()}
+                className="flex flex-col items-center"
+                title="Download Sample"
+              >
+                <span
+                  className={`${mainButtonClass} hover:bg-green-500 hover:text-white`}
+                >
+                  <Download className="w-6 h-6" />
+                </span>
+                <span className={extraButtonLabelClass}>
+                  {lang === "en" ? "Download" : "ดาวน์โหลด"}
+                </span>
+              </a>
+            )}
+
+            {/* VIDEO */}
+            {languageVideoUrl ? (
+              <a
+                href={languageVideoUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                onClick={(e) => e.stopPropagation()}
+                className="flex flex-col items-center"
+                title={lang === "en" ? "Watch Video" : "ดูวิดีโอ"}
+              >
+                <span className={`${mainButtonClass} hover:bg-gray-300`}>
+                  <YouTubeColor className="w-6 h-6" />
+                </span>
+                <span className={extraButtonLabelClass}>
+                  {lang === "en" ? "Video" : "วิดีโอ"}
+                </span>
+              </a>
+            ) : (
+              <div
+                className="flex flex-col items-center opacity-60"
+                title={lang === "en" ? "No video available" : "ไม่มีวิดีโอ"}
+              >
+                <span className={`${mainButtonClass} cursor-not-allowed`}>
+                  <YouTubeColor className="w-6 h-6" />
+                </span>
+                <span className={extraButtonLabelClass}>
+                  {lang === "en" ? "Video" : "วิดีโอ"}
+                </span>
+              </div>
+            )}
+          </div>
+        </div>
+      )}
     </div>
   );
 };
