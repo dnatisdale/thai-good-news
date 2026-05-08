@@ -1,5 +1,5 @@
 import React from "react";
-import { Globe } from "./Icons";
+import { LanguageIcon } from "./Icons";
 
 const LanguageToggle = ({ lang, setLang, t }) => {
   const toggleLang = () => {
@@ -13,10 +13,10 @@ const LanguageToggle = ({ lang, setLang, t }) => {
       <button
         onClick={toggleLang}
         className="text-white p-1 rounded-lg hover:bg-red-800 transition-colors btn-hover flex-shrink-0"
-        title="Th-Eng Switcher"
-        aria-label="Th-Eng Switcher"
+        title={lang === "en" ? "เปลี่ยนเป็นภาษาไทย" : "Switch to English"}
+        aria-label={lang === "en" ? "เปลี่ยนเป็นภาษาไทย" : "Switch to English"}
       >
-        <Globe className="w-5 h-5 md:w-6 md:h-6" />
+        <LanguageIcon className="w-7 h-7 md:w-8 md:h-8" />
       </button>
     </div>
   );
