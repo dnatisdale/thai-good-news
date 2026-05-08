@@ -6,6 +6,8 @@ import {
   YouTubeColor,
   ExternalLink,
   Qrcode,
+  ChevronDown,
+  ChevronUp,
 } from "./Icons";
 import { i18n } from "../i18n";
 
@@ -61,7 +63,15 @@ const LanguageCard = ({
         : "ข้อความ";
 
   const circleButtonClass =
-    "w-10 h-10 flex items-center justify-center rounded-full bg-gray-200 dark:bg-white text-gray-600 dark:text-gray-600 transition-all shrink-0";
+    "w-10 h-10 flex items-center justify-center rounded-full bg-gray-200 dark:bg-white text-gray-600 dark:text-gray-600 transition-all duration-200 shrink-0 hover:scale-110 active:scale-95 focus:outline-none focus:ring-2 focus:ring-brand-red/30";
+
+  const caretTitle = isExpanded
+    ? lang === "en"
+      ? "Hide extra buttons"
+      : "ซ่อนปุ่มเพิ่มเติม"
+    : lang === "en"
+      ? "Show extra buttons"
+      : "แสดงปุ่มเพิ่มเติม";
 
   return (
     <div
@@ -70,38 +80,38 @@ const LanguageCard = ({
       onMouseLeave={() => setHovering && setHovering(false)}
       className="relative bg-white dark:bg-[#374151] px-2 py-3 mb-1 rounded-xl shadow-md border-b-4 border-brand-red card-hover transition-colors"
     >
-      {/* CARET — TOP RIGHT CORNER, SAME SPOT, NO CIRCLE */}
+      {/* CARET: SAME TOP-RIGHT LOCATION, NO CIRCLE, NO BOX */}
       <button
+        type="button"
         onClick={(e) => {
           e.stopPropagation();
           setIsExpanded((currentValue) => !currentValue);
         }}
         className="
-          absolute top-1 right-2 z-10
-          w-7 h-7
+          absolute top-1 right-1 z-20
+          w-8 h-8
           flex items-center justify-center
-          text-3xl leading-none
           text-gray-500 dark:text-gray-200
+          bg-transparent border-0 shadow-none
+          outline-none ring-0
           hover:text-brand-red dark:hover:text-white
-          hover:scale-125 active:scale-150
+          hover:scale-150 active:scale-175
+          focus:outline-none focus:ring-0
           transition-all duration-200 ease-out
         "
-        title={
-          isExpanded
-            ? lang === "en"
-              ? "Hide extra buttons"
-              : "ซ่อนปุ่มเพิ่มเติม"
-            : lang === "en"
-              ? "Show extra buttons"
-              : "แสดงปุ่มเพิ่มเติม"
-        }
+        title={caretTitle}
+        aria-label={caretTitle}
         aria-expanded={isExpanded}
       >
-        {isExpanded ? "⌃" : "⌄"}
+        {isExpanded ? (
+          <ChevronUp className="w-7 h-7" />
+        ) : (
+          <ChevronDown className="w-7 h-7" />
+        )}
       </button>
 
       {/* TOP ROW */}
-      <div className="flex items-start gap-1.5 pr-7">
+      <div className="flex items-start gap-1.5 pr-8">
         {/* CHECKBOX */}
         <div
           className="pt-2 shrink-0"
@@ -144,6 +154,7 @@ const LanguageCard = ({
         <div className="flex items-start gap-1.5 shrink-0">
           {/* LISTEN */}
           <button
+            type="button"
             onClick={(e) => {
               e.stopPropagation();
               onPlayLanguage && onPlayLanguage();
@@ -154,6 +165,7 @@ const LanguageCard = ({
                 : "hover:bg-amber-500 hover:text-white"
             }`}
             title={lang === "en" ? "Listen to sample" : "ฟังตัวอย่าง"}
+            aria-label={lang === "en" ? "Listen to sample" : "ฟังตัวอย่าง"}
           >
             <Volume2 className="w-6 h-6" />
           </button>
@@ -161,35 +173,23 @@ const LanguageCard = ({
           {/* FAVORITE */}
           {onToggleFavorite && (
             <button
+              type="button"
               onClick={(e) => {
                 e.stopPropagation();
                 onToggleFavorite();
               }}
               className={`${circleButtonClass} group hover:bg-brand-red`}
               title={isFavorite ? "Remove from Favorites" : "Add to Favorites"}
+              aria-label={
+                isFavorite ? "Remove from Favorites" : "Add to Favorites"
+              }
             >
               <Heart
-                className="w-6 h-6 transition-all"
+                className="w-6 h-6 transition-all group-hover:text-white"
                 style={{
                   fill: isFavorite ? "#CC3333" : "none",
                   color: "#CC3333",
                   strokeWidth: "2",
-                }}
-                onMouseEnter={(e) => {
-                  if (isFavorite) {
-                    e.currentTarget.style.fill = "white";
-                    e.currentTarget.style.color = "white";
-                  } else {
-                    e.currentTarget.style.color = "white";
-                  }
-                }}
-                onMouseLeave={(e) => {
-                  if (isFavorite) {
-                    e.currentTarget.style.fill = "#CC3333";
-                    e.currentTarget.style.color = "#CC3333";
-                  } else {
-                    e.currentTarget.style.color = "#CC3333";
-                  }
                 }}
               />
             </button>
@@ -197,12 +197,14 @@ const LanguageCard = ({
 
           {/* QR SHARE */}
           <button
+            type="button"
             onClick={(e) => {
               e.stopPropagation();
               onShowQrForLanguage(languageName);
             }}
             className={`${circleButtonClass} hover:bg-brand-red hover:text-white`}
             title={i18n[lang].share_language_qr || "Show QR code / Share"}
+            aria-label={i18n[lang].share_language_qr || "Show QR code / Share"}
           >
             <Qrcode className="w-6 h-6" />
           </button>
@@ -211,8 +213,8 @@ const LanguageCard = ({
 
       {/* HIDDEN EXTRA BUTTONS */}
       {isExpanded && (
-        <div className="mt-3 ml-8 mr-8 rounded-xl bg-gray-50 dark:bg-[#4b5563] px-2 py-2">
-          <div className="flex justify-end gap-1.5">
+        <div className="mt-2 pr-8 flex justify-end">
+          <div className="flex items-center justify-end gap-1.5 rounded-xl bg-gray-50 dark:bg-[#4b5563] px-2 py-2">
             {/* OPEN */}
             {externalUrl && (
               <a
@@ -222,6 +224,10 @@ const LanguageCard = ({
                 onClick={(e) => e.stopPropagation()}
                 className={`${circleButtonClass} hover:bg-blue-500 hover:text-white`}
                 title={
+                  i18n[lang].open_language_on_grn ||
+                  "Open this language on GRN / 5fish"
+                }
+                aria-label={
                   i18n[lang].open_language_on_grn ||
                   "Open this language on GRN / 5fish"
                 }
@@ -238,6 +244,7 @@ const LanguageCard = ({
                 onClick={(e) => e.stopPropagation()}
                 className={`${circleButtonClass} hover:bg-green-500 hover:text-white`}
                 title="Download sample"
+                aria-label="Download sample"
               >
                 <Download className="w-6 h-6" />
               </a>
@@ -252,6 +259,7 @@ const LanguageCard = ({
                 onClick={(e) => e.stopPropagation()}
                 className={`${circleButtonClass} hover:bg-gray-300`}
                 title={lang === "en" ? "Watch video" : "ดูวิดีโอ"}
+                aria-label={lang === "en" ? "Watch video" : "ดูวิดีโอ"}
               >
                 <YouTubeColor className="w-6 h-6" />
               </a>
@@ -259,6 +267,9 @@ const LanguageCard = ({
               <div
                 className={`${circleButtonClass} cursor-not-allowed opacity-60`}
                 title={lang === "en" ? "No video available" : "ไม่มีวิดีโอ"}
+                aria-label={
+                  lang === "en" ? "No video available" : "ไม่มีวิดีโอ"
+                }
               >
                 <YouTubeColor className="w-6 h-6" />
               </div>

@@ -226,6 +226,39 @@ export const ChevronRight = (props) => (
     <polyline points="9 18 15 12 9 6" />
   </svg>
 );
+export const ChevronDown = (props) => (
+  <svg
+    {...props}
+    xmlns="http://www.w3.org/2000/svg"
+    width="24"
+    height="24"
+    viewBox="0 0 24 24"
+    fill="none"
+    stroke="currentColor"
+    strokeWidth="2.8"
+    strokeLinecap="round"
+    strokeLinejoin="round"
+  >
+    <polyline points="6 9 12 15 18 9" />
+  </svg>
+);
+
+export const ChevronUp = (props) => (
+  <svg
+    {...props}
+    xmlns="http://www.w3.org/2000/svg"
+    width="24"
+    height="24"
+    viewBox="0 0 24 24"
+    fill="none"
+    stroke="currentColor"
+    strokeWidth="2.8"
+    strokeLinecap="round"
+    strokeLinejoin="round"
+  >
+    <polyline points="18 15 12 9 6 15" />
+  </svg>
+);
 
 export const Download = (props) => (
   <svg
@@ -352,97 +385,72 @@ export const Qrcode = (props) => (
     viewBox="0 0 24 24"
     fill="none"
     stroke="currentColor"
-    strokeWidth="1.8"
+    strokeWidth="2.1"
     strokeLinecap="round"
     strokeLinejoin="round"
   >
-    {/* Top-left finder square */}
-    <rect x="3" y="3" width="6" height="6" rx="1" />
+    {/* outer scan corners */}
+    <path d="M4 8V5a1 1 0 0 1 1-1h3" />
+    <path d="M16 4h3a1 1 0 0 1 1 1v3" />
+    <path d="M20 16v3a1 1 0 0 1-1 1h-3" />
+    <path d="M8 20H5a1 1 0 0 1-1-1v-3" />
+
+    {/* QR finder squares */}
+    <rect x="6.2" y="6.2" width="4.2" height="4.2" rx="0.5" />
+    <rect x="13.6" y="6.2" width="4.2" height="4.2" rx="0.5" />
+    <rect x="6.2" y="13.6" width="4.2" height="4.2" rx="0.5" />
+
+    {/* solid finder centers */}
     <rect
-      x="5"
-      y="5"
-      width="2"
-      height="2"
-      rx="0.3"
+      x="7.7"
+      y="7.7"
+      width="1.2"
+      height="1.2"
+      rx="0.2"
+      fill="currentColor"
+      stroke="none"
+    />
+    <rect
+      x="15.1"
+      y="7.7"
+      width="1.2"
+      height="1.2"
+      rx="0.2"
+      fill="currentColor"
+      stroke="none"
+    />
+    <rect
+      x="7.7"
+      y="15.1"
+      width="1.2"
+      height="1.2"
+      rx="0.2"
       fill="currentColor"
       stroke="none"
     />
 
-    {/* Top-right finder square */}
-    <rect x="15" y="3" width="6" height="6" rx="1" />
+    {/* QR data blocks */}
+    <rect
+      x="13.4"
+      y="13.4"
+      width="1.5"
+      height="1.5"
+      rx="0.2"
+      fill="currentColor"
+      stroke="none"
+    />
     <rect
       x="17"
-      y="5"
-      width="2"
-      height="2"
-      rx="0.3"
+      y="13.4"
+      width="1.5"
+      height="1.5"
+      rx="0.2"
       fill="currentColor"
       stroke="none"
     />
-
-    {/* Bottom-left finder square */}
-    <rect x="3" y="15" width="6" height="6" rx="1" />
     <rect
-      x="5"
+      x="13.4"
       y="17"
-      width="2"
-      height="2"
-      rx="0.3"
-      fill="currentColor"
-      stroke="none"
-    />
-
-    {/* QR bits */}
-    <rect
-      x="12"
-      y="12"
-      width="2"
-      height="2"
-      rx="0.2"
-      fill="currentColor"
-      stroke="none"
-    />
-    <rect
-      x="16"
-      y="12"
-      width="2"
-      height="2"
-      rx="0.2"
-      fill="currentColor"
-      stroke="none"
-    />
-    <rect
-      x="20"
-      y="12"
-      width="1.5"
-      height="1.5"
-      rx="0.2"
-      fill="currentColor"
-      stroke="none"
-    />
-
-    <rect
-      x="12"
-      y="16"
-      width="2"
-      height="2"
-      rx="0.2"
-      fill="currentColor"
-      stroke="none"
-    />
-    <rect
-      x="18"
-      y="16"
-      width="3"
-      height="2"
-      rx="0.2"
-      fill="currentColor"
-      stroke="none"
-    />
-
-    <rect
-      x="12"
-      y="20"
       width="1.5"
       height="1.5"
       rx="0.2"
@@ -450,17 +458,8 @@ export const Qrcode = (props) => (
       stroke="none"
     />
     <rect
-      x="15.5"
-      y="19.5"
-      width="2"
-      height="2"
-      rx="0.2"
-      fill="currentColor"
-      stroke="none"
-    />
-    <rect
-      x="20"
-      y="20"
+      x="17"
+      y="17"
       width="1.5"
       height="1.5"
       rx="0.2"
