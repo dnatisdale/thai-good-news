@@ -385,65 +385,70 @@ export const Qrcode = (props) => (
     viewBox="0 0 24 24"
     fill="currentColor"
   >
-    {/* QR code with 3 clear finder squares and blocky QR dots */}
+    {/* Clean QR icon: 3 finder boxes + connected bottom-right QR blocks */}
 
-    {/* Top-left finder */}
+    {/* Top-left finder square */}
     <rect
-      x="2"
-      y="2"
-      width="7"
-      height="7"
-      rx="1.2"
+      x="2.5"
+      y="2.5"
+      width="6.5"
+      height="6.5"
+      rx="1"
       fill="none"
       stroke="currentColor"
-      strokeWidth="1.8"
+      strokeWidth="1.9"
     />
-    <rect x="4.2" y="4.2" width="2.6" height="2.6" rx="0.3" />
+    <rect x="4.6" y="4.6" width="2.3" height="2.3" rx="0.25" />
 
-    {/* Top-right finder */}
+    {/* Top-right finder square */}
     <rect
       x="15"
-      y="2"
-      width="7"
-      height="7"
-      rx="1.2"
+      y="2.5"
+      width="6.5"
+      height="6.5"
+      rx="1"
       fill="none"
       stroke="currentColor"
-      strokeWidth="1.8"
+      strokeWidth="1.9"
     />
-    <rect x="17.2" y="4.2" width="2.6" height="2.6" rx="0.3" />
+    <rect x="17.1" y="4.6" width="2.3" height="2.3" rx="0.25" />
 
-    {/* Bottom-left finder */}
+    {/* Bottom-left finder square */}
     <rect
-      x="2"
+      x="2.5"
       y="15"
-      width="7"
-      height="7"
-      rx="1.2"
+      width="6.5"
+      height="6.5"
+      rx="1"
       fill="none"
       stroke="currentColor"
-      strokeWidth="1.8"
+      strokeWidth="1.9"
     />
-    <rect x="4.2" y="17.2" width="2.6" height="2.6" rx="0.3" />
+    <rect x="4.6" y="17.1" width="2.3" height="2.3" rx="0.25" />
 
-    {/* QR data blocks */}
-    <rect x="11" y="3" width="2.5" height="2.5" rx="0.2" />
-    <rect x="11" y="7" width="2.5" height="2.5" rx="0.2" />
+    {/* Top middle QR blocks */}
+    <rect x="11" y="2.8" width="2.4" height="2.4" rx="0.2" />
+    <rect x="11" y="6.4" width="2.4" height="2.4" rx="0.2" />
 
-    <rect x="10.5" y="10.5" width="2.5" height="2.5" rx="0.2" />
-    <rect x="14" y="10.5" width="2.5" height="2.5" rx="0.2" />
-    <rect x="18" y="10.5" width="2.5" height="2.5" rx="0.2" />
+    {/* Middle QR blocks */}
+    <rect x="10.8" y="10.8" width="2.4" height="2.4" rx="0.2" />
+    <rect x="14.2" y="10.8" width="2.4" height="2.4" rx="0.2" />
+    <rect x="18.2" y="10.8" width="2.4" height="2.4" rx="0.2" />
 
-    <rect x="11" y="15" width="2.5" height="2.5" rx="0.2" />
-    <rect x="14.5" y="14.5" width="2.5" height="2.5" rx="0.2" />
-    <rect x="18.5" y="14.5" width="2.5" height="2.5" rx="0.2" />
+    {/* Connected bottom-right QR pattern */}
+    <rect x="11" y="15" width="2.4" height="2.4" rx="0.2" />
+    <rect x="14.2" y="15" width="2.4" height="2.4" rx="0.2" />
+    <rect x="17.4" y="15" width="4.1" height="2.4" rx="0.2" />
 
-    <rect x="11" y="19" width="2.5" height="2.5" rx="0.2" />
-    <rect x="15" y="18.5" width="2.5" height="2.5" rx="0.2" />
-    <rect x="19" y="18.5" width="2.5" height="2.5" rx="0.2" />
+    <rect x="11" y="18.2" width="2.4" height="2.4" rx="0.2" />
+    <rect x="14.2" y="18.2" width="4.1" height="2.4" rx="0.2" />
+    <rect x="19.1" y="18.2" width="2.4" height="2.4" rx="0.2" />
+
+    {/* Small connector blocks to make it feel more QR-like */}
+    <rect x="15.8" y="12.6" width="2.4" height="2.4" rx="0.2" />
+    <rect x="19.1" y="13.4" width="2.4" height="4.1" rx="0.2" />
   </svg>
 );
-
 export const PlayCircle = (props) => (
   <svg
     {...props}
