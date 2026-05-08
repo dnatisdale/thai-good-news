@@ -713,32 +713,26 @@ export const LanguageIcon = (props) => (
   <svg
     {...props}
     xmlns="http://www.w3.org/2000/svg"
+    width="24"
+    height="24"
     viewBox="0 0 24 24"
     fill="none"
+    stroke="currentColor"
+    strokeWidth="2.2"
+    strokeLinecap="round"
+    strokeLinejoin="round"
   >
-    {/* Standard language / translate style icon: 文 + A */}
+    {/* Language / translate style icon: thinner, rounded, matches header icons */}
 
-    <text
-      x="2.2"
-      y="13.5"
-      fontSize="15"
-      fontWeight="900"
-      fill="currentColor"
-      fontFamily="'Noto Sans CJK SC', 'Noto Sans Thai', 'Arial Unicode MS', Arial, sans-serif"
-    >
-      文
-    </text>
+    {/* 文-style left character */}
+    <path d="M4 5h9" />
+    <path d="M8.5 3v3" />
+    <path d="M6 8c1.2 3.2 3.4 5.4 6.5 7" />
+    <path d="M12.5 8c-1.2 3.2-3.4 5.4-6.5 7" />
 
-    <text
-      x="10.2"
-      y="21"
-      fontSize="17"
-      fontWeight="900"
-      fill="currentColor"
-      fontFamily="'Outfit', Arial, sans-serif"
-    >
-      A
-    </text>
+    {/* A-style right character */}
+    <path d="M13.5 20l3.2-8.5L20 20" />
+    <path d="M14.8 17h3.9" />
   </svg>
 );
 
