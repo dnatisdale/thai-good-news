@@ -27,7 +27,7 @@ import {
   MessageSquare, // NEW
   Music,
   Globe,
-  List, // For language search bar toggle
+  AlphabetIndex,
   Copy, // NEW
   Share2, // NEW
 } from "./components/Icons";
@@ -1721,33 +1721,10 @@ export default function App() {
               )}
             </div>
 
-            {/* RIGHT: Controls */}
+            {/* RIGHT MOBILE: Controls */}
             <div className="flex items-center justify-end space-x-1">
-              {/* Language List Search Bar Toggle - only on Home page */}
-              {currentPage.name === "Home" && (
-                <button
-                  onClick={() => setIsLangSearchBarVisible((prev) => !prev)}
-                  className="text-white p-1 rounded-lg hover:bg-red-800 transition-colors btn-hover"
-                  title={
-                    isLangSearchBarVisible
-                      ? lang === "th"
-                        ? "ซ่อนรายการตัวอักษร"
-                        : "Hide ABC List"
-                      : lang === "th"
-                        ? "แสดงรายการตัวอักษร"
-                        : "Show ABC List"
-                  }
-                  aria-label={
-                    isLangSearchBarVisible
-                      ? "Hide alphabet list"
-                      : "Show alphabet list"
-                  }
-                >
-                  <List className="w-6 h-6" />
-                </button>
-              )}
-
               <LanguageToggle lang={lang} setLang={setLang} t={t} />
+
               <FloatingUtilityBar
                 t={t}
                 lang={lang}
@@ -1758,6 +1735,7 @@ export default function App() {
                 setFontSize={setFontSize}
                 navigateToSelectedContent={navigateToSelectedContent}
               />
+
               {!isPwaInstalled && (
                 <button
                   onClick={handleInstallClick}
@@ -1769,10 +1747,39 @@ export default function App() {
                 </button>
               )}
 
+              {/* A-Z / Thai alphabet side rolodex toggle - only on Home page */}
+              {currentPage.name === "Home" && (
+                <button
+                  onClick={() => setIsLangSearchBarVisible((prev) => !prev)}
+                  className="text-white p-1 rounded-lg hover:bg-red-800 transition-colors btn-hover"
+                  title={
+                    isLangSearchBarVisible
+                      ? lang === "th"
+                        ? "ซ่อนรายการตัวอักษร"
+                        : "Hide A-Z index"
+                      : lang === "th"
+                        ? "แสดงรายการตัวอักษร"
+                        : "Show A-Z index"
+                  }
+                  aria-label={
+                    isLangSearchBarVisible
+                      ? lang === "th"
+                        ? "ซ่อนรายการตัวอักษร"
+                        : "Hide A-Z index"
+                      : lang === "th"
+                        ? "แสดงรายการตัวอักษร"
+                        : "Show A-Z index"
+                  }
+                >
+                  <AlphabetIndex className="w-9 h-9" />
+                </button>
+              )}
+
               <button
                 onClick={() => setIsSearchOpen(true)}
                 className="text-white p-1 rounded-lg hover:bg-red-800 transition-colors btn-hover"
                 aria-label="Toggle Search"
+                title={lang === "th" ? "ค้นหา" : "Search"}
               >
                 <Search className="w-6 h-6" />
               </button>
@@ -1858,54 +1865,8 @@ export default function App() {
               )}
             </div>
 
-            {/* Right: Controls */}
+            {/* Right Desktop: Controls */}
             <div className="flex items-center space-x-4 flex-shrink-0">
-              {/* Language List Search Bar Toggle - only on Home page */}
-              {currentPage.name === "Home" && (
-                <button
-                  onClick={() =>
-                    setIsLangSearchBarVisible((prev) => {
-                      const next = !prev;
-                      // If we’re opening the drawer, jump to the top so it’s visible
-                      if (!prev && mainScrollRef.current) {
-                        mainScrollRef.current.scrollTo({
-                          top: 0,
-                          behavior: "smooth",
-                        });
-                      }
-                      // Also scroll the window, in case the browser is using window scroll
-                      if (!prev) {
-                        window.scrollTo({ top: 0, behavior: "smooth" });
-                      }
-                      return next;
-                    })
-                  }
-                  className="text-white p-1 rounded-lg hover:bg-red-800 transition-colors btn-hover"
-                  title={
-                    isLangSearchBarVisible
-                      ? "Hide search bar"
-                      : "Show search bar"
-                  }
-                  aria-label={
-                    isLangSearchBarVisible
-                      ? "Hide language search bar"
-                      : "Show language search bar"
-                  }
-                >
-                  <List className="w-6 h-6" />
-                </button>
-              )}
-
-              {!isPwaInstalled && (
-                <button
-                  onClick={handleInstallClick}
-                  title={t.install_app || "Install App"}
-                  className="p-1 rounded-lg transition-colors btn-hover text-white hover:bg-red-800"
-                  aria-label={t.install_app || "Install App"}
-                >
-                  <Download className="w-6 h-6" />
-                </button>
-              )}
               <FloatingUtilityBar
                 t={t}
                 lang={lang}
@@ -1917,12 +1878,70 @@ export default function App() {
                 navigateToSelectedContent={navigateToSelectedContent}
                 isHovering={isHoveringContent}
               />
+
               <LanguageToggle lang={lang} setLang={setLang} t={t} />
+
+              {!isPwaInstalled && (
+                <button
+                  onClick={handleInstallClick}
+                  title={t.install_app || "Install App"}
+                  className="p-1 rounded-lg transition-colors btn-hover text-white hover:bg-red-800"
+                  aria-label={t.install_app || "Install App"}
+                >
+                  <Download className="w-6 h-6" />
+                </button>
+              )}
+
+              {/* A-Z / Thai alphabet side rolodex toggle - only on Home page */}
+              {currentPage.name === "Home" && (
+                <button
+                  onClick={() =>
+                    setIsLangSearchBarVisible((prev) => {
+                      const next = !prev;
+
+                      if (!prev && mainScrollRef.current) {
+                        mainScrollRef.current.scrollTo({
+                          top: 0,
+                          behavior: "smooth",
+                        });
+                      }
+
+                      if (!prev) {
+                        window.scrollTo({ top: 0, behavior: "smooth" });
+                      }
+
+                      return next;
+                    })
+                  }
+                  className="text-white p-1 rounded-lg hover:bg-red-800 transition-colors btn-hover"
+                  title={
+                    isLangSearchBarVisible
+                      ? lang === "th"
+                        ? "ซ่อนรายการตัวอักษร"
+                        : "Hide A-Z index"
+                      : lang === "th"
+                        ? "แสดงรายการตัวอักษร"
+                        : "Show A-Z index"
+                  }
+                  aria-label={
+                    isLangSearchBarVisible
+                      ? lang === "th"
+                        ? "ซ่อนรายการตัวอักษร"
+                        : "Hide A-Z index"
+                      : lang === "th"
+                        ? "แสดงรายการตัวอักษร"
+                        : "Show A-Z index"
+                  }
+                >
+                  <AlphabetIndex className="w-9 h-9" />
+                </button>
+              )}
 
               <button
                 onClick={() => setIsSearchOpen(true)}
                 className="text-white p-1 rounded-lg hover:bg-red-800 transition-colors btn-hover"
                 aria-label="Toggle Search"
+                title={lang === "th" ? "ค้นหา" : "Search"}
               >
                 <Search className="w-6 h-6" />
               </button>

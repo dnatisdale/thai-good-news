@@ -31,6 +31,14 @@ const LanguageListPage = ({
   // Search state for filtering languages
   const [searchQuery, setSearchQuery] = useState("");
 
+  const getLetterJumpLabel = (letter) => {
+    if (lang === "th") {
+      return `ไปที่ตัวอักษร ${letter}`;
+    }
+
+    return `Jump to ${letter}`;
+  };
+
   // Filter languages based on search query (English or Thai)
   const filteredLanguages = languageGroups.filter((group) => {
     if (!searchQuery) return true;
@@ -224,50 +232,45 @@ const LanguageListPage = ({
 
   return (
     <div className="h-full flex flex-col">
-      {/* Search Bar with Slide Animation - always rendered, slides in/out */}
-      {/* Search Bar - conditionally rendered for reliability */}
+      {/* Right-side Rolodex Letter Index */}
       {isSearchBarVisible && (
-        <div className="sticky top-0 z-30 bg-gray-100 dark:bg-[#374151] pb-6 pt-2 px-1 shadow-lg border-b border-gray-200 dark:border-gray-600 rounded-b-xl">
-          <div className="flex flex-col items-center">
-            {honeycombRows.map((row, rowIndex) => (
-              <div
-                key={rowIndex}
-                className="flex justify-center gap-[1px] -mb-3.5 w-full"
-                style={{ zIndex: 30 - rowIndex }}
+        <div
+          className="
+      fixed right-1 top-32 bottom-24 z-40
+      flex flex-col items-center justify-center
+      pointer-events-none
+    "
+        >
+          <div
+            className="
+        pointer-events-auto
+        max-h-full overflow-y-auto
+        rounded-full
+        bg-white/90 dark:bg-[#374151]/95
+        shadow-lg border border-gray-200 dark:border-gray-600
+        px-1 py-2
+        flex flex-col items-center gap-0.5
+      "
+          >
+            {alphabet.map((letter) => (
+              <button
+                key={letter}
+                onClick={() => scrollToLetter(letter)}
+                className="
+            w-7 h-7
+            flex items-center justify-center
+            rounded-full
+            text-sm font-bold
+            text-[#003366] dark:text-white
+            hover:bg-brand-red hover:text-white
+            active:scale-110
+            transition-all duration-150
+          "
+                title={getLetterJumpLabel(letter)}
+                aria-label={getLetterJumpLabel(letter)}
               >
-                {/* Visible Letters */}
-                {row.letters.map((letter) => (
-                  <button
-                    key={letter}
-                    onClick={() => scrollToLetter(letter)}
-                    className="
-                      w-12 h-12 flex items-center justify-center
-                      text-xl md:text-2xl font-bold text-gray-700 dark:text-gray-100
-                      bg-gray-200 dark:bg-gray-700
-                      hover:bg-brand-red hover:text-white
-                      dark:hover:bg-[#CC3333] dark:hover:text-white
-                      transition-all duration-200 ease-out origin-center
-                      hover:scale-150 hover:z-50 
-                      hover:shadow-xl dark:hover:shadow-[0_0_20px_rgba(204,51,51,0.6)]
-                    "
-                    style={{
-                      clipPath:
-                        "polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%)",
-                    }}
-                  >
-                    {letter}
-                  </button>
-                ))}
-
-                {/* Invisible Placeholders to maintain alignment */}
-                {row.placeholders > 0 &&
-                  Array.from({ length: row.placeholders }).map((_, i) => (
-                    <div
-                      key={`placeholder-${i}`}
-                      className="w-12 h-12 invisible"
-                    />
-                  ))}
-              </div>
+                {letter}
+              </button>
             ))}
           </div>
         </div>
@@ -276,7 +279,9 @@ const LanguageListPage = ({
       {/* Scrollable Language Cards Container with Letter Headers */}
       <div
         ref={scrollContainerRef}
-        className="flex-1 overflow-y-auto px-1 sm:px-4 relative"
+        className={`flex-1 overflow-y-auto px-1 sm:px-4 relative ${
+          isSearchBarVisible ? "pr-8 sm:pr-10" : ""
+        }`}
       >
         {Object.keys(groupedByLetter).length > 0 ? (
           Object.entries(groupedByLetter).map(([letter, languages]) => (

@@ -134,6 +134,53 @@ export const List = (props) => (
   </svg>
 );
 
+export const AlphabetIndex = (props) => (
+  <svg
+    {...props}
+    xmlns="http://www.w3.org/2000/svg"
+    width="24"
+    height="24"
+    viewBox="0 0 24 24"
+    fill="none"
+  >
+    {/* Tall A-Z side index icon */}
+
+    <text
+      x="12"
+      y="6.5"
+      textAnchor="middle"
+      fontSize="8.5"
+      fontWeight="800"
+      fill="currentColor"
+      fontFamily="Arial, sans-serif"
+    >
+      A
+    </text>
+
+    <line
+      x1="12"
+      y1="9.3"
+      x2="12"
+      y2="14.1"
+      stroke="currentColor"
+      strokeWidth="1.9"
+      strokeLinecap="round"
+    />
+
+    <text
+      x="12"
+      y="22.5"
+      textAnchor="middle"
+      fontSize="8.5"
+      fontWeight="800"
+      fill="currentColor"
+      fontFamily="Arial, sans-serif"
+    >
+      Z
+    </text>
+  </svg>
+);
+
 export const X = (props) => (
   <svg
     {...props}
