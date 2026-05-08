@@ -385,7 +385,7 @@ export const Qrcode = (props) => (
     viewBox="0 0 24 24"
     fill="currentColor"
   >
-    {/* Clean QR icon: 3 finder boxes + connected bottom-right QR blocks */}
+    {/* Clean QR icon: keep the 3 finder boxes, open up the bottom-right maze */}
 
     {/* Top-left finder square */}
     <rect
@@ -426,27 +426,29 @@ export const Qrcode = (props) => (
     />
     <rect x="4.6" y="17.1" width="2.3" height="2.3" rx="0.25" />
 
-    {/* Top middle QR blocks */}
+    {/* Small top-middle blocks */}
     <rect x="11" y="2.8" width="2.4" height="2.4" rx="0.2" />
     <rect x="11" y="6.4" width="2.4" height="2.4" rx="0.2" />
 
-    {/* Middle QR blocks */}
+    {/* Middle row blocks */}
     <rect x="10.8" y="10.8" width="2.4" height="2.4" rx="0.2" />
-    <rect x="14.2" y="10.8" width="2.4" height="2.4" rx="0.2" />
-    <rect x="18.2" y="10.8" width="2.4" height="2.4" rx="0.2" />
+    <rect x="14.4" y="10.8" width="2.4" height="2.4" rx="0.2" />
+    <rect x="19" y="10.8" width="2.4" height="2.4" rx="0.2" />
 
-    {/* Connected bottom-right QR pattern */}
-    <rect x="11" y="15" width="2.4" height="2.4" rx="0.2" />
-    <rect x="14.2" y="15" width="2.4" height="2.4" rx="0.2" />
-    <rect x="17.4" y="15" width="4.1" height="2.4" rx="0.2" />
+    {/* Bottom-right QR maze pattern - more open, less clumped */}
+    <rect x="11" y="14.4" width="2.4" height="2.4" rx="0.2" />
+    <rect x="15.2" y="14.4" width="2.4" height="2.4" rx="0.2" />
+    <rect x="19" y="14.4" width="2.4" height="2.4" rx="0.2" />
 
-    <rect x="11" y="18.2" width="2.4" height="2.4" rx="0.2" />
-    <rect x="14.2" y="18.2" width="4.1" height="2.4" rx="0.2" />
-    <rect x="19.1" y="18.2" width="2.4" height="2.4" rx="0.2" />
+    {/* horizontal maze line */}
+    <rect x="13.4" y="17.6" width="4.2" height="2.2" rx="0.2" />
 
-    {/* Small connector blocks to make it feel more QR-like */}
-    <rect x="15.8" y="12.6" width="2.4" height="2.4" rx="0.2" />
-    <rect x="19.1" y="13.4" width="2.4" height="4.1" rx="0.2" />
+    {/* lower blocks with breathing room */}
+    <rect x="11" y="19" width="2.4" height="2.4" rx="0.2" />
+    <rect x="18.9" y="19" width="2.4" height="2.4" rx="0.2" />
+
+    {/* small connector to give QR-code maze feel */}
+    <rect x="17.4" y="12.6" width="2.1" height="4.2" rx="0.2" />
   </svg>
 );
 export const PlayCircle = (props) => (
