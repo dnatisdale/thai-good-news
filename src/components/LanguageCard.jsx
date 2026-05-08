@@ -65,6 +65,9 @@ const LanguageCard = ({
   const circleButtonClass =
     "w-10 h-10 flex items-center justify-center rounded-full bg-gray-200 dark:bg-white text-gray-600 dark:text-gray-600 transition-all duration-200 shrink-0 hover:scale-110 active:scale-95 focus:outline-none focus:ring-2 focus:ring-brand-red/30";
 
+  const disabledCircleClass =
+    "w-10 h-10 flex items-center justify-center rounded-full bg-gray-200 dark:bg-white text-gray-400 dark:text-gray-400 shrink-0 cursor-not-allowed opacity-55";
+
   const caretTitle = isExpanded
     ? lang === "en"
       ? "Hide extra buttons"
@@ -78,13 +81,13 @@ const LanguageCard = ({
       id={id}
       onMouseEnter={() => setHovering && setHovering(true)}
       onMouseLeave={() => setHovering && setHovering(false)}
-      className="relative bg-white dark:bg-[#374151] px-2 py-3 mb-1 rounded-xl shadow-md border-b-4 border-brand-red card-hover transition-colors"
+      className="relative bg-white dark:bg-[#374151] px-2 py-1.5 mb-1 rounded-xl shadow-md border-b-4 border-brand-red card-hover transition-colors"
     >
       {/* MAIN CARD ROW */}
       <div className="flex items-start gap-1.5">
         {/* CHECKBOX */}
         <div
-          className="pt-6 shrink-0"
+          className="pt-4 shrink-0"
           onClick={(e) => {
             e.stopPropagation();
             onToggle();
@@ -106,7 +109,7 @@ const LanguageCard = ({
         {/* LANGUAGE TEXT */}
         <div
           onClick={() => onSelect(languageName)}
-          className="flex-1 min-w-0 pt-5 cursor-pointer"
+          className="flex-1 min-w-0 pt-3 cursor-pointer"
         >
           <h3
             className={`text-xl font-bold leading-tight ${ACCENT_COLOR_CLASS} dark:text-white`}
@@ -121,8 +124,8 @@ const LanguageCard = ({
         </div>
 
         {/* RIGHT BUTTON AREA */}
-        <div className="relative shrink-0 ml-1 pt-8 pr-0">
-          {/* CARET: HIGH, RIGHT, ABOVE QR BUTTON */}
+        <div className="relative shrink-0 w-[132px] pt-5 pr-0">
+          {/* CARET: HIGHER, FAR RIGHT, ABOVE QR BUTTON */}
           <button
             type="button"
             onClick={(e) => {
@@ -130,7 +133,7 @@ const LanguageCard = ({
               setIsExpanded((currentValue) => !currentValue);
             }}
             className="
-              absolute -top-1 right-0 z-20
+              absolute -top-4 right-0 z-20
               w-10 h-8
               flex items-center justify-center
               text-gray-500 dark:text-gray-200
@@ -152,8 +155,8 @@ const LanguageCard = ({
             )}
           </button>
 
-          {/* TOP 3 BUTTONS: FLUSH RIGHT */}
-          <div className="flex items-center justify-end gap-1.5">
+          {/* TOP 3 BUTTONS */}
+          <div className="grid grid-cols-3 gap-1.5 justify-items-center">
             {/* LISTEN */}
             <button
               type="button"
@@ -173,7 +176,7 @@ const LanguageCard = ({
             </button>
 
             {/* FAVORITE */}
-            {onToggleFavorite && (
+            {onToggleFavorite ? (
               <button
                 type="button"
                 onClick={(e) => {
@@ -197,6 +200,14 @@ const LanguageCard = ({
                   }}
                 />
               </button>
+            ) : (
+              <div
+                className={disabledCircleClass}
+                title="Favorites unavailable"
+                aria-label="Favorites unavailable"
+              >
+                <Heart className="w-6 h-6" />
+              </div>
             )}
 
             {/* QR SHARE */}
@@ -216,11 +227,11 @@ const LanguageCard = ({
             </button>
           </div>
 
-          {/* BOTTOM 3 BUTTONS: DIRECTLY UNDER TOP 3, FLUSH RIGHT, SMALL GAP */}
+          {/* BOTTOM 3 BUTTONS: SAME GRID, NO BACKGROUND BOX */}
           {isExpanded && (
-            <div className="mt-1 flex items-center justify-end gap-1.5 rounded-xl bg-gray-50 dark:bg-[#4b5563] px-2 py-2">
+            <div className="mt-1 grid grid-cols-3 gap-1.5 justify-items-center">
               {/* OPEN */}
-              {externalUrl && (
+              {externalUrl ? (
                 <a
                   href={externalUrl}
                   target="_blank"
@@ -238,10 +249,26 @@ const LanguageCard = ({
                 >
                   <ExternalLink className="w-6 h-6" />
                 </a>
+              ) : (
+                <div
+                  className={disabledCircleClass}
+                  title={
+                    lang === "en"
+                      ? "No external link available"
+                      : "ไม่มีลิงก์ภายนอก"
+                  }
+                  aria-label={
+                    lang === "en"
+                      ? "No external link available"
+                      : "ไม่มีลิงก์ภายนอก"
+                  }
+                >
+                  <ExternalLink className="w-6 h-6" />
+                </div>
               )}
 
               {/* DOWNLOAD */}
-              {sampleUrl && (
+              {sampleUrl ? (
                 <a
                   href={sampleUrl}
                   download
@@ -252,6 +279,22 @@ const LanguageCard = ({
                 >
                   <Download className="w-6 h-6" />
                 </a>
+              ) : (
+                <div
+                  className={disabledCircleClass}
+                  title={
+                    lang === "en"
+                      ? "No download available"
+                      : "ไม่มีไฟล์ดาวน์โหลด"
+                  }
+                  aria-label={
+                    lang === "en"
+                      ? "No download available"
+                      : "ไม่มีไฟล์ดาวน์โหลด"
+                  }
+                >
+                  <Download className="w-6 h-6" />
+                </div>
               )}
 
               {/* VIDEO */}
@@ -269,7 +312,7 @@ const LanguageCard = ({
                 </a>
               ) : (
                 <div
-                  className={`${circleButtonClass} cursor-not-allowed opacity-60`}
+                  className={disabledCircleClass}
                   title={lang === "en" ? "No video available" : "ไม่มีวิดีโอ"}
                   aria-label={
                     lang === "en" ? "No video available" : "ไม่มีวิดีโอ"
