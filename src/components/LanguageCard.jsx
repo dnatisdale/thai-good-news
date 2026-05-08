@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   Volume2,
   Heart,
@@ -33,6 +33,11 @@ const LanguageCard = ({
   id,
 }) => {
   const [isExpanded, setIsExpanded] = useState(false);
+  const [localIsFavorite, setLocalIsFavorite] = useState(!!isFavorite);
+
+  useEffect(() => {
+    setLocalIsFavorite(!!isFavorite);
+  }, [isFavorite]);
 
   const highlightText = (text, query) => {
     if (!query || !text) return text;
@@ -124,8 +129,8 @@ const LanguageCard = ({
         </div>
 
         {/* RIGHT BUTTON AREA */}
-        <div className="relative shrink-0 w-[132px] pt-5 pr-0">
-          {/* CARET: HIGHER, FAR RIGHT, ABOVE QR BUTTON */}
+        <div className="relative shrink-0 w-[132px] pt-4 pr-0">
+          {/* CARET */}
           <button
             type="button"
             onClick={(e) => {
@@ -133,14 +138,14 @@ const LanguageCard = ({
               setIsExpanded((currentValue) => !currentValue);
             }}
             className="
-              absolute -top-4 right-0 z-20
+              absolute -top-2 right-0 z-20
               w-10 h-8
               flex items-center justify-center
               text-gray-500 dark:text-gray-200
               bg-transparent border-0 shadow-none
               outline-none ring-0
               hover:text-brand-red dark:hover:text-white
-              hover:scale-150 active:scale-175
+              hover:scale-145 active:scale-170
               focus:outline-none focus:ring-0
               transition-all duration-200 ease-out
             "
@@ -181,20 +186,21 @@ const LanguageCard = ({
                 type="button"
                 onClick={(e) => {
                   e.stopPropagation();
+                  setLocalIsFavorite((currentValue) => !currentValue);
                   onToggleFavorite();
                 }}
                 className={`${circleButtonClass} group hover:bg-brand-red`}
                 title={
-                  isFavorite ? "Remove from Favorites" : "Add to Favorites"
+                  localIsFavorite ? "Remove from Favorites" : "Add to Favorites"
                 }
                 aria-label={
-                  isFavorite ? "Remove from Favorites" : "Add to Favorites"
+                  localIsFavorite ? "Remove from Favorites" : "Add to Favorites"
                 }
               >
                 <Heart
                   className="w-6 h-6 transition-all group-hover:text-white"
                   style={{
-                    fill: isFavorite ? "#CC3333" : "none",
+                    fill: localIsFavorite ? "#CC3333" : "none",
                     color: "#CC3333",
                     strokeWidth: "2",
                   }}
@@ -227,7 +233,7 @@ const LanguageCard = ({
             </button>
           </div>
 
-          {/* BOTTOM 3 BUTTONS: SAME GRID, NO BACKGROUND BOX */}
+          {/* BOTTOM 3 BUTTONS */}
           {isExpanded && (
             <div className="mt-1 grid grid-cols-3 gap-1.5 justify-items-center">
               {/* OPEN */}

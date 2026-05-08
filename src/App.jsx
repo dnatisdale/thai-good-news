@@ -60,7 +60,6 @@ import UpdateNotification from "./components/UpdateNotification";
 import StorageManagementPage from "./pages/StorageManagementPage"; // NEW
 import InstallBanner from "./components/InstallBanner"; // NEW: Install Banner
 
-
 // --- CONSTANTS ---
 const PRIMARY_COLOR_CLASS = "bg-gradient-to-r from-brand-red to-brand-red-dark";
 const ACCENT_COLOR_CLASS = "text-brand-red";
@@ -69,10 +68,11 @@ const DEFAULT_FONT_SIZE = "16px";
 export default function App() {
   // --- Swipe to Close Sidebar Logic ---
   const [customBackHandler, setCustomBackHandler] = useState(null); // NEW: Allow pages to intercept Back
-  
+
   // --- STATE LIFTING: Shared Offline Storage ---
-  const { offlineTracks, downloadTrack, deleteTrack, clearLibrary } = useOfflineStorage();
-  
+  const { offlineTracks, downloadTrack, deleteTrack, clearLibrary } =
+    useOfflineStorage();
+
   const touchStartRef = React.useRef(null);
   const touchEndRef = React.useRef(null);
   const minSwipeDistance = 50; // Minimum distance for a swipe to be registered
@@ -106,7 +106,7 @@ export default function App() {
     // 1. Get the list of actual message objects based on selectedPrograms
     const filteredContent = getFilteredMessages(
       staticContent,
-      selectedPrograms
+      selectedPrograms,
     );
 
     if (filteredContent.length === 0) return null;
@@ -160,7 +160,7 @@ export default function App() {
   const handleDownloadSelectedPDF = () => {
     const filteredContent = getFilteredMessages(
       staticContent,
-      selectedPrograms
+      selectedPrograms,
     );
     if (filteredContent.length === 0) {
       alert(t.select_content_first || "Please select some content first!");
@@ -179,12 +179,12 @@ export default function App() {
       .replace(/:/g, "-")
       .slice(0, 5); // HH-mm
     const filename = `TGN_Selected_Messages_${dateStr}_${timeStr}`;
-    const dateText = now.toLocaleString(isThai ? 'th-TH' : 'en-US', {
-      year: 'numeric',
-      month: 'long',
-      day: 'numeric',
-      hour: '2-digit',
-      minute: '2-digit'
+    const dateText = now.toLocaleString(isThai ? "th-TH" : "en-US", {
+      year: "numeric",
+      month: "long",
+      day: "numeric",
+      hour: "2-digit",
+      minute: "2-digit",
     });
 
     // Generate HTML list items
@@ -306,13 +306,13 @@ export default function App() {
     // 1. Get the list of actual message objects based on selectedPrograms
     const filteredContent = getFilteredMessages(
       staticContent,
-      selectedPrograms
+      selectedPrograms,
     );
 
     if (filteredContent.length === 0) {
       alert(
         t.please_select_messages ||
-          "Please select some messages first by checking the boxes next to them!"
+          "Please select some messages first by checking the boxes next to them!",
       );
       return null;
     }
@@ -345,7 +345,7 @@ export default function App() {
         // Fallback: Copy to clipboard if Web Share API is not available
         await navigator.clipboard.writeText(contentToShare);
         alert(
-          t.list_copied_to_clipboard || "Selected list copied to clipboard!"
+          t.list_copied_to_clipboard || "Selected list copied to clipboard!",
         );
       }
     } catch (error) {
@@ -408,7 +408,7 @@ export default function App() {
 
             // simple QR image (200x200) for the card
             const qrImg = `https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=${encodeURIComponent(
-              cardUrl
+              cardUrl,
             )}`;
 
             return `
@@ -723,7 +723,8 @@ export default function App() {
 
   // --------------------------------------------------------------------------
   // *** FIX: Changed from array to object destructuring and passed  // --- HOOKS ---
-  const { isAuthReady, userId, userData, saveUserData, error, logOut, signUp } = useFirebase(setLang); // Modified to include signUp
+  const { isAuthReady, userId, userData, saveUserData, error, logOut, signUp } =
+    useFirebase(setLang); // Modified to include signUp
   // const { offlineTracks } = useOfflineStorage(); // REMOVED: Managed at top level
 
   // --- NEW: Toggle Favorite (Message) ---
@@ -740,16 +741,37 @@ export default function App() {
   };
 
   // --- NEW: Toggle Favorite Language ---
+  const favoriteLanguagesRef = React.useRef([]);
+
+  useEffect(() => {
+    favoriteLanguagesRef.current = Array.isArray(userData?.favoriteLanguages)
+      ? userData.favoriteLanguages
+      : [];
+  }, [userData?.favoriteLanguages]);
+
+  // --- NEW: Toggle Favorite Language ---
   const handleToggleFavoriteLanguage = (stableKey) => {
-    if (!userData) return;
-    const currentFavorites = userData.favoriteLanguages || [];
-    let newFavorites;
-    if (currentFavorites.includes(stableKey)) {
-      newFavorites = currentFavorites.filter((key) => key !== stableKey);
-    } else {
-      newFavorites = [...currentFavorites, stableKey];
-    }
-    saveUserData({ ...userData, favoriteLanguages: newFavorites });
+    if (!userData || !stableKey) return;
+
+    const clickedKey = String(stableKey);
+    const currentFavorites = Array.isArray(favoriteLanguagesRef.current)
+      ? favoriteLanguagesRef.current
+      : [];
+
+    const alreadyFavorite = currentFavorites.some(
+      (key) => String(key) === clickedKey,
+    );
+
+    const newFavorites = alreadyFavorite
+      ? currentFavorites.filter((key) => String(key) !== clickedKey)
+      : [...currentFavorites, stableKey];
+
+    favoriteLanguagesRef.current = newFavorites;
+
+    saveUserData({
+      ...userData,
+      favoriteLanguages: newFavorites,
+    });
   };
 
   // NEW: Global Search State
@@ -986,7 +1008,7 @@ export default function App() {
       if (!targetItem) return [];
 
       const targetGroup = languageGroups.find(
-        (g) => g.stableKey === targetItem.stableKey
+        (g) => g.stableKey === targetItem.stableKey,
       );
       return targetGroup ? targetGroup.messages : [];
     } else if (
@@ -1093,7 +1115,7 @@ export default function App() {
 
     const currentItemId = currentPage.key;
     const currentIndex = flatContentList.findIndex(
-      (item) => item.id === currentItemId
+      (item) => item.id === currentItemId,
     );
 
     let newIndex;
@@ -1126,7 +1148,6 @@ export default function App() {
   };
 
   // --- NEW: PWA Install Click Handler ---
-
 
   // --- Current Content and Navigation Status ---
   const currentPage = pageStack[pageStack.length - 1];
@@ -1226,7 +1247,7 @@ export default function App() {
     return () => {
       window.removeEventListener(
         "beforeinstallprompt",
-        handleBeforeInstallPrompt
+        handleBeforeInstallPrompt,
       );
       try {
         mediaQueryLocal.removeEventListener("change", handleChange);
@@ -1258,14 +1279,14 @@ export default function App() {
         alert(
           lang === "th"
             ? "ในการติดตั้ง: แตะปุ่มแชร์ด้านล่าง แล้วเลือก 'เพิ่มไปยังหน้าจอหลัก'"
-            : "To install: Tap the Share button below and select 'Add to Home Screen'"
+            : "To install: Tap the Share button below and select 'Add to Home Screen'",
         );
       } else {
         // Fallback for other browsers
         alert(
           lang === "th"
             ? "ติดตั้งแอพนี้ได้จากเมนูของเบราว์เซอร์ (เพิ่มไปยังหน้าจอหลัก)"
-            : "Install this app from your browser menu (Add to Home Screen)"
+            : "Install this app from your browser menu (Add to Home Screen)",
         );
       }
     }
@@ -1709,8 +1730,12 @@ export default function App() {
                   className="text-white p-1 rounded-lg hover:bg-red-800 transition-colors btn-hover"
                   title={
                     isLangSearchBarVisible
-                      ? (lang === "th" ? "ซ่อนรายการตัวอักษร" : "Hide ABC List")
-                      : (lang === "th" ? "แสดงรายการตัวอักษร" : "Show ABC List")
+                      ? lang === "th"
+                        ? "ซ่อนรายการตัวอักษร"
+                        : "Hide ABC List"
+                      : lang === "th"
+                        ? "แสดงรายการตัวอักษร"
+                        : "Show ABC List"
                   }
                   aria-label={
                     isLangSearchBarVisible
@@ -2032,7 +2057,11 @@ export default function App() {
               {/* Navigation Items */}
               {[
                 { name: "Search", icon: Search, target: "Search" },
-                { name: "Sign_Language", icon: SignLanguage, target: "SignLanguage" },
+                {
+                  name: "Sign_Language",
+                  icon: SignLanguage,
+                  target: "SignLanguage",
+                },
                 { name: "Favorites", icon: Heart, target: "Favorites" },
                 { name: "Notes", icon: Pen, target: "Notes" },
                 {
@@ -2041,7 +2070,11 @@ export default function App() {
                   target: "SelectedContent",
                 },
                 { name: "My_Library", icon: Download, target: "MyLibrary" },
-                { name: "storage_management", icon: Settings, target: "StorageManagement" },
+                {
+                  name: "storage_management",
+                  icon: Settings,
+                  target: "StorageManagement",
+                },
                 { name: "Import", icon: Upload, target: "Import" },
                 { name: "Feedback", icon: MessageSquare, target: "Feedback" },
                 {
@@ -2084,10 +2117,10 @@ export default function App() {
                 const count = isFavorites
                   ? favoritesCount
                   : isNotes
-                  ? notesCount
-                  : isLibrary // 👈 NEW CONDITION
-                  ? libraryCount
-                  : 0;
+                    ? notesCount
+                    : isLibrary // 👈 NEW CONDITION
+                      ? libraryCount
+                      : 0;
 
                 return (
                   <button
@@ -2112,7 +2145,10 @@ export default function App() {
                           {t[item.name.toLowerCase()]}
                         </span>
                         {item.target === "SignLanguage" && (
-                          <span className="comic-pow shrink-0 inline-flex items-center justify-center bg-[#FF8C00] text-white text-[8px] font-black italic px-1 py-0.5 ml-1 leading-none" style={{ minWidth: '32px', minHeight: '16px' }}>
+                          <span
+                            className="comic-pow shrink-0 inline-flex items-center justify-center bg-[#FF8C00] text-white text-[8px] font-black italic px-1 py-0.5 ml-1 leading-none"
+                            style={{ minWidth: "32px", minHeight: "16px" }}
+                          >
                             {lang === "th" ? "ใหม่" : "NEW"}
                           </span>
                         )}
@@ -2137,7 +2173,9 @@ export default function App() {
                   localStorage.setItem("appLang", newLang);
                 }}
                 className="w-full flex items-center justify-between p-2 rounded-lg font-semibold text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-[#004d99] transition-colors"
-                title={lang === "th" ? "Switch to English" : "เปลี่ยนเป็นภาษาไทย"}
+                title={
+                  lang === "th" ? "Switch to English" : "เปลี่ยนเป็นภาษาไทย"
+                }
               >
                 <div className="flex items-center">
                   <Globe className="w-6 h-6 mr-3 shrink-0" />
@@ -2220,10 +2258,11 @@ export default function App() {
                 {/* Build Information */}
                 <div className="text-center space-y-1">
                   <p className="text-gray-600 dark:text-white">
-                    Build:{" "}
-                    {process.env.REACT_APP_BUILD_DATE || "local dev"}
+                    Build: {process.env.REACT_APP_BUILD_DATE || "local dev"}
                     {process.env.REACT_APP_VERSION && (
-                      <span className="ml-1 opacity-60">(v{process.env.REACT_APP_VERSION})</span>
+                      <span className="ml-1 opacity-60">
+                        (v{process.env.REACT_APP_VERSION})
+                      </span>
                     )}
                   </p>
                   <p className="text-gray-600 dark:text-white flex items-center justify-center gap-2">
@@ -2250,17 +2289,17 @@ export default function App() {
             </div>
           </div>
         </div>
-        
+
         {/* --- INSTALL BANNER --- */}
-        {(!isPwaInstalled && !isBannerDismissed) && (
-          <InstallBanner 
-            onInstall={handleInstallClick} 
-            t={t} 
-            lang={lang} 
+        {!isPwaInstalled && !isBannerDismissed && (
+          <InstallBanner
+            onInstall={handleInstallClick}
+            t={t}
+            lang={lang}
             onClose={() => {
               // Mark as dismissed for this session or logic as needed
               // For now, simpler is better: clicking close removes it from DOM until refresh
-              // But InstallBanner handles its own visibility via onClose usually? 
+              // But InstallBanner handles its own visibility via onClose usually?
               // Wait, InstallBanner component we wrote uses internal visibility logic but we passed onClose.
               // We should probably just store dismissal in a generic state if we want it to persist?
               // The component provided by the thinking block calls `onClose` so we can set a state in App.jsx or let component unmount.
@@ -2269,7 +2308,7 @@ export default function App() {
               // Looking at previous step's code: InstallBanner accepts `onClose`.
               // We can create a state `isBannerDismissed`.
               setIsBannerDismissed(true);
-            }} 
+            }}
           />
         )}
       </div>
