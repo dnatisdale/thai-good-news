@@ -383,89 +383,64 @@ export const Qrcode = (props) => (
     {...props}
     xmlns="http://www.w3.org/2000/svg"
     viewBox="0 0 24 24"
-    fill="none"
-    stroke="currentColor"
-    strokeWidth="2.1"
-    strokeLinecap="round"
-    strokeLinejoin="round"
+    fill="currentColor"
   >
-    {/* outer scan corners */}
-    <path d="M4 8V5a1 1 0 0 1 1-1h3" />
-    <path d="M16 4h3a1 1 0 0 1 1 1v3" />
-    <path d="M20 16v3a1 1 0 0 1-1 1h-3" />
-    <path d="M8 20H5a1 1 0 0 1-1-1v-3" />
+    {/* QR code with 3 clear finder squares and blocky QR dots */}
 
-    {/* QR finder squares */}
-    <rect x="6.2" y="6.2" width="4.2" height="4.2" rx="0.5" />
-    <rect x="13.6" y="6.2" width="4.2" height="4.2" rx="0.5" />
-    <rect x="6.2" y="13.6" width="4.2" height="4.2" rx="0.5" />
+    {/* Top-left finder */}
+    <rect
+      x="2"
+      y="2"
+      width="7"
+      height="7"
+      rx="1.2"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="1.8"
+    />
+    <rect x="4.2" y="4.2" width="2.6" height="2.6" rx="0.3" />
 
-    {/* solid finder centers */}
+    {/* Top-right finder */}
     <rect
-      x="7.7"
-      y="7.7"
-      width="1.2"
-      height="1.2"
-      rx="0.2"
-      fill="currentColor"
-      stroke="none"
+      x="15"
+      y="2"
+      width="7"
+      height="7"
+      rx="1.2"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="1.8"
     />
+    <rect x="17.2" y="4.2" width="2.6" height="2.6" rx="0.3" />
+
+    {/* Bottom-left finder */}
     <rect
-      x="15.1"
-      y="7.7"
-      width="1.2"
-      height="1.2"
-      rx="0.2"
-      fill="currentColor"
-      stroke="none"
+      x="2"
+      y="15"
+      width="7"
+      height="7"
+      rx="1.2"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="1.8"
     />
-    <rect
-      x="7.7"
-      y="15.1"
-      width="1.2"
-      height="1.2"
-      rx="0.2"
-      fill="currentColor"
-      stroke="none"
-    />
+    <rect x="4.2" y="17.2" width="2.6" height="2.6" rx="0.3" />
 
     {/* QR data blocks */}
-    <rect
-      x="13.4"
-      y="13.4"
-      width="1.5"
-      height="1.5"
-      rx="0.2"
-      fill="currentColor"
-      stroke="none"
-    />
-    <rect
-      x="17"
-      y="13.4"
-      width="1.5"
-      height="1.5"
-      rx="0.2"
-      fill="currentColor"
-      stroke="none"
-    />
-    <rect
-      x="13.4"
-      y="17"
-      width="1.5"
-      height="1.5"
-      rx="0.2"
-      fill="currentColor"
-      stroke="none"
-    />
-    <rect
-      x="17"
-      y="17"
-      width="1.5"
-      height="1.5"
-      rx="0.2"
-      fill="currentColor"
-      stroke="none"
-    />
+    <rect x="11" y="3" width="2.5" height="2.5" rx="0.2" />
+    <rect x="11" y="7" width="2.5" height="2.5" rx="0.2" />
+
+    <rect x="10.5" y="10.5" width="2.5" height="2.5" rx="0.2" />
+    <rect x="14" y="10.5" width="2.5" height="2.5" rx="0.2" />
+    <rect x="18" y="10.5" width="2.5" height="2.5" rx="0.2" />
+
+    <rect x="11" y="15" width="2.5" height="2.5" rx="0.2" />
+    <rect x="14.5" y="14.5" width="2.5" height="2.5" rx="0.2" />
+    <rect x="18.5" y="14.5" width="2.5" height="2.5" rx="0.2" />
+
+    <rect x="11" y="19" width="2.5" height="2.5" rx="0.2" />
+    <rect x="15" y="18.5" width="2.5" height="2.5" rx="0.2" />
+    <rect x="19" y="18.5" width="2.5" height="2.5" rx="0.2" />
   </svg>
 );
 
