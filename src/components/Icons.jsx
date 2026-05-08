@@ -349,20 +349,124 @@ export const Qrcode = (props) => (
   <svg
     {...props}
     xmlns="http://www.w3.org/2000/svg"
-    width="24"
-    height="24"
     viewBox="0 0 24 24"
     fill="none"
     stroke="currentColor"
-    strokeWidth="2"
+    strokeWidth="1.8"
     strokeLinecap="round"
     strokeLinejoin="round"
   >
-    <rect x="3" y="3" width="18" height="18" rx="2" ry="2" />
-    <line x1="7" y1="7" x2="7" y2="7" />
-    <line x1="17" y1="7" x2="17" y2="7" />
-    <line x1="7" y1="17" x2="7" y2="17" />
-    <rect x="13" y="13" width="3" height="3" />
+    {/* Top-left finder square */}
+    <rect x="3" y="3" width="6" height="6" rx="1" />
+    <rect
+      x="5"
+      y="5"
+      width="2"
+      height="2"
+      rx="0.3"
+      fill="currentColor"
+      stroke="none"
+    />
+
+    {/* Top-right finder square */}
+    <rect x="15" y="3" width="6" height="6" rx="1" />
+    <rect
+      x="17"
+      y="5"
+      width="2"
+      height="2"
+      rx="0.3"
+      fill="currentColor"
+      stroke="none"
+    />
+
+    {/* Bottom-left finder square */}
+    <rect x="3" y="15" width="6" height="6" rx="1" />
+    <rect
+      x="5"
+      y="17"
+      width="2"
+      height="2"
+      rx="0.3"
+      fill="currentColor"
+      stroke="none"
+    />
+
+    {/* QR bits */}
+    <rect
+      x="12"
+      y="12"
+      width="2"
+      height="2"
+      rx="0.2"
+      fill="currentColor"
+      stroke="none"
+    />
+    <rect
+      x="16"
+      y="12"
+      width="2"
+      height="2"
+      rx="0.2"
+      fill="currentColor"
+      stroke="none"
+    />
+    <rect
+      x="20"
+      y="12"
+      width="1.5"
+      height="1.5"
+      rx="0.2"
+      fill="currentColor"
+      stroke="none"
+    />
+
+    <rect
+      x="12"
+      y="16"
+      width="2"
+      height="2"
+      rx="0.2"
+      fill="currentColor"
+      stroke="none"
+    />
+    <rect
+      x="18"
+      y="16"
+      width="3"
+      height="2"
+      rx="0.2"
+      fill="currentColor"
+      stroke="none"
+    />
+
+    <rect
+      x="12"
+      y="20"
+      width="1.5"
+      height="1.5"
+      rx="0.2"
+      fill="currentColor"
+      stroke="none"
+    />
+    <rect
+      x="15.5"
+      y="19.5"
+      width="2"
+      height="2"
+      rx="0.2"
+      fill="currentColor"
+      stroke="none"
+    />
+    <rect
+      x="20"
+      y="20"
+      width="1.5"
+      height="1.5"
+      rx="0.2"
+      fill="currentColor"
+      stroke="none"
+    />
   </svg>
 );
 
@@ -813,6 +917,16 @@ export const PdfFile = (props) => (
   >
     <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
     <polyline points="14 2 14 8 20 8" />
-    <text x="5" y="16" fontSize="7" fontWeight="bold" stroke="none" fill="currentColor" fontFamily="sans-serif">PDF</text>
+    <text
+      x="5"
+      y="16"
+      fontSize="7"
+      fontWeight="bold"
+      stroke="none"
+      fill="currentColor"
+      fontFamily="sans-serif"
+    >
+      PDF
+    </text>
   </svg>
 );
