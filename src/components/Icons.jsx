@@ -718,21 +718,21 @@ export const LanguageIcon = (props) => (
     viewBox="0 0 24 24"
     fill="none"
     stroke="currentColor"
-    strokeWidth="2.2"
+    strokeWidth="1.95"
     strokeLinecap="round"
     strokeLinejoin="round"
   >
-    {/* Language / translate style icon: thinner, rounded, matches header icons */}
+    {/* Language / translate icon: thinner, rounded, balanced for header */}
 
     {/* 文-style left character */}
-    <path d="M4 5h9" />
-    <path d="M8.5 3v3" />
-    <path d="M6 8c1.2 3.2 3.4 5.4 6.5 7" />
-    <path d="M12.5 8c-1.2 3.2-3.4 5.4-6.5 7" />
+    <path d="M4.3 5.2h8.5" />
+    <path d="M8.5 3.4v3.1" />
+    <path d="M6.2 8.2c1.1 2.9 3.2 5 6 6.4" />
+    <path d="M12.2 8.2c-1.1 2.9-3.2 5-6 6.4" />
 
     {/* A-style right character */}
-    <path d="M13.5 20l3.2-8.5L20 20" />
-    <path d="M14.8 17h3.9" />
+    <path d="M13.9 20l3-8.1L20 20" />
+    <path d="M15.1 17.1h3.6" />
   </svg>
 );
 
