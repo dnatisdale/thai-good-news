@@ -1,0 +1,98 @@
+PWA BUILD CHEAT SHEET
+=====================
+
+Project folder example:
+C:\GitHub\Your-PWA-Folder
+
+--------------------------------------------------
+1) Open the project folder in PowerShell
+--------------------------------------------------
+cd C:\GitHub\Your-PWA-Folder
+
+Example:
+cd C:\GitHub\Tailenders
+
+--------------------------------------------------
+2) Start the app for local testing
+--------------------------------------------------
+npm run start
+
+If that does not work, try:
+npm run dev
+
+Then open the local address shown in the terminal, usually something like:
+http://localhost:5173
+
+--------------------------------------------------
+3) Build the app for Firebase Hosting
+--------------------------------------------------
+npm run build
+
+This usually creates a folder named:
+dist
+
+Firebase Hosting should normally point to:
+dist
+
+--------------------------------------------------
+4) Login to Firebase, if needed
+--------------------------------------------------
+firebase login
+
+--------------------------------------------------
+5) Deploy to Firebase Hosting
+--------------------------------------------------
+firebase deploy --only hosting
+
+--------------------------------------------------
+6) Simple full update flow
+--------------------------------------------------
+git status
+npm run build
+firebase deploy --only hosting
+
+--------------------------------------------------
+7) If Firebase says command not found
+--------------------------------------------------
+Install Firebase tools globally:
+npm install -g firebase-tools
+
+Then try again:
+firebase login
+firebase deploy --only hosting
+
+--------------------------------------------------
+8) If this is a brand-new Firebase setup
+--------------------------------------------------
+firebase init hosting
+
+Recommended choices:
+- Use an existing Firebase project
+- Public directory: dist
+- Configure as single-page app: Yes
+- Set up automatic builds/deploys with GitHub: No, unless you really want that
+- Overwrite index.html: No
+
+Then deploy:
+npm run build
+firebase deploy --only hosting
+
+--------------------------------------------------
+9) GitHub save commands after changes
+--------------------------------------------------
+git status
+git add .
+git commit -m "Update PWA build"
+git push
+
+--------------------------------------------------
+10) Quick reminder
+--------------------------------------------------
+Local testing command:
+npm run start
+
+Build command:
+npm run build
+
+Firebase deploy command:
+firebase deploy --only hosting
