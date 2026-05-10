@@ -1046,7 +1046,12 @@ export default function App() {
   const navigateTo = (pageName, key = null, sourceList = null) => {
     setPageStack((prev) => [...prev, { name: pageName, key, sourceList }]);
     setIsDrawerOpen(false);
-    setIsSearchOpen(false); // Close search bar
+
+    // Keep the search bar open when we are navigating to Search.
+    // Close it for every other page.
+    if (pageName !== "Search") {
+      setIsSearchOpen(false);
+    }
 
     // Always jump to the top of the main content when navigating
     if (mainScrollRef.current) {
@@ -1161,13 +1166,17 @@ export default function App() {
     setSearchTerm(value);
 
     if (value) {
+      // Keep the visible search bar open while typing
+      setIsSearchOpen(true);
+
+      // Move to the Search page only once
       if (currentPage.name !== "Search") {
         navigateTo("Search");
       }
     } else {
-      // If search cleared while on Search page, go back Home
+      // If the search box is empty, stay open but show Home again
       if (currentPage.name === "Search") {
-        navigateTo("Home");
+        setPageStack([{ name: "Home" }]);
       }
     }
   };
@@ -1943,7 +1952,12 @@ export default function App() {
                 aria-label="Toggle Search"
                 title={lang === "th" ? "ค้นหา" : "Search"}
               >
-                <Search className="w-6 h-6" />
+                <Search
+                  className="w-7 h-7"
+                  circleFill="#b9483b"
+                  circleStroke="currentColor"
+                  handleStroke="currentColor"
+                />
               </button>
             </div>
           </div>

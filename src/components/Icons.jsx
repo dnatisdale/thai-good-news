@@ -22,7 +22,12 @@ export const Home = (props) => (
   </svg>
 );
 
-export const Search = (props) => (
+export const Search = ({
+  circleFill = "none",
+  circleStroke = "currentColor",
+  handleStroke = "currentColor",
+  ...props
+}) => (
   <svg
     {...props}
     xmlns="http://www.w3.org/2000/svg"
@@ -30,13 +35,27 @@ export const Search = (props) => (
     height="24"
     viewBox="0 0 24 24"
     fill="none"
-    stroke="currentColor"
-    strokeWidth="2"
     strokeLinecap="round"
     strokeLinejoin="round"
   >
-    <circle cx="10" cy="10" r="7" />
-    <line x1="21" y1="21" x2="15" y2="15" />
+    <circle
+      cx="10"
+      cy="10"
+      r="7"
+      fill={circleFill}
+      stroke={circleStroke}
+      strokeWidth="2.25"
+    />
+
+    <line
+      x1="21"
+      y1="21"
+      x2="15"
+      y2="15"
+      stroke={handleStroke}
+      strokeWidth="2.25"
+      strokeLinecap="round"
+    />
   </svg>
 );
 
@@ -143,38 +162,39 @@ export const AlphabetIndex = (props) => (
     viewBox="0 0 24 24"
     fill="none"
   >
-    {/* Tall A-Z side index icon */}
+    {/* A-Z index icon: thinner, rounded, matching the 2 A's icon */}
 
     <text
       x="12"
-      y="6.5"
+      y="7"
       textAnchor="middle"
-      fontSize="8.5"
-      fontWeight="800"
+      fontSize="8"
+      fontWeight="700"
       fill="currentColor"
-      fontFamily="Arial, sans-serif"
+      fontFamily="Arial Rounded MT Bold, Arial, sans-serif"
     >
       A
     </text>
 
     <line
       x1="12"
-      y1="9.3"
+      y1="9.4"
       x2="12"
-      y2="14.1"
+      y2="14.3"
       stroke="currentColor"
-      strokeWidth="1.9"
+      strokeWidth="2.25"
       strokeLinecap="round"
+      strokeLinejoin="round"
     />
 
     <text
       x="12"
-      y="22.5"
+      y="22"
       textAnchor="middle"
-      fontSize="8.5"
-      fontWeight="800"
+      fontSize="8"
+      fontWeight="700"
       fill="currentColor"
-      fontFamily="Arial, sans-serif"
+      fontFamily="Arial Rounded MT Bold, Arial, sans-serif"
     >
       Z
     </text>
@@ -282,7 +302,7 @@ export const ChevronDown = (props) => (
     viewBox="0 0 24 24"
     fill="none"
     stroke="currentColor"
-    strokeWidth="2.8"
+    strokeWidth="1.95"
     strokeLinecap="round"
     strokeLinejoin="round"
   >
@@ -299,7 +319,7 @@ export const ChevronUp = (props) => (
     viewBox="0 0 24 24"
     fill="none"
     stroke="currentColor"
-    strokeWidth="2.8"
+    strokeWidth="1.9"
     strokeLinecap="round"
     strokeLinejoin="round"
   >
@@ -561,19 +581,24 @@ export const Languages = (props) => (
     viewBox="0 0 24 24"
     fill="none"
     stroke="currentColor"
-    strokeWidth="2"
+    strokeWidth="1.85"
     strokeLinecap="round"
     strokeLinejoin="round"
   >
-    {/* 舟 (Boat) Character */}
+    {/* EN/TH language icon: slightly thinner lines */}
+
     {/* Top dash */}
     <path d="M12 3l-2 2" />
+
     {/* Main horizontal bar */}
     <path d="M4 11h16" />
+
     {/* Left curved side */}
     <path d="M8 6c-1 4-1 10 1 14" />
+
     {/* Right vertical side with hook */}
     <path d="M16 6v11c0 2 2 2 3 1" />
+
     {/* Inside dashes */}
     <path d="M11 14l1 1" />
     <path d="M13 14l1 1" />
