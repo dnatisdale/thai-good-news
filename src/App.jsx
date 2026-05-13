@@ -1186,6 +1186,18 @@ export default function App() {
     window.scrollTo({ top: 0, behavior: "smooth" });
   };
 
+  // Close the search bar completely and return to Home
+  const closeSearchCompletely = () => {
+    setSearchTerm("");
+    setIsSearchOpen(false);
+    setPageStack([{ name: "Home", key: Date.now() }]);
+
+    if (mainScrollRef.current) {
+      mainScrollRef.current.scrollTo({ top: 0, behavior: "smooth" });
+    }
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  };
+
   // Real form submit so Android keyboard Enter/Search actually works
   const submitSearch = (e) => {
     if (e) e.preventDefault();
@@ -2008,39 +2020,56 @@ export default function App() {
 
         {/* --- TOGGLED SEARCH BAR (Below Header) --- */}
         {shouldShowSearchBar && (
-          <div className="sticky top-14 w-full p-2 bg-white shadow-xl z-20">
+          <div className="sticky top-14 w-full px-2 py-1.5 bg-white shadow-xl z-20">
             <form
               onSubmit={submitSearch}
-              className="relative w-full flex items-center"
+              className="relative w-full flex items-center gap-2"
               role="search"
             >
               {/* Search Input Field */}
-              <input
-                type="search"
-                inputMode="search"
-                enterKeyHint="search"
-                placeholder={
-                  t.search_placeholder || "Search languages or messages..."
-                }
-                value={searchTerm}
-                onChange={(e) => handleSearchChange(e.target.value)}
-                className="w-full p-2 pl-10 pr-10 text-gray-800 rounded-lg shadow-inner focus:outline-none focus:ring-2 focus:ring-red-300 transition duration-150"
-                style={{ fontSize: "1.2rem" }}
-                autoFocus
-              />
+              <div className="relative flex-1">
+                <input
+                  type="text"
+                  inputMode="search"
+                  enterKeyHint="search"
+                  placeholder={
+                    t.search_placeholder || "Search languages or messages..."
+                  }
+                  value={searchTerm}
+                  onChange={(e) => handleSearchChange(e.target.value)}
+                  className="w-full p-2 pl-10 pr-3 text-gray-800 rounded-lg shadow-inner focus:outline-none focus:ring-2 focus:ring-red-300 transition duration-150"
+                  style={{ fontSize: "1.1rem" }}
+                  autoFocus
+                />
 
-              {/* Search Icon color changed to Thai Red */}
-              <Search
-                className={`absolute left-2 top-1.5 w-5 h-5 ${ACCENT_COLOR_CLASS}`}
-              />
+                <Search
+                  className={`absolute left-2 top-1/2 -translate-y-1/2 w-5 h-5 ${ACCENT_COLOR_CLASS}`}
+                />
+              </div>
 
-              {/* Clear Search Button */}
+              {/* Clear text button */}
               <button
                 type="button"
                 onClick={clearSearchAndStayOpen}
-                className="absolute right-2 top-1/2 transform -translate-y-1/2 p-1 text-gray-500 hover:text-gray-800"
-                aria-label={lang === "th" ? "ล้างการค้นหา" : "Clear Search"}
-                title={lang === "th" ? "ล้างการค้นหา" : "Clear Search"}
+                disabled={!searchTerm}
+                className={`px-3 py-2 rounded-lg text-sm font-semibold transition-colors ${
+                  searchTerm
+                    ? "bg-gray-100 text-gray-700 hover:bg-gray-200"
+                    : "bg-gray-50 text-gray-300 cursor-not-allowed"
+                }`}
+                aria-label={t.clear_search || "Clear"}
+                title={t.clear_search || "Clear"}
+              >
+                {t.clear_search || "Clear"}
+              </button>
+
+              {/* Close Search Button */}
+              <button
+                type="button"
+                onClick={closeSearchCompletely}
+                className="p-2 text-gray-500 hover:text-gray-800 hover:bg-gray-100 rounded-lg transition-colors"
+                aria-label={t.close_search || "Close Search"}
+                title={t.close_search || "Close Search"}
               >
                 <X className="w-5 h-5" />
               </button>

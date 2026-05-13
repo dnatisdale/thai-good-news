@@ -3,8 +3,6 @@ import { Search, ChevronLeft, ChevronRight } from "../components/Icons";
 import ContentCard from "../components/ContentCard";
 import { staticContent } from "../data/staticContent";
 
-const ACCENT_COLOR_CLASS = "text-brand-red";
-
 const SearchPage = ({
   lang,
   t,
@@ -19,15 +17,13 @@ const SearchPage = ({
   onHistorySelect,
   userData,
   onToggleFavorite,
-  onOpenSearch, // function to open search bar
+  onOpenSearch,
 }) => {
-  // Receives searchTerm and nav props
   const filteredContent = useMemo(() => {
     if (!searchTerm) return [];
     const lowerSearchTerm = searchTerm.toLowerCase();
 
     return staticContent.filter((item) => {
-      // Robust search logic to prevent crashes
       const languageEn = item.languageEn?.toLowerCase() ?? "";
       const languageTh = item.langTh?.toLowerCase() ?? "";
       const titleEn = item.title_en?.toLowerCase() ?? "";
@@ -44,11 +40,10 @@ const SearchPage = ({
         verseTh.includes(lowerSearchTerm)
       );
     });
-  }, [searchTerm, lang]);
+  }, [searchTerm]);
 
   const resultCount = filteredContent.length;
 
-  // Auto-open search bar when there are no results and no search term
   useEffect(() => {
     if (!searchTerm && onOpenSearch) {
       onOpenSearch();
@@ -56,38 +51,45 @@ const SearchPage = ({
   }, [searchTerm, onOpenSearch]);
 
   return (
-    <div className="p-4 pt-8 h-full overflow-y-auto">
-      {/* Navigation Header */}
-      <div className="bg-slate-100 dark:bg-slate-700 text-gray-600 dark:text-white px-4 py-2 flex justify-between items-center mb-4 border-b border-slate-200 dark:border-slate-600">
+    <div className="px-2 sm:px-4 pt-3 h-full overflow-y-auto">
+      {/* Compact Navigation Header */}
+      <div className="bg-slate-100 dark:bg-slate-700 text-gray-600 dark:text-white px-3 py-1.5 flex justify-between items-center mb-2 border-b border-slate-200 dark:border-slate-600">
         <button
           onClick={onBack}
           disabled={!hasPrev}
-          className={`flex items-center text-base font-semibold transition-colors ${
-            hasPrev ? "hover:text-gray-900 dark:hover:text-gray-300" : "text-gray-400 dark:text-gray-500 cursor-not-allowed"
+          className={`flex items-center text-sm font-semibold transition-colors ${
+            hasPrev
+              ? "hover:text-gray-900 dark:hover:text-gray-300"
+              : "text-gray-400 dark:text-gray-500 cursor-not-allowed"
           }`}
         >
-          <ChevronLeft className="w-5 h-5 mr-1" />
+          <ChevronLeft className="w-4 h-4 mr-0.5" />
           {t.back || "Back"}
         </button>
+
         <button
           onClick={onForward}
           disabled={!hasNext}
-          className={`flex items-center text-base font-semibold transition-colors ${
-            hasNext ? "hover:text-gray-900 dark:hover:text-gray-300" : "text-gray-400 dark:text-gray-500 cursor-not-allowed"
+          className={`flex items-center text-sm font-semibold transition-colors ${
+            hasNext
+              ? "hover:text-gray-900 dark:hover:text-gray-300"
+              : "text-gray-400 dark:text-gray-500 cursor-not-allowed"
           }`}
         >
           {t.forward || "Forward"}
-          <ChevronRight className="w-5 h-5 ml-1" />
+          <ChevronRight className="w-4 h-4 ml-0.5" />
         </button>
       </div>
 
-      <h1 className="text-2xl font-bold text-gray-800 dark:text-white mb-4 flex items-center justify-center">
-        <Search className="w-8 h-8 mr-3 text-brand-red dark:text-white" />
-        {t.search_results || "Search Results"}
-      </h1>
+      <div className="flex items-center justify-center mb-2">
+        <Search className="w-6 h-6 mr-2 text-brand-red dark:text-white" />
+        <h1 className="text-xl sm:text-2xl font-bold text-gray-800 dark:text-white">
+          {t.search_results || "Search Results"}
+        </h1>
+      </div>
 
       {searchTerm && (
-        <p className="text-sm text-gray-600 mb-4 font-semibold">
+        <p className="text-sm text-gray-600 dark:text-gray-300 mb-2 font-semibold px-1">
           {resultCount}{" "}
           {resultCount === 1 ? t.result || "Result" : t.results || "Results"}{" "}
           {t.found || "found"} {t.for_query || "for"} "{searchTerm}".
@@ -95,20 +97,22 @@ const SearchPage = ({
       )}
 
       {resultCount > 0 ? (
-        filteredContent.map((item) => (
-          <ContentCard
-            key={item.id}
-            item={item}
-            lang={lang}
-            t={t}
-            onSelect={onSelect}
-            showLanguageName={true}
-            isFavorite={userData?.favorites?.includes(item.id)}
-            onToggleFavorite={() => onToggleFavorite(item.id)}
-          />
-        ))
+        <div className="space-y-0">
+          {filteredContent.map((item) => (
+            <ContentCard
+              key={item.id}
+              item={item}
+              lang={lang}
+              t={t}
+              onSelect={onSelect}
+              showLanguageName={true}
+              isFavorite={userData?.favorites?.includes(item.id)}
+              onToggleFavorite={() => onToggleFavorite(item.id)}
+            />
+          ))}
+        </div>
       ) : searchTerm ? (
-        <div className="text-center p-8 text-gray-500">
+        <div className="text-center px-4 py-6 text-gray-500 dark:text-gray-300">
           <p>
             {t.no_results_for || "No results found for"} "{searchTerm}".
           </p>
@@ -118,12 +122,11 @@ const SearchPage = ({
           </p>
         </div>
       ) : (
-        <div className="text-center p-8 text-gray-500">
-          {/* --- NEW: Recent Searches Section --- */}
+        <div className="text-center px-4 py-6 text-gray-500 dark:text-gray-300">
           {searchHistory && searchHistory.length > 0 && (
-            <div className="mb-8 text-left">
+            <div className="mb-6 text-left">
               <div className="flex justify-between items-center mb-2">
-                <h2 className="text-lg font-bold text-gray-700">
+                <h2 className="text-lg font-bold text-gray-700 dark:text-gray-100">
                   {t.recent_searches || "Recent Searches"}
                 </h2>
                 <button
@@ -133,6 +136,7 @@ const SearchPage = ({
                   {t.clear_history || "Clear History"}
                 </button>
               </div>
+
               <div className="flex flex-wrap gap-2">
                 {searchHistory.map((term, index) => (
                   <button
@@ -144,7 +148,8 @@ const SearchPage = ({
                   </button>
                 ))}
               </div>
-              <hr className="my-6 border-gray-200" />
+
+              <hr className="my-4 border-gray-200" />
             </div>
           )}
 
@@ -159,7 +164,8 @@ const SearchPage = ({
           </p>
         </div>
       )}
-      <div className="h-16"></div>
+
+      <div className="h-12"></div>
     </div>
   );
 };

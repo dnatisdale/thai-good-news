@@ -25,7 +25,11 @@ export const i18n = {
     messages: "messages",
     message_label: "Message",
     selected_messages: "Selected Messages",
-
+    search_results: "Search Results",
+    search_placeholder: "Search languages or messages...",
+    clear_search: "Clear",
+    close_search: "Close search",
+    for_query: "for",
     // Status / Authentication
     loading: "Loading...",
     loading_auth: "Loading authentication...",
@@ -108,7 +112,7 @@ export const i18n = {
     font_size_medium: "Medium", // NEW
     font_size_large: "Large", // NEW
     pro_tip_button: "Pro Tip",
-    
+
     // Storage Management
     storage_management: "Storage Management",
     manage_downloads: "Manage Downloads",
@@ -206,8 +210,10 @@ export const i18n = {
     share_on_line: "Share on LINE",
     watch_video: "Watch Video",
     watch_on_youtube: "Watch on YouTube",
-    share_email_subject: "A great tool for sharing Jesus in Thailand (100+ languages) 🙌🏼🇹🇭",
-    share_email_body: "Greetings!\n\nA great tool for sharing Jesus in Thailand: Thai Good News. It lets someone hear the Good News in Thai and 100+ languages spoken in Thailand, even if you don’t speak their language.\n\nTry it here:\n{{appUrl}}\n\nQuestions/feedback: Kow-D@globalrecordings.net\n\nSent via the Thai Good News App 🇹🇭\nGlobal Recordings Network • 5fish.mobi",
+    share_email_subject:
+      "A great tool for sharing Jesus in Thailand (100+ languages) 🙌🏼🇹🇭",
+    share_email_body:
+      "Greetings!\n\nA great tool for sharing Jesus in Thailand: Thai Good News. It lets someone hear the Good News in Thai and 100+ languages spoken in Thailand, even if you don’t speak their language.\n\nTry it here:\n{{appUrl}}\n\nQuestions/feedback: Kow-D@globalrecordings.net\n\nSent via the Thai Good News App 🇹🇭\nGlobal Recordings Network • 5fish.mobi",
     share_email_signature: "",
 
     // Import Page
@@ -224,16 +230,20 @@ export const i18n = {
     add_to_list_btn: "Add to List",
     ready_to_export_title: "Ready to Export",
     copy_json_btn: "Copy JSON",
-    duplicate_warning_text: "You have already downloaded this track. Click to view in My Library.",
+    duplicate_warning_text:
+      "You have already downloaded this track. Click to view in My Library.",
     static_warning_title: "View in Main Collection",
-    static_warning_text: "This program is already listed in the app's Language List. Click to view.",
+    static_warning_text:
+      "This program is already listed in the app's Language List. Click to view.",
     clear_data_confirm: "Are you sure you want to clear all imported data?",
     import_success_title: "Import Successful",
-    import_success_text: "Successfully added {{count}} messages to your library.",
+    import_success_text:
+      "Successfully added {{count}} messages to your library.",
     go_to_library: "Go to My Library",
     ok_close: "OK (Stay Here)",
     external_lookup_title: "Looking for Something Else?",
-    external_lookup_desc: "If you can't find your message above, try searching these websites to find the Program ID:",
+    external_lookup_desc:
+      "If you can't find your message above, try searching these websites to find the Program ID:",
   },
 
   // --- THAI TRANSLATIONS ---
@@ -263,7 +273,11 @@ export const i18n = {
     messages: "ข้อความ",
     message_label: "ข้อความ",
     selected_messages: "ข้อความที่เลือก",
-
+    search_results: "ผลการค้นหา",
+    search_placeholder: "ค้นหาภาษาหรือข้อความ...",
+    clear_search: "ล้าง",
+    close_search: "ปิดการค้นหา",
+    for_query: "สำหรับ",
     // Status / Authentication
     loading: "กำลังโหลด...",
     loading_auth: "กำลังโหลดการยืนยันตัวตน...",
@@ -425,7 +439,8 @@ export const i18n = {
     confirm_delete_track: "ลบแทร็กนี้?",
 
     already_added: "เพิ่มแล้ว",
-    duplicate_warning_text: "คุณได้ดาวน์โหลดแทร็กนี้แล้ว คลิกเพื่อดูในคลังของฉัน",
+    duplicate_warning_text:
+      "คุณได้ดาวน์โหลดแทร็กนี้แล้ว คลิกเพื่อดูในคลังของฉัน",
     clear_data_confirm: "คุณแน่ใจหรือไม่ว่าต้องการล้างข้อมูลที่นำเข้าทั้งหมด?",
 
     // UI Helpers
@@ -466,7 +481,8 @@ export const i18n = {
     copy_for_email: "แชร์ผ่านอีเมล", // UPDATED
     open_app_button: "เปิดแอป Thai Good News", // NEW
     or_copy_link: "หรือคัดลอกและวางลิงก์นี้:", // NEW
-    share_app_text: "กำลังมองหาวิธีนำพระคริสต์มาสู่เพื่อนบ้านของคุณอยู่หรือเปล่า? 🌏 แอป Thai Good News เป็นเครื่องมือที่ยอดเยี่ยมสำหรับการแบ่งปันเรื่องราวของพระเยซูกับผู้คนจากหลากหลายภูมิหลัง แม้ว่าคุณจะไม่พูดภาษาของพวกเขา คุณก็สามารถใช้แอปนี้เพื่อให้พวกเขาได้ยินข่าวดีได้อย่างชัดเจน ลองดูภาษาที่มีให้เลือกมากกว่า 100 ภาษา และเริ่มแบ่งปันได้เลยวันนี้!",
+    share_app_text:
+      "กำลังมองหาวิธีนำพระคริสต์มาสู่เพื่อนบ้านของคุณอยู่หรือเปล่า? 🌏 แอป Thai Good News เป็นเครื่องมือที่ยอดเยี่ยมสำหรับการแบ่งปันเรื่องราวของพระเยซูกับผู้คนจากหลากหลายภูมิหลัง แม้ว่าคุณจะไม่พูดภาษาของพวกเขา คุณก็สามารถใช้แอปนี้เพื่อให้พวกเขาได้ยินข่าวดีได้อย่างชัดเจน ลองดูภาษาที่มีให้เลือกมากกว่า 100 ภาษา และเริ่มแบ่งปันได้เลยวันนี้!",
     link_copied: "คัดลอกลิงก์แล้ว!",
     copy_failed: "ไม่สามารถคัดลอกลิงก์ได้",
     copy_link: "คัดลอกลิงก์ URL แอป",
@@ -478,8 +494,10 @@ export const i18n = {
     share_on_line: "แชร์บน LINE",
     watch_video: "ดูวิดีโอ",
     watch_on_youtube: "ดูบน YouTube",
-    share_email_subject: "เครื่องมือดีๆ สำหรับการแบ่งปันเรื่องราวของพระเยซูในประเทศไทย (กว่า 100 ภาษา) 🙌🏼🇹🇭",
-    share_email_body: "สวัสดีครับ!\n\nเครื่องมือดีๆ สำหรับการแบ่งปันเรื่องราวของพระเยซูในประเทศไทย: ไทยข่าวดี ช่วยให้ใครสักคนได้ยินข่าวดีในภาษาไทยและกว่า 100 ภาษาที่พูดในประเทศไทย แม้ว่าเราจะพูดภาษาเขาไม่ได้ก็ตาม\n\nลองใช้งานได้ที่นี่:\n{{appUrl}}\n\nคำถาม/ข้อเสนอแนะ: Kow-D@globalrecordings.net\n\nส่งผ่านแอป Thai Good News 🇹🇭\nGlobal Recordings Network • 5fish.mobi",
+    share_email_subject:
+      "เครื่องมือดีๆ สำหรับการแบ่งปันเรื่องราวของพระเยซูในประเทศไทย (กว่า 100 ภาษา) 🙌🏼🇹🇭",
+    share_email_body:
+      "สวัสดีครับ!\n\nเครื่องมือดีๆ สำหรับการแบ่งปันเรื่องราวของพระเยซูในประเทศไทย: ไทยข่าวดี ช่วยให้ใครสักคนได้ยินข่าวดีในภาษาไทยและกว่า 100 ภาษาที่พูดในประเทศไทย แม้ว่าเราจะพูดภาษาเขาไม่ได้ก็ตาม\n\nลองใช้งานได้ที่นี่:\n{{appUrl}}\n\nคำถาม/ข้อเสนอแนะ: Kow-D@globalrecordings.net\n\nส่งผ่านแอป Thai Good News 🇹🇭\nGlobal Recordings Network • 5fish.mobi",
     share_email_signature: "",
 
     // Notes
@@ -510,12 +528,14 @@ export const i18n = {
     clear_data_confirm: "คุณแน่ใจหรือไม่ว่าต้องการล้างข้อมูลที่นำเข้าทั้งหมด?",
     static_warning_title: "อยู่ในรายการภาษาหลัก",
     static_warning_text: "รายการนี้มีอยู่ในรายการหลักของแอป คลิกเพื่อดู",
-    duplicate_warning_text: "คุณได้ดาวน์โหลดแทร็กนี้แล้ว คลิกเพื่อดูในคลังของฉัน",
+    duplicate_warning_text:
+      "คุณได้ดาวน์โหลดแทร็กนี้แล้ว คลิกเพื่อดูในคลังของฉัน",
     import_success_title: "นำเข้าสำเร็จ",
     import_success_text: "เพิ่มข้อความ {{count}} รายการไปยังคลังของคุณแล้ว",
     go_to_library: "ไปที่คลังของฉัน",
     ok_close: "ตกลง (อยู่ที่นี่)",
     external_lookup_title: "มองหาอย่างอื่นอยู่ใช่ไหม?",
-    external_lookup_desc: "หากไม่พบข้อความที่ต้องการด้านบน ลองค้นหาจากเว็บไซต์เหล่านี้เพื่อหารหัสรายการ (Program ID):",
+    external_lookup_desc:
+      "หากไม่พบข้อความที่ต้องการด้านบน ลองค้นหาจากเว็บไซต์เหล่านี้เพื่อหารหัสรายการ (Program ID):",
   },
 };
