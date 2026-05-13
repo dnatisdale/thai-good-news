@@ -710,8 +710,9 @@ export default function App() {
     // Reset to a fresh Home page
     setPageStack([{ name: "Home", key: Date.now() }]);
 
-    // Close the global search overlay
+    // Close the global search overlay and clear any old search text
     setIsSearchOpen(false);
+    setSearchTerm("");
 
     // Scroll the main content area back to the very top
     if (mainScrollRef.current) {
@@ -1079,11 +1080,10 @@ export default function App() {
       return;
     }
 
-    // If we are on Search page and going back, we might want to keep it open?
-    // But usually "Back" implies leaving the current context.
-    // Let's close it to be safe, unless we want to preserve state.
-    // Actually, if we are LEAVING search page, it should close.
-    // If we are ON another page and hit back, it should stay closed.
+    // Leaving Search should also clear the old search text so Home is not secretly filtered.
+    if (currentPage.name === "Search") {
+      setSearchTerm("");
+    }
     setIsSearchOpen(false);
 
     if (pageStack.length > 1) {
@@ -1161,14 +1161,57 @@ export default function App() {
       ? staticContent.find((item) => item.id === currentPage.key)
       : null;
 
+  // Show the search bar whenever the user opened it OR when we are on Search page
+  const shouldShowSearchBar = isSearchOpen || currentPage.name === "Search";
+
+  // Open search from the header search icon
+  const openSearchPage = () => {
+    setIsSearchOpen(true);
+    setIsDrawerOpen(false);
+
+    if (currentPage.name !== "Search") {
+      navigateTo("Search");
+    }
+  };
+
+  // Clear search text, return to Home, but keep the search box visible and ready
+  const clearSearchAndStayOpen = () => {
+    setSearchTerm("");
+    setIsSearchOpen(true);
+    setPageStack([{ name: "Home", key: Date.now() }]);
+
+    if (mainScrollRef.current) {
+      mainScrollRef.current.scrollTo({ top: 0, behavior: "smooth" });
+    }
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  };
+
+  // Real form submit so Android keyboard Enter/Search actually works
+  const submitSearch = (e) => {
+    if (e) e.preventDefault();
+
+    const cleanTerm = searchTerm.trim();
+
+    if (!cleanTerm) {
+      clearSearchAndStayOpen();
+      return;
+    }
+
+    setSearchTerm(cleanTerm);
+    setIsSearchOpen(true);
+    addToSearchHistory(cleanTerm);
+
+    if (currentPage.name !== "Search") {
+      navigateTo("Search");
+    }
+  };
+
   // Shared Search handler (used by header + floating bar)
   const handleSearchChange = (value) => {
     setSearchTerm(value);
+    setIsSearchOpen(true);
 
-    if (value) {
-      // Keep the visible search bar open while typing
-      setIsSearchOpen(true);
-
+    if (value.trim()) {
       // Move to the Search page only once
       if (currentPage.name !== "Search") {
         navigateTo("Search");
@@ -1176,7 +1219,7 @@ export default function App() {
     } else {
       // If the search box is empty, stay open but show Home again
       if (currentPage.name === "Search") {
-        setPageStack([{ name: "Home" }]);
+        setPageStack([{ name: "Home", key: Date.now() }]);
       }
     }
   };
@@ -1785,9 +1828,9 @@ export default function App() {
               )}
 
               <button
-                onClick={() => setIsSearchOpen(true)}
+                onClick={openSearchPage}
                 className="text-white p-1 rounded-lg hover:bg-red-800 transition-colors btn-hover"
-                aria-label="Toggle Search"
+                aria-label="Open Search"
                 title={lang === "th" ? "ค้นหา" : "Search"}
               >
                 <Search className="w-6 h-6" />
@@ -1947,9 +1990,9 @@ export default function App() {
               )}
 
               <button
-                onClick={() => setIsSearchOpen(true)}
+                onClick={openSearchPage}
                 className="text-white p-1 rounded-lg hover:bg-red-800 transition-colors btn-hover"
-                aria-label="Toggle Search"
+                aria-label="Open Search"
                 title={lang === "th" ? "ค้นหา" : "Search"}
               >
                 <Search
@@ -1964,42 +2007,44 @@ export default function App() {
         </header>
 
         {/* --- TOGGLED SEARCH BAR (Below Header) --- */}
-        {isSearchOpen && (
-          // IMPORTANT CHANGE: Increased top-16 to top-20 (5rem) and lowered z-index to z-10
+        {shouldShowSearchBar && (
           <div className="sticky top-14 w-full p-2 bg-white shadow-xl z-20">
-            <div className="relative w-full flex items-center">
+            <form
+              onSubmit={submitSearch}
+              className="relative w-full flex items-center"
+              role="search"
+            >
               {/* Search Input Field */}
               <input
-                type="text"
+                type="search"
+                inputMode="search"
+                enterKeyHint="search"
                 placeholder={
                   t.search_placeholder || "Search languages or messages..."
                 }
                 value={searchTerm}
                 onChange={(e) => handleSearchChange(e.target.value)}
-                className="w-full p-2 pl-10 text-gray-800 rounded-lg shadow-inner focus:outline-none focus:ring-2 focus:ring-red-300 transition duration-150"
-                style={{ fontSize: "1.2rem" }} // For the 1-point increase
+                className="w-full p-2 pl-10 pr-10 text-gray-800 rounded-lg shadow-inner focus:outline-none focus:ring-2 focus:ring-red-300 transition duration-150"
+                style={{ fontSize: "1.2rem" }}
                 autoFocus
-                // --- NEW: Save history on Enter ---
-                onKeyDown={(e) => {
-                  if (e.key === "Enter") {
-                    addToSearchHistory(searchTerm);
-                  }
-                }}
               />
+
               {/* Search Icon color changed to Thai Red */}
               <Search
                 className={`absolute left-2 top-1.5 w-5 h-5 ${ACCENT_COLOR_CLASS}`}
               />
 
-              {/* Close Button */}
+              {/* Clear Search Button */}
               <button
-                onClick={() => setIsSearchOpen(false)} // Close the search bar
+                type="button"
+                onClick={clearSearchAndStayOpen}
                 className="absolute right-2 top-1/2 transform -translate-y-1/2 p-1 text-gray-500 hover:text-gray-800"
-                aria-label="Close Search"
+                aria-label={lang === "th" ? "ล้างการค้นหา" : "Clear Search"}
+                title={lang === "th" ? "ล้างการค้นหา" : "Clear Search"}
               >
                 <X className="w-5 h-5" />
               </button>
-            </div>
+            </form>
           </div>
         )}
 
