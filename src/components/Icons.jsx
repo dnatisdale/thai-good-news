@@ -35,7 +35,7 @@ import {
   Trash,
   Folder,
   FileText,
-  Type,
+  ALargeSmall,
   Languages as LucideLanguages,
   Youtube,
 } from "lucide-react";
@@ -98,7 +98,7 @@ export const Languages = LucideLanguages;
 export const PdfFile = FileText;
 
 // Standard font-size style icon
-export const FontSize = Type;
+export const FontSize = ALargeSmall;
 
 // Standard YouTube icon from Lucide
 export const YouTube = Youtube;
