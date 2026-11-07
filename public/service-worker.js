@@ -3,7 +3,7 @@
 // Cache names (APP_SHELL_CACHE bumped to v2 to clear stale/stuck index.html & JS bundles)
 const CACHE_NAME = "gospel-audio-cache-v1";
 const OFFLINE_LIBRARY_CACHE = "offline-audio-v1";
-const APP_SHELL_CACHE = "app-shell-cache-v2";
+const APP_SHELL_CACHE = "app-shell-cache-v1.0.4";
 
 // App shell files to pre-cache for offline support
 const APP_SHELL_FILES = [
