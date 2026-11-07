@@ -26,8 +26,17 @@ export function useFirebase(setLang) {
       return;
     }
 
+    // If device is already offline, allow immediate app entry without waiting for network auth
+    if (typeof navigator !== "undefined" && navigator.onLine === false) {
+      setIsAuthReady(true);
+    }
+
     const unsubscribe = onAuthStateChanged(auth, async (user) => {
       if (!user) {
+        if (typeof navigator !== "undefined" && navigator.onLine === false) {
+          setIsAuthReady(true);
+          return;
+        }
         // If no user is logged in, sign in anonymously to ensure every user has a UID for data storage.
         console.log(i18n.en.sign_in_guest);
         try {

@@ -3,6 +3,12 @@ import html2canvas from "html2canvas";
 import ContentView from "./pages/ContentView";
 import { useFirebase } from "./hooks/useFirebase";
 import { useOfflineStorage } from "./hooks/useOfflineStorage"; // 👈 IMPORTED
+import {
+  precacheAllAudioSamples,
+  getPlayableTrackUrl,
+  playSampleWithOfflineSupport,
+} from "./utils/audioHelper";
+import { BUILD_INFO } from "./buildInfo";
 import { i18n } from "./i18n";
 import { useContentFilter } from "./hooks/useContentFilter";
 import { getFilteredMessages } from "./utils/filterLogic";
@@ -16,6 +22,10 @@ import {
   X,
   ExternalLink,
   Download,
+  CheckCircle,
+  Loader,
+  YouTubeColor,
+  YouTubeOff,
   Upload,
   Zap,
   ChevronLeft,
@@ -70,32 +80,62 @@ export default function App() {
   const [customBackHandler, setCustomBackHandler] = useState(null); // NEW: Allow pages to intercept Back
 
   // --- STATE LIFTING: Shared Offline Storage ---
-  const { offlineTracks, downloadTrack, deleteTrack, clearLibrary } =
-    useOfflineStorage();
+  const {
+    offlineTracks,
+    downloadTrack,
+    deleteTrack,
+    clearLibrary,
+    isTrackOffline,
+    isTrackDownloading,
+  } = useOfflineStorage();
 
   const touchStartRef = React.useRef(null);
+  const touchStartYRef = React.useRef(null);
   const touchEndRef = React.useRef(null);
-  const minSwipeDistance = 50; // Minimum distance for a swipe to be registered
+  const minSwipeDistance = 35; // Minimum distance (px) for a left swipe to close drawer
 
   const onTouchStart = (e) => {
+    const touch = e.touches?.[0] || e.targetTouches?.[0];
+    if (!touch) return;
     touchEndRef.current = null;
-    touchStartRef.current = e.targetTouches[0].clientX;
+    touchStartRef.current = touch.clientX;
+    touchStartYRef.current = touch.clientY;
   };
 
   const onTouchMove = (e) => {
-    if (!touchStartRef.current) return;
-    touchEndRef.current = e.targetTouches[0].clientX;
+    if (touchStartRef.current === null) return;
+    const touch = e.touches?.[0] || e.targetTouches?.[0];
+    if (!touch) return;
+    touchEndRef.current = touch.clientX;
+
+    const deltaX = touchStartRef.current - touch.clientX;
+    const deltaY = Math.abs((touchStartYRef.current ?? touch.clientY) - touch.clientY);
+
+    // Close immediately during a clear horizontal left-swipe so scrollable children don't swallow it
+    if (deltaX > minSwipeDistance && deltaX > deltaY * 1.2) {
+      setIsDrawerOpen(false);
+      touchStartRef.current = null;
+      touchStartYRef.current = null;
+      touchEndRef.current = null;
+    }
   };
 
-  const onTouchEnd = () => {
-    if (!touchStartRef.current || !touchEndRef.current) return;
-    const distance = touchStartRef.current - touchEndRef.current;
-    const isLeftSwipe = distance > minSwipeDistance;
-    if (isLeftSwipe) {
-      setIsDrawerOpen(false);
+  const onTouchEnd = (e) => {
+    if (touchStartRef.current === null) return;
+    const endX =
+      touchEndRef.current ??
+      e.changedTouches?.[0]?.clientX ??
+      null;
+
+    if (endX !== null) {
+      const distance = touchStartRef.current - endX;
+      if (distance > minSwipeDistance) {
+        setIsDrawerOpen(false);
+      }
     }
     // Reset refs
     touchStartRef.current = null;
+    touchStartYRef.current = null;
     touchEndRef.current = null;
   };
 
@@ -635,7 +675,10 @@ export default function App() {
   const [fontSize, setFontSize] = useState(initialFontSize);
   const [pageStack, setPageStack] = useState([{ name: "Home" }]);
   const mainScrollRef = React.useRef(null); // 👈 NEW: main scroll container
+  const mainAudioRef = React.useRef(null); // 👈 Persistent main audio element ref
   const [track, setTrack] = useState(null);
+  const [isAudioPlaying, setIsAudioPlaying] = useState(false);
+  const [isSelectMode, setIsSelectMode] = useState(false);
   const [isHoveringContent, setIsHoveringContent] = useState(false);
   const [isAudioMinimized, setIsAudioMinimized] = useState(true);
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
@@ -705,6 +748,13 @@ export default function App() {
   };
   const [deferredPrompt, setDeferredPrompt] = useState(null);
   const [isPwaInstalled, setIsPwaInstalled] = useState(false); // Install Prompt state
+  const [isInstallClicked, setIsInstallClicked] = useState(false); // Hide install button immediately on click
+  const [updateAvailable, setUpdateAvailable] = useState(false);
+  const [newVersionLabel, setNewVersionLabel] = useState(null);
+  const [isUpdateClicked, setIsUpdateClicked] = useState(false);
+  const [isTopUpdateBannerDismissed, setIsTopUpdateBannerDismissed] =
+    useState(false);
+  const waitingWorkerRef = React.useRef(null);
   // --- NEW FUNCTION: navigateToHome ---
   const navigateToHome = () => {
     // Reset to a fresh Home page
@@ -786,7 +836,7 @@ export default function App() {
     clearSelection,
   } = useContentFilter();
 
-  // --- Unified Share QR Modal ---
+  // --- Consolidated Share QR & Actions Modal ---
   const ShareQrModal = ({
     isOpen,
     onClose,
@@ -794,8 +844,48 @@ export default function App() {
     subtitle,
     url,
     footerText,
+    item,
+    externalUrl,
+    videoUrl,
   }) => {
+    const [copiedFeedback, setCopiedFeedback] = useState(false);
+
     if (!isOpen) return null;
+
+    const isOffline = item ? isTrackOffline(item.id) : false;
+    const isDownloading = item ? isTrackDownloading(item.id) : false;
+    const openTargetUrl = externalUrl || url;
+
+    const handleShareOrCopy = async () => {
+      const shareTitle =
+        lang === "th" ? `ข่าวดี — ${subtitle}` : `Thai Good News — ${subtitle}`;
+      const shareText = `${subtitle}\n${url}`;
+
+      if (navigator.share) {
+        try {
+          await navigator.share({
+            title: shareTitle,
+            text: shareText,
+            url: url,
+          });
+          return;
+        } catch (err) {
+          if (err.name === "AbortError") return;
+        }
+      }
+
+      try {
+        await navigator.clipboard.writeText(url);
+        setCopiedFeedback(true);
+        setTimeout(() => setCopiedFeedback(false), 2500);
+      } catch (e) {
+        alert(
+          lang === "th"
+            ? "คัดลอกลิงก์ไม่สำเร็จ"
+            : "Failed to copy link to clipboard.",
+        );
+      }
+    };
 
     return (
       <div
@@ -803,43 +893,150 @@ export default function App() {
         onClick={onClose}
       >
         <div
-          className="bg-white p-6 rounded-lg shadow-xl max-w-sm w-full relative"
+          className="bg-white dark:bg-[#1e293b] p-5 rounded-xl shadow-2xl max-w-sm w-full relative border border-gray-200 dark:border-gray-700"
           onClick={(e) => e.stopPropagation()}
         >
           {/* Close button */}
           <button
             onClick={onClose}
-            className="absolute top-3 right-5 text-gray-800"
+            className="absolute top-3 right-4 w-8 h-8 rounded-full bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600 flex items-center justify-center text-gray-800 dark:text-white font-bold"
+            aria-label={lang === "th" ? "ปิด" : "Close"}
           >
             ✕
           </button>
 
           {/* Title */}
-          <h2 className="text-sm text-gray-600 text-center break-all mb-1">
+          <h2 className="text-xs text-gray-500 dark:text-gray-300 text-center pr-6 mb-0.5">
             {title}
           </h2>
 
           {/* Subtitle (Language Name or Message Title) */}
-          <h3 className="text-lg font-bold text-brand-red mb-2 text-center">
+          <h3 className="text-lg font-bold text-brand-red dark:text-white mb-3 text-center pr-4 leading-snug">
             {subtitle}
           </h3>
 
           {/* --- QR CODE DISPLAY --- */}
-          <div className="flex justify-center mb-3 p-4 bg-white rounded-lg">
+          <div className="flex justify-center mb-3 p-3 bg-white rounded-xl shadow-inner border border-gray-100">
             <QRCodeDisplay
               url={url}
-              size={200}
+              size={170}
               fgColor="#000000"
               bgColor="#FFFFFF"
             />
           </div>
 
-          {/* URL under the QR */}
-          <p className="text-xs text-gray-600 text-center break-all mb-1">
+          {/* --- CONSOLIDATED ACTION BUTTONS --- */}
+          <div className="space-y-2 mt-3">
+            {/* 1. Save Offline to PWA Library */}
+            {item && (item.sampleUrl || item.trackDownloadUrl) && (
+              <button
+                type="button"
+                onClick={() =>
+                  !isOffline && !isDownloading && downloadTrack(item)
+                }
+                disabled={isOffline || isDownloading}
+                className={`w-full py-2.5 px-3 rounded-lg font-bold text-sm text-white flex items-center justify-center gap-2 shadow transition-all ${
+                  isOffline
+                    ? "bg-amber-500 cursor-default"
+                    : isDownloading
+                      ? "bg-gray-400 cursor-wait"
+                      : "bg-brand-red hover:bg-red-800 active:scale-95"
+                }`}
+              >
+                {isOffline ? (
+                  <>
+                    <CheckCircle className="w-5 h-5 shrink-0" />
+                    <span>
+                      {t?.downloaded ||
+                        (lang === "th"
+                          ? "บันทึกออฟไลน์แล้ว"
+                          : "Saved in Offline Library")}
+                    </span>
+                  </>
+                ) : isDownloading ? (
+                  <>
+                    <Loader className="w-5 h-5 shrink-0 animate-spin" />
+                    <span>
+                      {t?.downloading ||
+                        (lang === "th"
+                          ? "กำลังดาวน์โหลด..."
+                          : "Downloading...")}
+                    </span>
+                  </>
+                ) : (
+                  <>
+                    <Download className="w-5 h-5 shrink-0" />
+                    <span>
+                      {lang === "th"
+                        ? "บันทึกไว้ฟังออฟไลน์ (My Library)"
+                        : "Save for Offline (Library)"}
+                    </span>
+                  </>
+                )}
+              </button>
+            )}
+
+            {/* 2. Share / Copy Link */}
+            <button
+              type="button"
+              onClick={handleShareOrCopy}
+              style={{ backgroundColor: "#003366" }}
+              className="w-full py-2.5 px-3 rounded-lg font-bold text-sm text-white hover:opacity-90 active:scale-95 flex items-center justify-center gap-2 shadow transition-all"
+            >
+              <Share2 className="w-5 h-5 shrink-0" />
+              <span>
+                {copiedFeedback
+                  ? lang === "th"
+                    ? "✓ คัดลอกลิงก์แล้ว!"
+                    : "✓ Link Copied!"
+                  : lang === "th"
+                    ? "แชร์ / คัดลอกลิงก์"
+                    : "Share / Copy Link"}
+              </span>
+            </button>
+
+            {/* 3. YouTube & 5fish / GRN External Links */}
+            <div className="grid grid-cols-2 gap-2 pt-0.5">
+              {videoUrl ? (
+                <a
+                  href={videoUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="py-2 px-2.5 rounded-lg bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600 text-gray-800 dark:text-white font-semibold text-xs flex items-center justify-center gap-1.5 shadow-sm transition-all"
+                >
+                  <YouTubeColor className="w-5 h-5 shrink-0" />
+                  <span>{lang === "th" ? "ดูวิดีโอ YouTube" : "YouTube"}</span>
+                </a>
+              ) : (
+                <div
+                  className="py-2 px-2.5 rounded-lg bg-gray-100 dark:bg-gray-800 text-gray-400 dark:text-gray-500 font-semibold text-xs flex items-center justify-center gap-1.5 opacity-60 cursor-not-allowed"
+                  title={lang === "th" ? "ไม่มีวิดีโอ" : "No video available"}
+                >
+                  <YouTubeOff className="w-5 h-5 shrink-0" />
+                  <span>{lang === "th" ? "ไม่มีวิดีโอ" : "No Video"}</span>
+                </div>
+              )}
+
+              {openTargetUrl && (
+                <a
+                  href={openTargetUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="py-2 px-2.5 rounded-lg bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600 text-gray-800 dark:text-white font-semibold text-xs flex items-center justify-center gap-1.5 shadow-sm transition-all"
+                >
+                  <ExternalLink className="w-4 h-4 shrink-0" />
+                  <span>{lang === "th" ? "เปิด 5fish / GRN" : "5fish / GRN"}</span>
+                </a>
+              )}
+            </div>
+          </div>
+
+          {/* URL under the buttons */}
+          <p className="text-xs text-gray-500 dark:text-gray-400 text-center break-all mt-3">
             {footerText}
             <a
               href={url}
-              className="text-brand-red underline break-all text-[10px] block mt-1"
+              className="text-brand-red dark:text-red-400 underline break-all text-xs block mt-0.5"
               target="_blank"
               rel="noopener noreferrer"
             >
@@ -858,6 +1055,9 @@ export default function App() {
     subtitle: "",
     url: "",
     footerText: "",
+    item: null,
+    externalUrl: null,
+    videoUrl: null,
   });
 
   const handleCloseShareModal = () => {
@@ -869,41 +1069,66 @@ export default function App() {
     if (group) {
       const name = lang === "en" ? group.displayNameEn : group.displayNameTh;
 
-      // Construct URL (using first message's ISO or fallback)
-      const firstMsg = group.messages[0];
+      const firstMsg =
+        group.messages.find((m) => m.sampleUrl || m.trackDownloadUrl) ||
+        group.messages[0];
       const iso3 = firstMsg?.iso3 || "";
+      const langId = group.langId || firstMsg?.langId;
       const url = `https://5fish.mobi/${iso3}`;
+      const externalUrl = langId
+        ? `https://globalrecordings.net/en/language/${langId}`
+        : url;
+      const videoUrl =
+        group.messages.find((m) => m.languageVideoUrl || m.youtubeUrl)
+          ?.languageVideoUrl ||
+        group.messages.find((m) => m.youtubeUrl)?.youtubeUrl ||
+        null;
 
       setShareModalState({
         isOpen: true,
         title:
-          t?.scan_qr_to_view_messages || "Scan QR to view all messages in:",
+          t?.scan_qr_to_view_messages ||
+          (lang === "th"
+            ? "สแกนคิวอาร์โค้ด แชร์ หรือบันทึกออฟไลน์:"
+            : "Scan QR, Share, or Save Offline:"),
         subtitle: name,
         url: url,
         footerText: t?.language_qr_title || "",
+        item: firstMsg || null,
+        externalUrl,
+        videoUrl,
       });
     }
   };
 
   const handleShowQrForMessage = (item, languageDisplayName) => {
     const title = lang === "en" ? item.title_en : item.title_th;
+    const langName =
+      languageDisplayName || (lang === "en" ? item.languageEn : item.langTh);
 
     // Construct URL
-    let url = item.trackDownloadUrl;
-    if (url) {
-      if (!url.startsWith("http")) {
-        url = `https://${url}`;
-      }
-    } else {
-      url = `https://5fish.mobi/T${item.id}`;
+    let url = `https://5fish.mobi/T${item.id}`;
+    if (item.shareUrl) {
+      url = item.shareUrl.startsWith("http")
+        ? item.shareUrl
+        : `https://${item.shareUrl}`;
     }
+
+    const videoUrl = item.youtubeUrl || item.languageVideoUrl || null;
 
     setShareModalState({
       isOpen: true,
-      title: t?.scan_qr_to_download || "Scan QR to download:",
-      subtitle: `${languageDisplayName} - ${title}`,
+      title:
+        t?.scan_qr_to_download ||
+        (lang === "th"
+          ? "สแกนคิวอาร์โค้ด แชร์ หรือบันทึกออฟไลน์:"
+          : "Scan QR, Share, or Save Offline:"),
+      subtitle: `${langName} — ${title}`,
       url: url,
       footerText: "",
+      item: item,
+      externalUrl: url,
+      videoUrl: videoUrl,
     });
   };
 
@@ -1146,10 +1371,46 @@ export default function App() {
     setTrack(newItem); // Auto-play next track if audio player is active
   };
 
-  // Handler for Content Card play button
+  // Handler for LanguageCard / ContentCard / ContentView play button
   const handlePlayMessage = (item) => {
+    if (!item) return;
+
+    // If tapping the speaker icon for the currently loaded track, toggle play/pause
+    if (track && String(track.id) === String(item.id) && mainAudioRef.current) {
+      if (!mainAudioRef.current.paused) {
+        mainAudioRef.current.pause();
+        setIsAudioPlaying(false);
+      } else {
+        const playableUrl = getPlayableTrackUrl(item);
+        if (!mainAudioRef.current.src && playableUrl) {
+          mainAudioRef.current._activeTrackId = item.id;
+          playSampleWithOfflineSupport(mainAudioRef.current, playableUrl, {
+            onPlaySuccess: () => setIsAudioPlaying(true),
+            onPlayError: () => setIsAudioPlaying(false),
+            onEnded: () => setIsAudioPlaying(false),
+          });
+        } else {
+          mainAudioRef.current
+            .play()
+            .then(() => setIsAudioPlaying(true))
+            .catch(() => {});
+        }
+      }
+      return;
+    }
+
     setTrack(item);
-    setIsAudioMinimized(false); // Open the audio player when play is clicked
+
+    // Synchronously start playback on the persistent <audio> element inside the user tap gesture
+    const playableUrl = getPlayableTrackUrl(item);
+    if (mainAudioRef.current && playableUrl) {
+      mainAudioRef.current._activeTrackId = item.id;
+      playSampleWithOfflineSupport(mainAudioRef.current, playableUrl, {
+        onPlaySuccess: () => setIsAudioPlaying(true),
+        onPlayError: () => setIsAudioPlaying(false),
+        onEnded: () => setIsAudioPlaying(false),
+      });
+    }
   };
 
   // --- NEW: PWA Install Click Handler ---
@@ -1250,8 +1511,19 @@ export default function App() {
   useEffect(() => {
     const timer = setTimeout(() => {
       setIsLoading(false);
+      // Quietly pre-cache all speaker-icon sample MP3s in the background for offline use
+      precacheAllAudioSamples();
     }, 2000); // 2 seconds
-    return () => clearTimeout(timer);
+
+    const handleOnline = () => {
+      precacheAllAudioSamples();
+    };
+    window.addEventListener("online", handleOnline);
+
+    return () => {
+      clearTimeout(timer);
+      window.removeEventListener("online", handleOnline);
+    };
   }, []);
 
   // URL Parameter Effect
@@ -1287,7 +1559,16 @@ export default function App() {
       console.log("beforeinstallprompt event captured.");
     };
 
+    const handleAppInstalled = () => {
+      console.log("PWA was installed.");
+      setIsPwaInstalled(true);
+      setIsInstallClicked(true);
+      setIsBannerDismissed(true);
+      setDeferredPrompt(null);
+    };
+
     window.addEventListener("beforeinstallprompt", handleBeforeInstallPrompt);
+    window.addEventListener("appinstalled", handleAppInstalled);
 
     // Check if already installed
     if (
@@ -1313,6 +1594,7 @@ export default function App() {
         "beforeinstallprompt",
         handleBeforeInstallPrompt,
       );
+      window.removeEventListener("appinstalled", handleAppInstalled);
       try {
         mediaQueryLocal.removeEventListener("change", handleChange);
       } catch (e) {
@@ -1321,19 +1603,138 @@ export default function App() {
     };
   }, []);
 
-  // --- NEW: PWA Install Click Handler ---
+  // --- NEW: Detect App Updates via Service Worker AND /version.json ---
+  const checkForAppUpdate = React.useCallback(async () => {
+    if (typeof navigator !== "undefined" && navigator.onLine === false) return;
+
+    // 1. Check /version.json (bypasses browser caches)
+    try {
+      const res = await fetch(`/version.json?t=${Date.now()}`, {
+        cache: "no-store",
+      });
+      if (res.ok) {
+        const ct = res.headers.get("content-type") || "";
+        if (ct.includes("application/json")) {
+          const data = await res.json();
+          if (data.buildId && data.buildId !== BUILD_INFO.buildId) {
+            setUpdateAvailable(true);
+            setNewVersionLabel(data.version || null);
+          }
+        }
+      }
+    } catch (e) {
+      // Ignore network errors while checking version.json
+    }
+
+    // 2. Check Service Worker registration
+    if ("serviceWorker" in navigator) {
+      try {
+        const registration = await navigator.serviceWorker.getRegistration();
+        if (registration) {
+          await registration.update().catch(() => {});
+          if (registration.waiting) {
+            waitingWorkerRef.current = registration.waiting;
+            setUpdateAvailable(true);
+          }
+        }
+      } catch (e) {
+        // Ignore SW update check error
+      }
+    }
+  }, []);
+
+  useEffect(() => {
+    checkForAppUpdate();
+
+    if ("serviceWorker" in navigator) {
+      navigator.serviceWorker.ready.then((registration) => {
+        if (registration.waiting) {
+          waitingWorkerRef.current = registration.waiting;
+          setUpdateAvailable(true);
+        }
+        registration.addEventListener("updatefound", () => {
+          const newWorker = registration.installing;
+          if (!newWorker) return;
+          newWorker.addEventListener("statechange", () => {
+            if (
+              newWorker.state === "installed" &&
+              navigator.serviceWorker.controller
+            ) {
+              waitingWorkerRef.current = newWorker;
+              setUpdateAvailable(true);
+            }
+          });
+        });
+      });
+    }
+
+    const handleVisibility = () => {
+      if (document.visibilityState === "visible") {
+        checkForAppUpdate();
+      }
+    };
+
+    window.addEventListener("online", checkForAppUpdate);
+    document.addEventListener("visibilitychange", handleVisibility);
+
+    return () => {
+      window.removeEventListener("online", checkForAppUpdate);
+      document.removeEventListener("visibilitychange", handleVisibility);
+    };
+  }, [checkForAppUpdate]);
+
+  // Also check for updates whenever the user opens the pullout menu
+  useEffect(() => {
+    if (isDrawerOpen) {
+      checkForAppUpdate();
+    }
+  }, [isDrawerOpen, checkForAppUpdate]);
+
+  // --- NEW: Apply App Update Handler (Button vanishes immediately on click) ---
+  const handleApplyUpdate = async () => {
+    // Immediately hide update buttons so user doesn't keep pushing it
+    setIsUpdateClicked(true);
+    setUpdateAvailable(false);
+    setIsDrawerOpen(false);
+
+    try {
+      if (waitingWorkerRef.current) {
+        waitingWorkerRef.current.postMessage({ type: "SKIP_WAITING" });
+      }
+      if ("caches" in window) {
+        const keys = await caches.keys();
+        for (const key of keys) {
+          if (key.startsWith("app-shell-cache")) {
+            await caches.delete(key);
+          }
+        }
+      }
+    } catch (e) {
+      console.warn("Error preparing app update:", e);
+    }
+
+    window.location.reload();
+  };
+
+  // --- NEW: PWA Install Click Handler (Button vanishes immediately on click) ---
   const handleInstallClick = async () => {
+    // Immediately hide the install button & banner so the user doesn't keep pushing it
+    setIsInstallClicked(true);
+    setIsBannerDismissed(true);
+    setIsDrawerOpen(false);
+
     if (deferredPrompt) {
       // Show the install prompt (Android / Chrome Desktop)
-      deferredPrompt.prompt();
-      const { outcome } = await deferredPrompt.userChoice;
+      const promptEvent = deferredPrompt;
+      setDeferredPrompt(null);
+      promptEvent.prompt();
+      const { outcome } = await promptEvent.userChoice;
       if (outcome === "accepted") {
         console.log("User accepted the PWA install prompt");
+        setIsPwaInstalled(true);
       } else {
         console.log("User dismissed the PWA install prompt");
       }
-      setDeferredPrompt(null);
-      setIsDrawerOpen(false);
     } else {
       // iOS / Safari / Existing PWA logic where prompt isn't supported
       // Show instructions instead of false "Installed"
@@ -1359,9 +1760,14 @@ export default function App() {
   // --- ADDED: New Global Font Size Effect ---
   useEffect(() => {
     // Apply the selected font size to the root <html> element
-    // This will scale all rem-based Tailwind classes.
+    // This will scale all rem-based Tailwind classes for reading text.
     if (fontSize) {
       document.documentElement.style.fontSize = fontSize;
+      const numericSize = parseInt(fontSize, 10) || 16;
+      document.documentElement.setAttribute(
+        "data-large-font",
+        numericSize >= 20 ? "true" : "false",
+      );
       // We also consolidate saving to localStorage here
       localStorage.setItem("appFontSize", fontSize);
     }
@@ -1397,6 +1803,11 @@ export default function App() {
           // --- NEW WIRING ---
           selectedPrograms={selectedPrograms}
           onToggleLanguage={handleLanguageToggle}
+          showCheckboxes={isSelectMode}
+          onEnableSelectMode={() => setIsSelectMode(true)}
+          onPlayTrack={handlePlayMessage}
+          activeTrack={track}
+          isAudioPlaying={isAudioPlaying}
           onHoverChange={setIsHoveringContent} // 👈 GIVE IT THE CONTROLLER
           userData={userData} // 👇 NEW
           onToggleFavoriteLanguage={handleToggleFavoriteLanguage} // 👇 NEW
@@ -1426,6 +1837,10 @@ export default function App() {
           onDownloadPDF={handleDownloadSelectedPDF} // This is the actual PDF button
           userData={userData}
           onToggleFavorite={handleToggleFavorite}
+          onPlayTrack={handlePlayMessage}
+          activeTrack={track}
+          isAudioPlaying={isAudioPlaying}
+          onShowQrForMessage={handleShowQrForMessage}
         />
       );
       break;
@@ -1466,6 +1881,11 @@ export default function App() {
           // --- NEW WIRING ---
           selectedPrograms={selectedPrograms}
           onToggleProgram={handleProgramToggle}
+          showCheckboxes={isSelectMode}
+          onEnableSelectMode={() => setIsSelectMode(true)}
+          onPlayTrack={handlePlayMessage}
+          activeTrack={track}
+          isAudioPlaying={isAudioPlaying}
           onShowQrForMessage={handleShowQrForMessage} // 👈 PASSED DOWN
           userData={userData}
           onToggleFavorite={handleToggleFavorite}
@@ -1495,6 +1915,10 @@ export default function App() {
           }}
           userData={userData}
           onToggleFavorite={handleToggleFavorite}
+          onPlayTrack={handlePlayMessage}
+          activeTrack={track}
+          isAudioPlaying={isAudioPlaying}
+          onShowQrForMessage={handleShowQrForMessage}
           onOpenSearch={() => setIsSearchOpen(true)} // Auto-open search bar
         />
       );
@@ -1516,6 +1940,10 @@ export default function App() {
           hasNext={hasNext}
           pageStack={pageStack}
           onToggleFavorite={handleToggleFavorite}
+          onPlayTrack={handlePlayMessage}
+          activeTrack={track}
+          isAudioPlaying={isAudioPlaying}
+          onShowQrForMessage={handleShowQrForMessage}
           // 🔴 NEW: give FavoritesPage what it needs for LANGUAGES
           languageGroups={languageGroups}
           onToggleFavoriteLanguage={handleToggleFavoriteLanguage}
@@ -1693,7 +2121,15 @@ export default function App() {
       // 2. --- NORMAL APPLICATION START (Visible while isLoading is FALSE) ---
       <div className="min-h-screen bg-gray-100 dark:bg-[#374151] flex flex-col">
         {/* --- UPDATE NOTIFICATION BANNER --- */}
-        <UpdateNotification />
+        <UpdateNotification
+          updateAvailable={
+            updateAvailable && !isUpdateClicked && !isTopUpdateBannerDismissed
+          }
+          newVersion={newVersionLabel}
+          onUpdate={handleApplyUpdate}
+          onDismiss={() => setIsTopUpdateBannerDismissed(true)}
+          lang={lang}
+        />
 
         {/* --- UNIFIED SHARE QR MODAL --- */}
         <ShareQrModal
@@ -1703,23 +2139,26 @@ export default function App() {
           subtitle={shareModalState.subtitle}
           url={shareModalState.url}
           footerText={shareModalState.footerText}
+          item={shareModalState.item}
+          externalUrl={shareModalState.externalUrl}
+          videoUrl={shareModalState.videoUrl}
         />
 
-        {/* --- HEADER (Banner) --- */}
+        {/* --- HEADER (Banner - locked in px so font-size changes never distort or overlap icons) --- */}
         <header
-          className={`sticky top-0 w-full ${PRIMARY_COLOR_CLASS} shadow-lg z-40 rounded-b-xl md:py-3 md:px-1`}
+          className={`sticky top-0 w-full ${PRIMARY_COLOR_CLASS} shadow-lg z-40 rounded-b-xl md:py-[10px] md:px-[12px]`}
         >
-          {/* Mobile/Tablet: 3-column grid layout */}
-          <div className="grid grid-cols-3 items-center h-20 md:hidden px-1">
-            {/* LEFT: Menu + Logo + Install */}
-            <div className="flex items-center justify-start space-x-1">
+          {/* Mobile/Tablet: Clean left-to-right flex bar (no colliding 3-column grid) */}
+          <div className="flex items-center justify-between h-[72px] md:hidden px-[8px]">
+            {/* LEFT: Menu + Logo + Home */}
+            <div className="flex items-center gap-[4px] flex-shrink-0">
               <div className="relative">
                 <button
                   onClick={() => setIsDrawerOpen(true)}
-                  className="text-white px-1 rounded-lg hover:bg-red-800 transition-colors btn-hover flex items-center"
+                  className="text-white p-[6px] rounded-lg hover:bg-red-800 transition-colors btn-hover flex items-center"
                   aria-label="Open Sidebar Menu"
                 >
-                  <Menu className="w-6 h-6" />
+                  <Menu className="w-[24px] h-[24px]" />
                 </button>
                 <SelectionBadge
                   selectionCount={selectedPrograms.length}
@@ -1734,59 +2173,82 @@ export default function App() {
                 target="_blank"
                 rel="noopener noreferrer"
                 title="5fish.mobi/th?r=Asia&country=Thailand"
-                className="flex items-center text-white rounded-lg hover:bg-red-800 transition-colors flex-shrink-0 -ml-1"
+                className="flex items-center text-white rounded-lg hover:bg-red-800 transition-colors flex-shrink-0"
               >
                 <img
                   src={BannerLogo}
                   alt={t.app_name}
                   className="w-auto flex-shrink-0 object-cover rounded-lg brightness-125 animate-windy"
-                  style={{ height: "4rem" }}
+                  style={{ height: "54px" }}
                 />
               </a>
               <button
                 onClick={navigateToHome}
-                className="text-white px-1 rounded-lg hover:bg-red-800 transition-colors btn-hover flex items-center"
+                className="text-white p-[6px] rounded-lg hover:bg-red-800 transition-colors btn-hover flex items-center"
                 title={t.home || "Home"}
                 aria-label={t.home || "Home"}
               >
-                <Home className="w-5 h-5" />
+                <Home className="w-[22px] h-[22px]" />
               </button>
             </div>
 
-            {/* CENTER: Navigation Controls */}
-            <div className="flex items-center justify-center space-x-1">
-              {currentPage.name !== "Home" && (
-                <>
-                  <button
-                    onClick={goBack}
-                    disabled={!hasPrev}
-                    className={`p-1 rounded-lg transition-colors flex items-center ${
-                      hasPrev
-                        ? "text-white hover:bg-white/20"
-                        : "text-red-200 opacity-50 cursor-not-allowed"
-                    }`}
-                    title={t.back || "Back"}
+            {/* RIGHT MOBILE: Controls (pixel-sized so they never overlap at any font size) */}
+            <div className="flex items-center justify-end gap-[2px] flex-shrink-0">
+              {(currentPage.name === "Home" ||
+                currentPage.name === "MessagesByLanguage") && (
+                <button
+                  type="button"
+                  onClick={() => setIsSelectMode((prev) => !prev)}
+                  className={`p-[6px] rounded-lg text-[13px] font-bold flex items-center gap-[4px] transition-colors ${
+                    isSelectMode
+                      ? "bg-amber-400 text-gray-900 shadow-sm"
+                      : "text-white hover:bg-red-800"
+                  }`}
+                  title={
+                    isSelectMode
+                      ? lang === "th"
+                        ? "ซ่อนช่องทำเครื่องหมาย"
+                        : "Hide selection checkboxes"
+                      : lang === "th"
+                        ? "เลือกหลายรายการ"
+                        : "Select multiple items"
+                  }
+                  aria-label={
+                    isSelectMode
+                      ? lang === "th"
+                        ? "ซ่อนช่องทำเครื่องหมาย"
+                        : "Hide selection checkboxes"
+                      : lang === "th"
+                        ? "เลือกหลายรายการ"
+                        : "Select multiple items"
+                  }
+                >
+                  <svg
+                    className="w-[22px] h-[22px] shrink-0"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="2.2"
+                    viewBox="0 0 24 24"
                   >
-                    <ChevronLeft className="w-8 h-8" />
-                  </button>
-                  <button
-                    onClick={goForward}
-                    disabled={!hasNext}
-                    className={`p-1 rounded-lg transition-colors flex items-center ${
-                      hasNext
-                        ? "text-white hover:bg-white/20"
-                        : "text-red-200 opacity-50 cursor-not-allowed"
-                    }`}
-                    title={t.forward || "Forward"}
-                  >
-                    <ChevronRight className="w-8 h-8" />
-                  </button>
-                </>
+                    <rect x="3" y="3" width="18" height="18" rx="3" />
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      d="M9 12l2 2 4-4"
+                    />
+                  </svg>
+                  <span className="hidden sm:inline">
+                    {isSelectMode
+                      ? lang === "th"
+                        ? "เสร็จ"
+                        : "Done"
+                      : lang === "th"
+                        ? "เลือก"
+                        : "Select"}
+                  </span>
+                </button>
               )}
-            </div>
 
-            {/* RIGHT MOBILE: Controls */}
-            <div className="flex items-center justify-end space-x-1">
               <LanguageToggle lang={lang} setLang={setLang} t={t} />
 
               <FloatingUtilityBar
@@ -1800,14 +2262,14 @@ export default function App() {
                 navigateToSelectedContent={navigateToSelectedContent}
               />
 
-              {!isPwaInstalled && (
+              {!isPwaInstalled && !isInstallClicked && (
                 <button
                   onClick={handleInstallClick}
                   title={t.install_app || "Install App"}
-                  className="p-1 rounded-lg transition-colors btn-hover text-white hover:bg-red-800"
+                  className="p-[6px] rounded-lg transition-colors btn-hover text-white hover:bg-red-800"
                   aria-label={t.install_app || "Install App"}
                 >
-                  <Download className="w-6 h-6" />
+                  <Download className="w-[22px] h-[22px]" />
                 </button>
               )}
 
@@ -1815,7 +2277,7 @@ export default function App() {
               {currentPage.name === "Home" && (
                 <button
                   onClick={() => setIsLangSearchBarVisible((prev) => !prev)}
-                  className="text-white p-1 rounded-lg hover:bg-red-800 transition-colors btn-hover"
+                  className="text-white p-[4px] rounded-lg hover:bg-red-800 transition-colors btn-hover"
                   title={
                     isLangSearchBarVisible
                       ? lang === "th"
@@ -1835,17 +2297,17 @@ export default function App() {
                         : "Show A-Z index"
                   }
                 >
-                  <AlphabetIndex className="w-9 h-9" />
+                  <AlphabetIndex className="w-[32px] h-[32px]" />
                 </button>
               )}
 
               <button
                 onClick={openSearchPage}
-                className="text-white p-1 rounded-lg hover:bg-red-800 transition-colors btn-hover"
+                className="text-white p-[6px] rounded-lg hover:bg-red-800 transition-colors btn-hover"
                 aria-label="Open Search"
                 title={lang === "th" ? "ค้นหา" : "Search"}
               >
-                <Search className="w-6 h-6" />
+                <Search className="w-[24px] h-[24px]" />
               </button>
             </div>
           </div>
@@ -1853,14 +2315,14 @@ export default function App() {
           {/* Desktop: Flexbox layout */}
           <div className="hidden md:flex justify-between items-center relative">
             {/* Left: Menu & Logo */}
-            <div className="flex items-center">
-              <div className="relative mr-3">
+            <div className="flex items-center gap-[8px]">
+              <div className="relative">
                 <button
                   onClick={() => setIsDrawerOpen(true)}
-                  className="text-white p-1 rounded-lg hover:bg-red-800 transition-colors btn-hover"
+                  className="text-white p-[6px] rounded-lg hover:bg-red-800 transition-colors btn-hover"
                   aria-label="Open Sidebar Menu"
                 >
-                  <Menu className="w-6 h-6 md:w-7 md:h-7" />
+                  <Menu className="w-[28px] h-[28px]" />
                 </button>
                 <SelectionBadge
                   selectionCount={selectedPrograms.length}
@@ -1875,13 +2337,13 @@ export default function App() {
                 target="_blank"
                 rel="noopener noreferrer"
                 title="5fish.mobi/th?r=Asia&country=Thailand"
-                className="flex items-center text-white rounded-lg hover:bg-red-800 transition-colors focus:outline-none focus:ring-2 focus:ring-white flex-shrink-0 -ml-1"
+                className="flex items-center text-white rounded-lg hover:bg-red-800 transition-colors focus:outline-none focus:ring-2 focus:ring-white flex-shrink-0"
               >
                 <img
                   src={BannerLogo}
                   alt={t.app_name}
                   className="w-auto flex-shrink-0 rounded-lg brightness-125 animate-windy"
-                  style={{ height: "4rem" }}
+                  style={{ height: "58px" }}
                 />
               </a>
               <button
@@ -1889,48 +2351,103 @@ export default function App() {
                   navigateToHome();
                   setIsDrawerOpen(false);
                 }}
-                className="text-white p-1 rounded-lg hover:bg-red-800 transition-colors btn-hover ml-2"
+                className="text-white p-[6px] rounded-lg hover:bg-red-800 transition-colors btn-hover"
                 title={t.home || "Home"}
                 aria-label={t.home || "Home"}
               >
-                <Home className="w-5 h-5" />
+                <Home className="w-[22px] h-[22px]" />
               </button>
             </div>
 
-            {/* Center: Navigation Buttons */}
-            <div className="flex items-center justify-center space-x-2">
+            {/* Center: Navigation Buttons (Desktop only) */}
+            <div className="flex items-center justify-center gap-[8px]">
               {currentPage.name !== "Home" && (
                 <>
                   <button
                     onClick={goBack}
                     disabled={!hasPrev}
-                    className={`p-1 rounded-lg transition-colors flex items-center ${
+                    className={`p-[4px] rounded-lg transition-colors flex items-center ${
                       hasPrev
                         ? "text-white hover:bg-white/20"
                         : "text-red-200 opacity-50 cursor-not-allowed"
                     }`}
                     title={t.back || "Back"}
                   >
-                    <ChevronLeft className="w-8 h-8" />
+                    <ChevronLeft className="w-[30px] h-[30px]" />
                   </button>
                   <button
                     onClick={goForward}
                     disabled={!hasNext}
-                    className={`p-1 rounded-lg transition-colors flex items-center ${
+                    className={`p-[4px] rounded-lg transition-colors flex items-center ${
                       hasNext
                         ? "text-white hover:bg-white/20"
                         : "text-red-200 opacity-50 cursor-not-allowed"
                     }`}
                     title={t.forward || "Forward"}
                   >
-                    <ChevronRight className="w-8 h-8" />
+                    <ChevronRight className="w-[30px] h-[30px]" />
                   </button>
                 </>
               )}
             </div>
 
             {/* Right Desktop: Controls */}
-            <div className="flex items-center space-x-4 flex-shrink-0">
+            <div className="flex items-center gap-[10px] flex-shrink-0">
+              {(currentPage.name === "Home" ||
+                currentPage.name === "MessagesByLanguage") && (
+                <button
+                  type="button"
+                  onClick={() => setIsSelectMode((prev) => !prev)}
+                  className={`px-[10px] py-[6px] rounded-lg text-[14px] font-bold flex items-center gap-[6px] transition-colors ${
+                    isSelectMode
+                      ? "bg-amber-400 text-gray-900 shadow-sm"
+                      : "text-white bg-white/15 hover:bg-red-800"
+                  }`}
+                  title={
+                    isSelectMode
+                      ? lang === "th"
+                        ? "ซ่อนช่องทำเครื่องหมาย"
+                        : "Hide selection checkboxes"
+                      : lang === "th"
+                        ? "เลือกหลายรายการ"
+                        : "Select multiple items"
+                  }
+                  aria-label={
+                    isSelectMode
+                      ? lang === "th"
+                        ? "ซ่อนช่องทำเครื่องหมาย"
+                        : "Hide selection checkboxes"
+                      : lang === "th"
+                        ? "เลือกหลายรายการ"
+                        : "Select multiple items"
+                  }
+                >
+                  <svg
+                    className="w-[18px] h-[18px] shrink-0"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="2.2"
+                    viewBox="0 0 24 24"
+                  >
+                    <rect x="3" y="3" width="18" height="18" rx="3" />
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      d="M9 12l2 2 4-4"
+                    />
+                  </svg>
+                  <span>
+                    {isSelectMode
+                      ? lang === "th"
+                        ? "เสร็จสิ้น"
+                        : "Done"
+                      : lang === "th"
+                        ? "เลือกหลายรายการ"
+                        : "Select"}
+                  </span>
+                </button>
+              )}
+
               <FloatingUtilityBar
                 t={t}
                 lang={lang}
@@ -1945,14 +2462,14 @@ export default function App() {
 
               <LanguageToggle lang={lang} setLang={setLang} t={t} />
 
-              {!isPwaInstalled && (
+              {!isPwaInstalled && !isInstallClicked && (
                 <button
                   onClick={handleInstallClick}
                   title={t.install_app || "Install App"}
-                  className="p-1 rounded-lg transition-colors btn-hover text-white hover:bg-red-800"
+                  className="p-[6px] rounded-lg transition-colors btn-hover text-white hover:bg-red-800"
                   aria-label={t.install_app || "Install App"}
                 >
-                  <Download className="w-6 h-6" />
+                  <Download className="w-[24px] h-[24px]" />
                 </button>
               )}
 
@@ -1977,7 +2494,7 @@ export default function App() {
                       return next;
                     })
                   }
-                  className="text-white p-1 rounded-lg hover:bg-red-800 transition-colors btn-hover"
+                  className="text-white p-[4px] rounded-lg hover:bg-red-800 transition-colors btn-hover"
                   title={
                     isLangSearchBarVisible
                       ? lang === "th"
@@ -1997,18 +2514,18 @@ export default function App() {
                         : "Show A-Z index"
                   }
                 >
-                  <AlphabetIndex className="w-9 h-9" />
+                  <AlphabetIndex className="w-[34px] h-[34px]" />
                 </button>
               )}
 
               <button
                 onClick={openSearchPage}
-                className="text-white p-1 rounded-lg hover:bg-red-800 transition-colors btn-hover"
+                className="text-white p-[6px] rounded-lg hover:bg-red-800 transition-colors btn-hover"
                 aria-label="Open Search"
                 title={lang === "th" ? "ค้นหา" : "Search"}
               >
                 <Search
-                  className="w-7 h-7"
+                  className="w-[26px] h-[26px]"
                   circleFill="#b9483b"
                   circleStroke="currentColor"
                   handleStroke="currentColor"
@@ -2085,23 +2602,33 @@ export default function App() {
         {/* --- AUDIO PLAYER --- */}
         <AudioPlayer
           track={track}
+          audioRef={mainAudioRef}
+          isPlaying={isAudioPlaying}
+          setIsPlaying={setIsAudioPlaying}
           isMinimized={isAudioMinimized}
           toggleMinimize={toggleAudioMinimize}
           t={t}
+          lang={lang}
           onGoBack={goBack}
           onGoForward={goForward}
           hasPrev={hasPrev}
           hasNext={hasNext}
-          onClose={() => setTrack(null)}
+          onClose={() => {
+            setIsAudioPlaying(false);
+            setTrack(null);
+          }}
         />
 
         {/* --- NAVIGATION DRAWER (Sidebar) --- */}
         <div
-          className={`fixed inset-0 z-40 transition-opacity duration-300 ${
+          className={`fixed inset-0 z-50 transition-opacity duration-300 ${
             isDrawerOpen
               ? "opacity-100 pointer-events-auto"
               : "opacity-0 pointer-events-none"
           }`}
+          onTouchStart={onTouchStart}
+          onTouchMove={onTouchMove}
+          onTouchEnd={onTouchEnd}
         >
           {/* Overlay (Click to close) */}
           <div
@@ -2109,24 +2636,21 @@ export default function App() {
             onClick={() => setIsDrawerOpen(false)}
           ></div>
 
-          {/* Drawer Content */}
+          {/* Drawer Content (locked in px + max-w-[85vw] so large fonts never push the X button off-screen) */}
           <div
-            className={`absolute left-0 top-0 w-72 h-full bg-white dark:bg-[#374151] shadow-2xl transition-transform duration-300 transform ${
+            className={`absolute left-0 top-0 w-[288px] max-w-[85vw] h-full bg-white dark:bg-[#374151] shadow-2xl transition-transform duration-300 transform ${
               isDrawerOpen ? "translate-x-0" : "-translate-x-full"
-              // 💡 ADD rounded-tr-xl CLASS HERE
-            } rounded-tr-xl flex flex-col`}
-            onTouchStart={onTouchStart}
-            onTouchMove={onTouchMove}
-            onTouchEnd={onTouchEnd}
+            } rounded-tr-xl flex flex-col z-10`}
           >
             {/* Header - Match PWA header height */}
             <div
-              className={`${PRIMARY_COLOR_CLASS} px-2 py-1 rounded-r-xl flex-shrink-0 flex items-center justify-between`}
+              className={`${PRIMARY_COLOR_CLASS} px-[10px] py-[8px] rounded-r-xl flex-shrink-0 flex items-center justify-between gap-[8px]`}
             >
-              {/* Left: Logo and Title with Share Button */}
-              <div className="flex items-center gap-2">
+              {/* Left: Logo and Title */}
+              <div className="flex items-center gap-[8px] min-w-0">
                 {/* 1. The Square Logo */}
                 <button
+                  type="button"
                   onClick={() => {
                     navigateToHome();
                     setIsDrawerOpen(false);
@@ -2137,25 +2661,31 @@ export default function App() {
                   <img
                     src={AppLogo}
                     alt="Logo"
-                    className="h-12 w-12 flex-shrink-0 object-cover brightness-125 animate-windy"
+                    className="h-[48px] w-[48px] flex-shrink-0 object-cover brightness-125 animate-windy"
                   />
                 </button>
 
                 {/* Title Column */}
-                <div className="flex flex-col items-start justify-center">
+                <div className="flex flex-col items-start justify-center min-w-0">
                   {/* 2. App Title */}
-                  <h2 className="text-2xl font-bold text-white leading-tight mt-1 mb-1">
+                  <h2 className="text-[22px] font-bold text-white leading-tight truncate">
                     {t.app_name}
                   </h2>
                 </div>
               </div>
 
-              {/* 4. Close Button */}
+              {/* 4. Close Button (Large, easy-to-tap 38px target) */}
               <button
-                onClick={() => setIsDrawerOpen(false)}
-                className="text-white p-1 hover:bg-red-800 rounded-full flex-shrink-0"
+                type="button"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  setIsDrawerOpen(false);
+                }}
+                aria-label={lang === "th" ? "ปิดเมนู" : "Close Menu"}
+                title={lang === "th" ? "ปิดเมนู" : "Close Menu"}
+                className="text-white w-[38px] h-[38px] flex items-center justify-center bg-white/15 hover:bg-red-800 active:scale-95 rounded-full flex-shrink-0 transition-all"
               >
-                <X className="w-5 h-5" />
+                <X className="w-[22px] h-[22px]" />
               </button>
             </div>
 
@@ -2348,7 +2878,7 @@ export default function App() {
                     title="Click to enlarge"
                   >
                     <QRCodeSVG
-                      value={`${window.location.origin}/listen`}
+                      value="https://thaigoodnews.org"
                       size={parseInt(fontSize || "16") * 3.5}
                       level="M"
                       includeMargin={false}
@@ -2358,17 +2888,51 @@ export default function App() {
                 </div>
               </div>
 
-              {/* Install Button removed from sidebar (moved to header) */}
+              {/* --- Update / Install Buttons in Pullout Menu --- */}
+              {updateAvailable && !isUpdateClicked && (
+                <button
+                  type="button"
+                  onClick={handleApplyUpdate}
+                  className="w-full py-2.5 px-3 bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white font-bold text-sm rounded-lg shadow-md flex items-center justify-center gap-2 transition-all active:scale-95 animate-pulse"
+                >
+                  <Download className="w-4 h-4 shrink-0" />
+                  <span>
+                    {lang === "th"
+                      ? `✨ มีเวอร์ชันใหม่${newVersionLabel ? ` (v${newVersionLabel})` : ""} — แตะเพื่อติดตั้ง`
+                      : `✨ New Version${newVersionLabel ? ` (v${newVersionLabel})` : ""} — Tap to Install`}
+                  </span>
+                </button>
+              )}
+
+              {!isPwaInstalled && !isInstallClicked && (
+                <button
+                  type="button"
+                  onClick={handleInstallClick}
+                  className="w-full py-2 px-3 bg-[#FF8C00] hover:bg-orange-600 text-white font-bold text-sm rounded-lg shadow-md flex items-center justify-center gap-2 transition-all active:scale-95"
+                >
+                  <Download className="w-4 h-4 shrink-0" />
+                  <span>
+                    {lang === "th" ? "ติดตั้งแอป (Install App)" : "Install App"}
+                  </span>
+                </button>
+              )}
 
               {/* --- Bottom Information --- */}
               <div className="text-xs text-gray-500 dark:text-white dark:bg-[#374151] pt-2 space-y-2">
                 {/* Build Information */}
                 <div className="text-center space-y-1">
-                  <p className="text-gray-600 dark:text-white">
-                    Build: {process.env.REACT_APP_BUILD_DATE || "local dev"}
-                    {process.env.REACT_APP_VERSION && (
-                      <span className="ml-1 opacity-60">
-                        (v{process.env.REACT_APP_VERSION})
+                  <p className="text-gray-600 dark:text-white font-medium">
+                    Build: {BUILD_INFO.buildDate || process.env.REACT_APP_BUILD_DATE || "local dev"}{" "}
+                    <span className="opacity-75">
+                      (v{BUILD_INFO.version || process.env.REACT_APP_VERSION || "1.0.3"})
+                    </span>
+                    {updateAvailable && !isUpdateClicked ? (
+                      <span className="ml-1.5 inline-block px-1.5 py-0.5 text-[10px] font-bold bg-blue-600 text-white rounded-full">
+                        {lang === "th" ? "มีอัปเดต!" : "Update Ready!"}
+                      </span>
+                    ) : (
+                      <span className="ml-1.5 text-green-600 dark:text-green-400 font-semibold">
+                        ✓
                       </span>
                     )}
                   </p>
@@ -2398,22 +2962,12 @@ export default function App() {
         </div>
 
         {/* --- INSTALL BANNER --- */}
-        {!isPwaInstalled && !isBannerDismissed && (
+        {!isPwaInstalled && !isBannerDismissed && !isInstallClicked && (
           <InstallBanner
             onInstall={handleInstallClick}
             t={t}
             lang={lang}
             onClose={() => {
-              // Mark as dismissed for this session or logic as needed
-              // For now, simpler is better: clicking close removes it from DOM until refresh
-              // But InstallBanner handles its own visibility via onClose usually?
-              // Wait, InstallBanner component we wrote uses internal visibility logic but we passed onClose.
-              // We should probably just store dismissal in a generic state if we want it to persist?
-              // The component provided by the thinking block calls `onClose` so we can set a state in App.jsx or let component unmount.
-              // Actually, simpler: Let's just have a state `showInstallBanner`?
-              // Or better: InstallBanner handles its own "close" visibility?
-              // Looking at previous step's code: InstallBanner accepts `onClose`.
-              // We can create a state `isBannerDismissed`.
               setIsBannerDismissed(true);
             }}
           />

@@ -1,169 +1,235 @@
 import { useState, useEffect, useCallback } from "react";
+import {
+  OFFLINE_AUDIO_CACHE,
+  enrichTrackMetadata,
+  getPlayableTrackUrl,
+  getTrackCacheKeys,
+  getCachedAudioBlobUrl,
+  fetchAndCacheAudio,
+  normalizeAudioUrl,
+} from "../utils/audioHelper";
 
-const CACHE_NAME = "offline-audio-v1";
+const CACHE_NAME = OFFLINE_AUDIO_CACHE;
 const STORAGE_KEY = "offline_library_metadata";
+const SYNC_EVENT = "offline-storage-sync";
+
+// Shared module-level set so all hook instances see active downloads
+const activeDownloads = new Set();
+
+function loadStoredTracks() {
+  try {
+    const saved = localStorage.getItem(STORAGE_KEY);
+    if (!saved) return [];
+    const parsed = JSON.parse(saved);
+    if (!Array.isArray(parsed)) return [];
+
+    return parsed.map((track) => enrichTrackMetadata(track));
+  } catch (e) {
+    console.error("Failed to parse offline library metadata", e);
+    return [];
+  }
+}
+
+function saveTracksToStorage(tracks) {
+  try {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(tracks));
+    window.dispatchEvent(new CustomEvent(SYNC_EVENT));
+  } catch (e) {
+    console.error("Failed to save offline library metadata", e);
+  }
+}
 
 export const useOfflineStorage = () => {
-  const [offlineTracks, setOfflineTracks] = useState([]);
-  const [downloadingIds, setDownloadingIds] = useState([]);
+  const [offlineTracks, setOfflineTracks] = useState(() => loadStoredTracks());
+  const [downloadingIds, setDownloadingIds] = useState(() =>
+    Array.from(activeDownloads)
+  );
 
-  // Load metadata from localStorage on mount
+  // Keep all hook instances (App, ContentView, AudioPlayer) synchronized
   useEffect(() => {
-    const saved = localStorage.getItem(STORAGE_KEY);
-    if (saved) {
-      try {
-        const tracks = JSON.parse(saved);
-        // Normalize URLs to ensure they have https:// protocol
-        const normalizedTracks = tracks.map(track => ({
-          ...track,
-          trackDownloadUrl: track.trackDownloadUrl && !track.trackDownloadUrl.startsWith('http')
-            ? `https://${track.trackDownloadUrl}`
-            : track.trackDownloadUrl
-        }));
-        console.log('useOfflineStorage: Loaded and normalized tracks from localStorage:', normalizedTracks);
-        setOfflineTracks(normalizedTracks);
-      } catch (e) {
-        console.error("Failed to parse offline library metadata", e);
-      }
-    }
+    const handleSync = () => {
+      setOfflineTracks(loadStoredTracks());
+      setDownloadingIds(Array.from(activeDownloads));
+    };
+
+    window.addEventListener(SYNC_EVENT, handleSync);
+    window.addEventListener("storage", handleSync);
+    return () => {
+      window.removeEventListener(SYNC_EVENT, handleSync);
+      window.removeEventListener("storage", handleSync);
+    };
   }, []);
 
-  // Save metadata to localStorage whenever it changes
+  // Self-heal any previously saved tracks in My Library whose cache entry was wiped or poisoned
   useEffect(() => {
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(offlineTracks));
-  }, [offlineTracks]);
+    if (typeof navigator !== "undefined" && navigator.onLine === false) return;
+    const currentTracks = loadStoredTracks();
+    if (currentTracks.length === 0) return;
+
+    let isCancelled = false;
+    (async () => {
+      for (const track of currentTracks) {
+        if (isCancelled) break;
+        const existingBlobUrl = await getCachedAudioBlobUrl(track);
+        if (existingBlobUrl) {
+          URL.revokeObjectURL(existingBlobUrl);
+          continue;
+        }
+        // Track metadata exists in My Library, but audio is missing from cache -> re-cache silently
+        const playableUrl = getPlayableTrackUrl(track);
+        if (playableUrl) {
+          try {
+            await fetchAndCacheAudio(
+              playableUrl,
+              CACHE_NAME,
+              getTrackCacheKeys(track)
+            );
+            console.log(
+              `useOfflineStorage: Repaired offline cache for track ${track.id}`
+            );
+          } catch (err) {
+            console.warn(
+              `useOfflineStorage: Could not repair cache for track ${track.id}:`,
+              err
+            );
+          }
+        }
+      }
+    })();
+
+    return () => {
+      isCancelled = true;
+    };
+  }, []);
 
   // Check if a track is fully downloaded (checked against metadata)
   const isTrackOffline = useCallback(
     (trackId) => {
-      return offlineTracks.some((t) => t.id === trackId);
+      return offlineTracks.some((t) => String(t.id) === String(trackId));
     },
     [offlineTracks]
   );
 
   const isTrackDownloading = useCallback(
     (trackId) => {
-      return downloadingIds.includes(trackId);
+      return downloadingIds.some((id) => String(id) === String(trackId));
     },
     [downloadingIds]
   );
 
   // Download a track
   const downloadTrack = useCallback(
-    async (track) => {
-      if (!track || !track.trackDownloadUrl) return false;
-      if (isTrackOffline(track.id)) return true; // Already downloaded
+    async (rawTrack) => {
+      if (!rawTrack) return false;
+      const track = enrichTrackMetadata(rawTrack);
+      const playableUrl = getPlayableTrackUrl(track);
+      if (!playableUrl) return false;
 
-      setDownloadingIds((prev) => [...prev, track.id]);
-    
-    // Define isLocal for use in try and catch blocks
-    const isLocal = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
+      if (isTrackOffline(track.id)) return { success: true };
 
-    try {
-      const cache = await caches.open(CACHE_NAME);
-        
-        // Ensure URL has protocol
-        let originalUrl = track.trackDownloadUrl;
-        if (!originalUrl.startsWith('http://') && !originalUrl.startsWith('https://')) {
-          originalUrl = `https://${originalUrl}`;
+      activeDownloads.add(track.id);
+      window.dispatchEvent(new CustomEvent(SYNC_EVENT));
+
+      try {
+        const candidateFetchUrls = [];
+
+        // 1. If playableUrl is a local /audio/*.mp3 file, fetch it directly (fast, same-origin, no CORS)
+        if (playableUrl.startsWith("/")) {
+          candidateFetchUrls.push(playableUrl);
+        } else {
+          // 2. If it's an external URL, try direct first, then local sampleUrl fallback
+          candidateFetchUrls.push(playableUrl);
+          if (track.sampleUrl) {
+            candidateFetchUrls.push(normalizeAudioUrl(track.sampleUrl));
+          }
         }
-        
-        // Use Netlify redirect proxy to avoid CORS issues
-        const isLocal = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
-        const isProduction = !isLocal;
-        
-        // Extract the path after the domain for the proxy
-        let proxyUrl = originalUrl;
-        if (isProduction && originalUrl.includes('api.globalrecordings.net')) {
-          const urlPath = originalUrl.replace('https://api.globalrecordings.net', '');
-          proxyUrl = `/api/proxy-audio${urlPath}`;
+
+        const extraKeys = getTrackCacheKeys(track);
+        let cachedSuccessfully = false;
+        let lastError = null;
+
+        for (const urlToTry of candidateFetchUrls) {
+          if (!urlToTry) continue;
+          try {
+            console.log(
+              `Downloading track ${track.id} from: ${urlToTry}`
+            );
+            await fetchAndCacheAudio(urlToTry, CACHE_NAME, extraKeys);
+            cachedSuccessfully = true;
+            break;
+          } catch (err) {
+            lastError = err;
+            console.warn(
+              `useOfflineStorage: Attempt failed for ${urlToTry}:`,
+              err.message
+            );
+          }
         }
-        
-        console.log(`Downloading track ${track.id} from ${isProduction ? 'proxy' : 'direct'}: ${originalUrl}`);
-        
-        // Fetch the audio file
-        const response = await fetch(proxyUrl);
-        
-        if (!response.ok) {
-          throw new Error(`HTTP error! status: ${response.status}`);
+
+        if (!cachedSuccessfully) {
+          throw lastError || new Error("Failed to download audio file");
         }
-        
-        console.log(`useOfflineStorage: Storing in cache with key: ${originalUrl}`);
-        await cache.put(originalUrl, response.clone());
-        
-        // Add to metadata
-        setOfflineTracks((prev) => {
-            if (prev.some(t => t.id === track.id)) return prev;
-            
-            const newTrack = {
-                ...track,
-                trackDownloadUrl: originalUrl, // Store normalized URL
-            };
-            return [...prev, newTrack];
-        });
-        
-        return { success: true }; // Success
+
+        const current = loadStoredTracks();
+        if (!current.some((t) => String(t.id) === String(track.id))) {
+          const newTrack = {
+            ...track,
+            trackDownloadUrl: playableUrl,
+          };
+          saveTracksToStorage([...current, newTrack]);
+        }
+
+        return { success: true };
       } catch (error) {
         console.error(`Failed to download track ${track.id}:`, error);
-        
-        // MOCK SUCCESS FOR LOCALHOST
-        if (isLocal) {
-            console.warn("Localhost detected: Mocking download success despite error (Audio won't play offline, but UI will update).");
-             // Add to metadata anyway so user can test the Library UI
-            setOfflineTracks((prev) => {
-                if (prev.some(t => t.id === track.id)) return prev;
-                const newTrack = {
-                    ...track,
-                    trackDownloadUrl: track.trackDownloadUrl, 
-                    isMock: true
-                };
-                return [...prev, newTrack];
-            });
-            return { success: true };
-        }
-
-        return { success: false, error: error.message }; // Failed with reason
+        return { success: false, error: error.message };
       } finally {
-        setDownloadingIds((prev) => prev.filter((id) => id !== track.id));
+        activeDownloads.delete(track.id);
+        window.dispatchEvent(new CustomEvent(SYNC_EVENT));
       }
     },
     [isTrackOffline]
   );
 
   // Delete a track
-  const deleteTrack = useCallback(
-    async (trackId) => {
-      const track = offlineTracks.find((t) => t.id === trackId);
-      if (!track) return;
+  const deleteTrack = useCallback(async (trackId) => {
+    const current = loadStoredTracks();
+    const track = current.find((t) => String(t.id) === String(trackId));
+    if (!track) return;
 
-      try {
-        const cache = await caches.open(CACHE_NAME);
-        await cache.delete(track.trackDownloadUrl);
-
-        setOfflineTracks((prev) => prev.filter((t) => t.id !== trackId));
-        console.log(`Track ${trackId} removed from offline storage.`);
-      } catch (error) {
-        console.error(`Failed to delete track ${trackId}:`, error);
+    try {
+      const cache = await caches.open(CACHE_NAME);
+      const keysToDelete = getTrackCacheKeys(track);
+      for (const key of keysToDelete) {
+        await cache.delete(key);
       }
-    },
-    [offlineTracks]
-  );
+
+      const updated = current.filter((t) => String(t.id) !== String(trackId));
+      saveTracksToStorage(updated);
+      console.log(`Track ${trackId} removed from offline storage.`);
+    } catch (error) {
+      console.error(`Failed to delete track ${trackId}:`, error);
+    }
+  }, []);
 
   // Clear all tracks
   const clearLibrary = useCallback(async () => {
-      if(!window.confirm("Are you sure you want to delete all downloaded messages?")) return;
-      
-      try {
-          const cache = await caches.open(CACHE_NAME);
-          const keys = await cache.keys();
-          for (const request of keys) {
-              await cache.delete(request);
-          }
-          setOfflineTracks([]);
-          console.log("Offline library cleared.");
-      } catch (error) {
-          console.error("Failed to clear library:", error);
+    if (
+      !window.confirm("Are you sure you want to delete all downloaded messages?")
+    )
+      return;
+
+    try {
+      const cache = await caches.open(CACHE_NAME);
+      const keys = await cache.keys();
+      for (const request of keys) {
+        await cache.delete(request);
       }
+      saveTracksToStorage([]);
+      console.log("Offline library cleared.");
+    } catch (error) {
+      console.error("Failed to clear library:", error);
+    }
   }, []);
 
   return {
@@ -173,6 +239,6 @@ export const useOfflineStorage = () => {
     deleteTrack,
     isTrackOffline,
     isTrackDownloading,
-    clearLibrary
+    clearLibrary,
   };
 };

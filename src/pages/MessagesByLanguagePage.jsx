@@ -1,6 +1,7 @@
 import React, { useMemo } from "react";
 import ContentCard from "../components/ContentCard";
 import { ChevronLeft, ChevronRight } from "../components/Icons";
+import { playSampleWithOfflineSupport } from "../utils/audioHelper";
 
 const ACCENT_COLOR_CLASS = "text-brand-red";
 
@@ -18,6 +19,11 @@ const MessagesByLanguagePage = ({
   pageStack,
   selectedPrograms,
   onToggleProgram,
+  showCheckboxes = false,
+  onEnableSelectMode,
+  onPlayTrack,
+  activeTrack,
+  isAudioPlaying = false,
   onShowQrForMessage,
   userData,
   onToggleFavorite,
@@ -65,6 +71,11 @@ const MessagesByLanguagePage = ({
   const audioRef = React.useRef(new Audio());
 
   const handlePlaySample = (item) => {
+    if (onPlayTrack) {
+      onPlayTrack(item);
+      return;
+    }
+
     if (playingSampleId === item.id) {
       audioRef.current.pause();
       audioRef.current.currentTime = 0;
@@ -73,22 +84,11 @@ const MessagesByLanguagePage = ({
     }
 
     if (item.sampleUrl) {
-      audioRef.current.pause();
-      audioRef.current.currentTime = 0;
-      audioRef.current.src = item.sampleUrl;
-
-      audioRef.current
-        .play()
-        .then(() => {
-          setPlayingSampleId(item.id);
-        })
-        .catch((e) => {
-          console.error("Error playing sample:", e);
-          console.error("Sample URL:", item.sampleUrl);
-          setPlayingSampleId(null);
-        });
-
-      audioRef.current.onended = () => setPlayingSampleId(null);
+      playSampleWithOfflineSupport(audioRef.current, item.sampleUrl, {
+        onPlaySuccess: () => setPlayingSampleId(item.id),
+        onPlayError: () => setPlayingSampleId(null),
+        onEnded: () => setPlayingSampleId(null),
+      });
     }
   };
 
@@ -116,11 +116,11 @@ const MessagesByLanguagePage = ({
   return (
     <div className="flex flex-col h-full px-1 sm:px-4 pt-4">
       {/* Compact Navigation Bar */}
-      <div className="bg-slate-100 dark:bg-slate-700 text-gray-600 dark:text-white px-3 py-1 flex justify-between items-center shrink-0 border-b border-slate-200 dark:border-slate-600">
+      <div className="bg-slate-100 dark:bg-slate-700 text-gray-600 dark:text-white px-[12px] py-[6px] flex justify-between items-center shrink-0 border-b border-slate-200 dark:border-slate-600">
         <button
           onClick={onBack}
           disabled={!hasPrev}
-          className={`flex items-center text-sm font-semibold transition-colors ${
+          className={`flex items-center text-[15px] font-semibold transition-colors ${
             hasPrev
               ? "hover:text-gray-900 dark:hover:text-gray-300"
               : "text-gray-400 dark:text-gray-500 cursor-not-allowed"
@@ -128,14 +128,14 @@ const MessagesByLanguagePage = ({
           title={t.back || "Back"}
           aria-label={t.back || "Back"}
         >
-          <ChevronLeft className="w-4 h-4 mr-0.5" />
+          <ChevronLeft className="w-[18px] h-[18px] mr-[4px]" />
           {t.back || "Back"}
         </button>
 
         <button
           onClick={onForward}
           disabled={!hasNext}
-          className={`flex items-center text-sm font-semibold transition-colors ${
+          className={`flex items-center text-[15px] font-semibold transition-colors ${
             hasNext
               ? "hover:text-gray-900 dark:hover:text-gray-300"
               : "text-gray-400 dark:text-gray-500 cursor-not-allowed"
@@ -144,13 +144,13 @@ const MessagesByLanguagePage = ({
           aria-label={t.forward || "Forward"}
         >
           {t.forward || "Forward"}
-          <ChevronRight className="w-4 h-4 ml-0.5" />
+          <ChevronRight className="w-[18px] h-[18px] ml-[4px]" />
         </button>
       </div>
 
       {/* Compact Page Header */}
-      <div className="px-3 pt-2 pb-1.5 border-b border-slate-200 dark:border-slate-600 bg-slate-100 dark:bg-slate-700 flex items-center justify-between">
-        <div className="flex items-baseline gap-2">
+      <div className="px-[12px] pt-[8px] pb-[6px] border-b border-slate-200 dark:border-slate-600 bg-slate-100 dark:bg-slate-700 flex items-center justify-between">
+        <div className="flex flex-wrap items-baseline gap-x-2 gap-y-0.5">
           {languageExternalUrl ? (
             <button
               type="button"
@@ -161,7 +161,7 @@ const MessagesByLanguagePage = ({
                   "noopener,noreferrer",
                 )
               }
-              className={`text-lg font-semibold ${ACCENT_COLOR_CLASS} dark:text-white hover:underline hover:decoration-solid focus:outline-none focus:ring-2 focus:ring-brand-red rounded-sm`}
+              className={`text-lg font-semibold text-left ${ACCENT_COLOR_CLASS} dark:text-white hover:underline hover:decoration-solid focus:outline-none focus:ring-2 focus:ring-brand-red rounded-sm`}
               title={
                 t.open_language_on_grn || "Open this language on GRN / 5fish"
               }
@@ -170,13 +170,13 @@ const MessagesByLanguagePage = ({
             </button>
           ) : (
             <div
-              className={`text-lg font-semibold ${ACCENT_COLOR_CLASS} dark:text-white`}
+              className={`text-lg font-semibold text-left ${ACCENT_COLOR_CLASS} dark:text-white`}
             >
               {languageDisplayName}
             </div>
           )}
 
-          <div className="text-sm text-slate-500 dark:text-slate-400">
+          <div className="text-sm text-slate-500 dark:text-slate-400 whitespace-nowrap">
             ({languageMessageCount}{" "}
             {languageMessageCount === 1
               ? t.message || "message"
@@ -199,7 +199,15 @@ const MessagesByLanguagePage = ({
             onToggle={() =>
               onToggleProgram(item.id, selectedLanguageKey, currentMessageList)
             }
-            isPlayingSample={playingSampleId === item.id}
+            showCheckbox={showCheckboxes}
+            onEnableSelectMode={onEnableSelectMode}
+            isPlayingSample={
+              onPlayTrack
+                ? Boolean(
+                    isAudioPlaying && activeTrack && activeTrack.id === item.id,
+                  )
+                : playingSampleId === item.id
+            }
             onPlaySample={() => handlePlaySample(item)}
             onShowQrForMessage={() =>
               onShowQrForMessage(item, languageDisplayName)

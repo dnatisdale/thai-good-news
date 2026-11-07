@@ -342,7 +342,7 @@ const ContentView = ({
           {/* Buttons Column (Right) */}
           <div className="flex-grow w-full flex flex-col gap-4">
             {/* Download Audio Button */}
-            {item.trackDownloadUrl && (
+            {(item.trackDownloadUrl || item.sampleUrl) && (
               <button
                 onClick={() =>
                   !isOffline && !isDownloading && downloadTrack(item)
@@ -376,7 +376,7 @@ const ContentView = ({
             )}
 
             {/* Listen Button */}
-            {item.trackDownloadUrl && (
+            {(item.trackDownloadUrl || item.sampleUrl) && (
               <button
                 onClick={() => onPlay(item)}
                 style={{ backgroundColor: THAI_BLUE }}

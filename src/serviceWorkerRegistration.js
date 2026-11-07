@@ -5,12 +5,14 @@ export function register() {
     window.addEventListener("load", () => {
       const swUrl = "/service-worker.js"; // Path to our worker in the public folder
       navigator.serviceWorker
-        .register(swUrl)
+        .register(swUrl, { updateViaCache: "none" })
         .then((registration) => {
           console.log(
             "Service Worker registered with scope:",
             registration.scope
           );
+          // Check for updates immediately so stuck clients get the latest service worker
+          registration.update().catch(() => {});
         })
         .catch((error) => {
           console.error("Service Worker registration failed:", error);

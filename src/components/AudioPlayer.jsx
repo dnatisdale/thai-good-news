@@ -1,6 +1,7 @@
-import React, { useState, useEffect } from "react";
+import React, { useEffect, useRef } from "react";
 import {
   PlayCircle,
+  Pause,
   ChevronLeft,
   ChevronRight,
   Download,
@@ -9,181 +10,266 @@ import {
   X,
 } from "./Icons";
 import { useOfflineStorage } from "../hooks/useOfflineStorage";
+import {
+  enrichTrackMetadata,
+  getPlayableTrackUrl,
+  getCachedAudioBlobUrl,
+  normalizeAudioUrl,
+  playSampleWithOfflineSupport,
+} from "../utils/audioHelper";
 
 const AudioPlayer = ({
   track,
+  audioRef: externalAudioRef,
+  isPlaying,
+  setIsPlaying,
   isMinimized,
   toggleMinimize,
   t,
+  lang = "th",
   onGoBack,
   onGoForward,
   hasPrev,
   hasNext,
   onClose,
 }) => {
-  const [audioSrc, setAudioSrc] = useState(null);
+  const internalAudioRef = useRef(null);
+  const audioRef = externalAudioRef || internalAudioRef;
+  const lastPlayedTrackIdRef = useRef(null);
 
+  const playableUrl = track ? getPlayableTrackUrl(track) : null;
+
+  // Fallback effect if track was changed without a direct synchronous handler (e.g. Next/Prev in ContentView)
   useEffect(() => {
-    const loadAudioSrc = async () => {
-      if (!track || !track.trackDownloadUrl) {
-        setAudioSrc(null);
+    if (!track || !playableUrl || !audioRef.current) {
+      lastPlayedTrackIdRef.current = null;
+      return;
+    }
+
+    if (
+      lastPlayedTrackIdRef.current === track.id ||
+      audioRef.current._activeTrackId === track.id
+    ) {
+      lastPlayedTrackIdRef.current = track.id;
+      return;
+    }
+    lastPlayedTrackIdRef.current = track.id;
+    audioRef.current._activeTrackId = track.id;
+
+    playSampleWithOfflineSupport(audioRef.current, playableUrl, {
+      onPlaySuccess: () => setIsPlaying && setIsPlaying(true),
+      onPlayError: () => setIsPlaying && setIsPlaying(false),
+      onEnded: () => setIsPlaying && setIsPlaying(false),
+    });
+  }, [track, playableUrl, audioRef, setIsPlaying]);
+
+  const handleAudioError = async () => {
+    if (!track || !audioRef.current) return;
+    const enriched = enrichTrackMetadata(track);
+    const sampleFallback = normalizeAudioUrl(enriched.sampleUrl);
+    const currentSrc = audioRef.current.src || "";
+
+    if (currentSrc && !currentSrc.startsWith("blob:")) {
+      const cachedBlobUrl = await getCachedAudioBlobUrl(enriched);
+      if (cachedBlobUrl && audioRef.current) {
+        if (audioRef.current._blobUrl) {
+          URL.revokeObjectURL(audioRef.current._blobUrl);
+        }
+        audioRef.current._blobUrl = cachedBlobUrl;
+        audioRef.current.src = cachedBlobUrl;
+        audioRef.current.play().catch(() => {});
         return;
       }
-
-      try {
-        const cache = await caches.open("offline-audio-v1");
-
-        let urlToCheck = track.trackDownloadUrl;
-        if (urlToCheck && !urlToCheck.startsWith("http")) {
-          urlToCheck = "https://" + urlToCheck;
-        }
-
-        console.debug("AudioPlayer: Checking cache for URL:", urlToCheck);
-        const cachedResponse = await cache.match(urlToCheck);
-
-        if (cachedResponse) {
-          const blob = await cachedResponse.blob();
-
-          if (blob.size === 0) {
-            console.error(
-              "AudioPlayer: Blob is empty! Falling back to online URL",
-            );
-            setAudioSrc(urlToCheck);
-            return;
-          }
-
-          const url = URL.createObjectURL(blob);
-          setAudioSrc(url);
-        } else {
-          setAudioSrc(urlToCheck);
-        }
-      } catch (error) {
-        console.error("AudioPlayer: Error loading audio:", error);
-        let fallbackUrl = track.trackDownloadUrl;
-        if (fallbackUrl && !fallbackUrl.startsWith("http")) {
-          fallbackUrl = "https://" + fallbackUrl;
-        }
-        setAudioSrc(fallbackUrl);
+      if (sampleFallback && !currentSrc.endsWith(sampleFallback)) {
+        audioRef.current.src = sampleFallback;
+        audioRef.current.play().catch(() => {});
       }
-    };
+    }
+  };
 
-    loadAudioSrc();
+  const handleTogglePlayPause = (e) => {
+    e.stopPropagation();
+    if (!audioRef.current || !track) return;
 
-    return () => {
-      if (audioSrc && audioSrc.startsWith("blob:")) {
-        URL.revokeObjectURL(audioSrc);
+    if (!audioRef.current.paused) {
+      audioRef.current.pause();
+      if (setIsPlaying) setIsPlaying(false);
+    } else {
+      if (!audioRef.current.src && playableUrl) {
+        lastPlayedTrackIdRef.current = track.id;
+        playSampleWithOfflineSupport(audioRef.current, playableUrl, {
+          onPlaySuccess: () => setIsPlaying && setIsPlaying(true),
+          onPlayError: () => setIsPlaying && setIsPlaying(false),
+          onEnded: () => setIsPlaying && setIsPlaying(false),
+        });
+      } else {
+        audioRef.current
+          .play()
+          .then(() => setIsPlaying && setIsPlaying(true))
+          .catch(() => {});
       }
-    };
-  }, [track]);
+    }
+  };
 
-  if (!track || !track.trackDownloadUrl) {
-    return (
-      <div className="sticky bottom-0 w-full px-2 py-1.5 bg-gray-200 flex items-center justify-between text-sm text-gray-600 z-20">
-        <button
-          onClick={onGoBack}
-          disabled={!hasPrev}
-          className={`p-1 transition-colors ${
-            hasPrev
-              ? "text-gray-600 hover:text-gray-800 cursor-pointer"
-              : "text-gray-400 cursor-not-allowed"
-          }`}
-          aria-label="Go Back"
-          title="Back"
-        >
-          <ChevronLeft className="w-5 h-5" />
-        </button>
+  const currentLang = lang || t?.lang || "en";
 
-        <span className="text-center flex-grow text-xs sm:text-sm truncate px-2">
-          {t.select_message_to_listen || "Select a message to listen."}
-        </span>
+  const languageName = track
+    ? currentLang === "en"
+      ? track.languageEn || track.stableKey || ""
+      : track.langTh || track.languageEn || ""
+    : "";
 
-        <button
-          onClick={onGoForward}
-          disabled={!hasNext}
-          className={`p-1 transition-colors ${
-            hasNext
-              ? "text-gray-600 hover:text-gray-800 cursor-pointer"
-              : "text-gray-400 cursor-not-allowed"
-          }`}
-          aria-label="Go Forward"
-          title="Forward"
-        >
-          <ChevronRight className="w-5 h-5" />
-        </button>
-      </div>
-    );
-  }
+  const messageTitle = track
+    ? currentLang === "en"
+      ? track.title_en || "Unknown Title"
+      : track.title_th || track.title_en || "ข้อความไม่ทราบชื่อ"
+    : "";
 
-  const currentLang = t.lang || "en";
-
-  const displayTitle =
-    currentLang === "en"
-      ? (track.title_en ?? "Unknown Title")
-      : (track.title_th ?? "ข้อความไม่ทราบชื่อ");
+  const displayTitle = languageName
+    ? `${languageName} — ${messageTitle}`
+    : messageTitle;
 
   return (
     <div
-      className={`sticky bottom-0 w-full p-0 bg-gray-800 shadow-inner transition-transform duration-300 ${
-        isMinimized ? "translate-y-[calc(100%-42px)]" : "translate-y-0"
-      } rounded-t-xl z-20`}
+      className={`sticky bottom-0 w-full p-0 ${
+        track && playableUrl
+          ? "bg-gray-800 shadow-inner rounded-t-xl"
+          : "bg-gray-200 dark:bg-slate-800 border-t border-gray-300 dark:border-slate-700"
+      } transition-all duration-300 z-20`}
     >
-      <div
-        onClick={toggleMinimize}
-        className="flex items-center px-3 py-2 cursor-pointer bg-gray-900 rounded-t-xl"
-      >
-        <PlayCircle className="w-5 h-5 text-white mr-2 flex-shrink-0" />
-        <p className="text-sm font-bold text-white truncate">
-          {isMinimized
-            ? (t.playing || "Playing") + ": " + displayTitle
-            : t.controls || "Audio Player"}
-        </p>
-
-        {onClose && (
+      {/* Idle Bar when no track is selected */}
+      {(!track || !playableUrl) && (
+        <div className="w-full px-[8px] py-[6px] flex items-center justify-between text-[14px] text-gray-600 dark:text-gray-300">
           <button
-            onClick={(e) => {
-              e.stopPropagation();
-              onClose();
-            }}
-            className="ml-auto mr-2 p-1 hover:bg-gray-700 rounded-full transition-colors"
-            title="Close Player"
-            aria-label="Close Player"
+            onClick={onGoBack}
+            disabled={!hasPrev}
+            className={`p-[4px] transition-colors ${
+              hasPrev
+                ? "text-gray-600 dark:text-gray-200 hover:text-gray-800 cursor-pointer"
+                : "text-gray-400 dark:text-gray-600 cursor-not-allowed"
+            }`}
+            aria-label="Go Back"
+            title={t?.back || "Back"}
           >
-            <X className="w-5 h-5 text-white" />
+            <ChevronLeft className="w-[20px] h-[20px]" />
           </button>
-        )}
 
-        <ChevronLeft
-          className={`w-5 h-5 text-white ${!onClose ? "ml-auto" : ""} transition-transform ${
-            isMinimized ? "rotate-90" : "-rotate-90"
-          }`}
-        />
-      </div>
+          <span className="text-center flex-grow text-[13px] sm:text-[14px] truncate px-[8px]">
+            {t?.select_message_to_listen ||
+              (currentLang === "th"
+                ? "แตะไอคอนลำโพง 🔊 เพื่อฟังข้อความ"
+                : "Select a message to listen.")}
+          </span>
 
-      <div className={`${isMinimized ? "hidden" : "p-4"}`}>
-        {audioSrc ? (
-          <audio
-            key={track.id + "-" + audioSrc}
-            controls
-            autoPlay
-            src={audioSrc}
-            className="w-full"
+          <button
+            onClick={onGoForward}
+            disabled={!hasNext}
+            className={`p-[4px] transition-colors ${
+              hasNext
+                ? "text-gray-600 dark:text-gray-200 hover:text-gray-800 cursor-pointer"
+                : "text-gray-400 dark:text-gray-600 cursor-not-allowed"
+            }`}
+            aria-label="Go Forward"
+            title={t?.forward || "Forward"}
           >
-            {t.audio_not_supported ||
-              "Your browser does not support the audio element."}
-          </audio>
-        ) : (
-          <div className="text-white text-center">Loading audio...</div>
-        )}
-
-        <div className="mt-3 flex justify-end">
-          <DownloadButton track={track} t={t} />
+            <ChevronRight className="w-[20px] h-[20px]" />
+          </button>
         </div>
+      )}
+
+      {/* Active Player Header Bar */}
+      {track && playableUrl && (
+        <div
+          onClick={toggleMinimize}
+          className="flex items-center px-[12px] py-[8px] cursor-pointer bg-[#003366] dark:bg-gray-900 rounded-t-xl gap-[8px]"
+        >
+          <button
+            type="button"
+            onClick={handleTogglePlayPause}
+            className="w-[32px] h-[32px] rounded-full bg-amber-400 hover:bg-amber-300 text-gray-900 flex items-center justify-center flex-shrink-0 shadow transition-transform active:scale-95"
+            title={
+              isPlaying
+                ? currentLang === "th"
+                  ? "หยุดชั่วคราว"
+                  : "Pause"
+                : currentLang === "th"
+                  ? "เล่น"
+                  : "Play"
+            }
+            aria-label={isPlaying ? "Pause" : "Play"}
+          >
+            {isPlaying ? (
+              <Pause className="w-[16px] h-[16px]" />
+            ) : (
+              <PlayCircle className="w-[20px] h-[20px]" />
+            )}
+          </button>
+
+          <p className="text-[14px] font-bold text-white truncate flex-1">
+            {displayTitle}
+          </p>
+
+          {onClose && (
+            <button
+              type="button"
+              onClick={(e) => {
+                e.stopPropagation();
+                if (audioRef.current) {
+                  audioRef.current.pause();
+                  audioRef.current.currentTime = 0;
+                }
+                if (setIsPlaying) setIsPlaying(false);
+                lastPlayedTrackIdRef.current = null;
+                onClose();
+              }}
+              className="p-[4px] hover:bg-white/20 rounded-full transition-colors flex-shrink-0"
+              title={currentLang === "th" ? "ปิดเครื่องเล่น" : "Close Player"}
+              aria-label="Close Player"
+            >
+              <X className="w-[20px] h-[20px] text-white" />
+            </button>
+          )}
+
+          <ChevronLeft
+            className={`w-[20px] h-[20px] text-white flex-shrink-0 transition-transform ${
+              isMinimized ? "rotate-90" : "-rotate-90"
+            }`}
+          />
+        </div>
+      )}
+
+      {/* Persistent <audio> element (Always in DOM for mobile gesture unlocking!) */}
+      <div
+        className={
+          track && playableUrl && !isMinimized ? "p-3 bg-gray-800" : "hidden"
+        }
+      >
+        <audio
+          ref={audioRef}
+          controls
+          playsInline
+          preload="none"
+          onPlay={() => setIsPlaying && setIsPlaying(true)}
+          onPause={() => setIsPlaying && setIsPlaying(false)}
+          onEnded={() => setIsPlaying && setIsPlaying(false)}
+          onError={handleAudioError}
+          className="w-full"
+        >
+          {t?.audio_not_supported ||
+            "Your browser does not support the audio element."}
+        </audio>
+
+        {track && (
+          <div className="mt-2.5 flex justify-end">
+            <DownloadButton track={track} t={t} lang={currentLang} />
+          </div>
+        )}
       </div>
     </div>
   );
 };
 
-const DownloadButton = ({ track, t }) => {
+const DownloadButton = ({ track, t, lang }) => {
   const { downloadTrack, isTrackOffline, isTrackDownloading } =
     useOfflineStorage();
   const isOffline = isTrackOffline(track.id);
@@ -193,9 +279,9 @@ const DownloadButton = ({ track, t }) => {
     <button
       onClick={() => !isOffline && !isDownloading && downloadTrack(track)}
       disabled={isOffline || isDownloading}
-      className={`flex items-center px-3 py-2 rounded-lg text-sm font-bold transition-colors ${
+      className={`flex items-center px-3 py-1.5 rounded-lg text-sm font-bold transition-colors ${
         isOffline
-          ? "text-amber-600 bg-amber-100 cursor-default"
+          ? "text-amber-700 bg-amber-100 cursor-default"
           : isDownloading
             ? "text-gray-500 bg-gray-200 cursor-wait"
             : "text-brand-red bg-red-100 hover:bg-red-200"
@@ -204,17 +290,20 @@ const DownloadButton = ({ track, t }) => {
       {isOffline ? (
         <>
           <CheckCircle className="w-4 h-4 mr-1.5" />
-          {t.downloaded || "Downloaded"}
+          {t?.downloaded || (lang === "th" ? "ดาวน์โหลดแล้ว" : "Downloaded")}
         </>
       ) : isDownloading ? (
         <>
           <Loader className="w-4 h-4 mr-1.5 animate-spin" />
-          {t.downloading || "Downloading..."}
+          {t?.downloading ||
+            (lang === "th" ? "กำลังดาวน์โหลด..." : "Downloading...")}
         </>
       ) : (
         <>
           <Download className="w-4 h-4 mr-1.5" />
-          {t.download || "Download"}
+          {t?.download_audio ||
+            t?.download ||
+            (lang === "th" ? "บันทึกไว้ฟังออฟไลน์" : "Save Offline")}
         </>
       )}
     </button>

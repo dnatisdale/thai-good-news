@@ -2,6 +2,7 @@ import React, { useMemo } from "react";
 import { Heart, ChevronLeft, ChevronRight } from "../components/Icons";
 import ContentCard from "../components/ContentCard";
 import { staticContent } from "../data/staticContent";
+import { playSampleWithOfflineSupport } from "../utils/audioHelper";
 
 const ACCENT_COLOR_CLASS = "text-brand-red";
 
@@ -19,6 +20,10 @@ const FavoritesPage = ({
   setFontSize,
   pageStack,
   onToggleFavorite,
+  onPlayTrack,
+  activeTrack,
+  isAudioPlaying = false,
+  onShowQrForMessage,
   // from App.jsx
   languageGroups,
   onToggleFavoriteLanguage,
@@ -52,34 +57,21 @@ const FavoritesPage = ({
   const audioRef = React.useRef(new Audio());
 
   const handlePlaySample = (item) => {
+    if (onPlayTrack) {
+      onPlayTrack(item);
+      return;
+    }
     // If this item is already playing, stop it
     if (playingSampleId === item.id) {
       audioRef.current.pause();
       audioRef.current.currentTime = 0;
       setPlayingSampleId(null);
-    } else {
-      // Start a new sample if we have a URL
-      if (item.sampleUrl) {
-        // Stop any current audio
-        audioRef.current.pause();
-        audioRef.current.currentTime = 0;
-
-        // Load new URL
-        audioRef.current.src = item.sampleUrl;
-        audioRef.current
-          .play()
-          .then(() => {
-            setPlayingSampleId(item.id);
-          })
-          .catch((e) => {
-            console.error("Error playing sample:", e);
-            console.error("Sample URL:", item.sampleUrl);
-            setPlayingSampleId(null);
-          });
-
-        // Reset state when audio finishes
-        audioRef.current.onended = () => setPlayingSampleId(null);
-      }
+    } else if (item.sampleUrl) {
+      playSampleWithOfflineSupport(audioRef.current, item.sampleUrl, {
+        onPlaySuccess: () => setPlayingSampleId(item.id),
+        onPlayError: () => setPlayingSampleId(null),
+        onEnded: () => setPlayingSampleId(null),
+      });
     }
   };
 
@@ -225,8 +217,25 @@ const FavoritesPage = ({
                 showLanguageName={true}
                 isFavorite={userData?.favorites?.includes(item.id)}
                 onToggleFavorite={() => onToggleFavorite(item.id)}
-                isPlayingSample={playingSampleId === item.id}
+                isPlayingSample={
+                  onPlayTrack
+                    ? Boolean(
+                        isAudioPlaying &&
+                          activeTrack &&
+                          activeTrack.id === item.id,
+                      )
+                    : playingSampleId === item.id
+                }
                 onPlaySample={() => handlePlaySample(item)}
+                onShowQrForMessage={
+                  onShowQrForMessage
+                    ? () =>
+                        onShowQrForMessage(
+                          item,
+                          lang === "en" ? item.languageEn : item.langTh,
+                        )
+                    : undefined
+                }
               />
             ))
           ) : (

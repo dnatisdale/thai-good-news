@@ -13,14 +13,7 @@
   "background_color": "#000000",
   "categories": ["education", "lifestyle", "entertainment"],
   "display_override": ["window-controls-overlay", "standalone", "minimal-ui"],
-  "prefer_related_applications": true,
-  "related_applications": [
-    {
-      "platform": "play",
-      "url": "https://play.google.com/store/apps/details?id=net.dantisdale.thaigoodnews",
-      "id": "net.dantisdale.thaigoodnews"
-    }
-  ],
+  "prefer_related_applications": false,
   "launch_handler": {
     "client_mode": "focus-existing"
   },

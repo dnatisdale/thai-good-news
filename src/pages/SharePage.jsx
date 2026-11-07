@@ -4,7 +4,7 @@ import fiveFishLogo from "../assets/5fish-trans-logo.png";
 
 const SharePage = ({ lang, t, onBack, onForward, hasPrev, hasNext }) => {
   const handleNativeShare = async () => {
-    const urlString = `${window.location.origin}/listen`;
+    const urlString = "https://thaigoodnews.org";
     const shareText = t.share_app_text || "Check out this app for Good News messages in multiple languages!";
     const shareData = {
       title: t.app_name || "Thai — Good News",
@@ -25,7 +25,7 @@ const SharePage = ({ lang, t, onBack, onForward, hasPrev, hasNext }) => {
   };
 
   const handleMailShare = () => {
-    const appUrl = "https://thai-good-news.netlify.app/listen";
+    const appUrl = "https://thaigoodnews.org";
     const defaultSubject = "A great tool for sharing Jesus in Thailand (100+ languages) \uD83D\uDE4C\uD83C\uDFFC\uD83C\uDDF9\uD83C\uDDED";
     const emailSubject = encodeURIComponent(t.share_email_subject || defaultSubject);
     
@@ -38,7 +38,7 @@ const SharePage = ({ lang, t, onBack, onForward, hasPrev, hasNext }) => {
   };
 
   const handleCopyLink = () => {
-    const appUrl = "https://thai-good-news.netlify.app";
+    const appUrl = "https://thaigoodnews.org";
     navigator.clipboard.writeText(appUrl)
       .then(() => alert(t.link_copied || "Link copied to clipboard!"))
       .catch((err) => {

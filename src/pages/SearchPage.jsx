@@ -2,6 +2,7 @@ import React, { useMemo, useEffect } from "react";
 import { Search, ChevronLeft, ChevronRight } from "../components/Icons";
 import ContentCard from "../components/ContentCard";
 import { staticContent } from "../data/staticContent";
+import { playSampleWithOfflineSupport } from "../utils/audioHelper";
 
 const SearchPage = ({
   lang,
@@ -17,6 +18,10 @@ const SearchPage = ({
   onHistorySelect,
   userData,
   onToggleFavorite,
+  onPlayTrack,
+  activeTrack,
+  isAudioPlaying = false,
+  onShowQrForMessage,
   onOpenSearch,
 }) => {
   const filteredContent = useMemo(() => {
@@ -43,6 +48,38 @@ const SearchPage = ({
   }, [searchTerm]);
 
   const resultCount = filteredContent.length;
+
+  const [playingSampleId, setPlayingSampleId] = React.useState(null);
+  const audioRef = React.useRef(new Audio());
+
+  const handlePlaySample = (item) => {
+    if (onPlayTrack) {
+      onPlayTrack(item);
+      return;
+    }
+
+    if (playingSampleId === item.id) {
+      audioRef.current.pause();
+      audioRef.current.currentTime = 0;
+      setPlayingSampleId(null);
+      return;
+    }
+
+    if (item.sampleUrl) {
+      playSampleWithOfflineSupport(audioRef.current, item.sampleUrl, {
+        onPlaySuccess: () => setPlayingSampleId(item.id),
+        onPlayError: () => setPlayingSampleId(null),
+        onEnded: () => setPlayingSampleId(null),
+      });
+    }
+  };
+
+  useEffect(() => {
+    return () => {
+      audioRef.current.pause();
+      audioRef.current.currentTime = 0;
+    };
+  }, []);
 
   useEffect(() => {
     if (!searchTerm && onOpenSearch) {
@@ -106,6 +143,25 @@ const SearchPage = ({
               t={t}
               onSelect={onSelect}
               showLanguageName={true}
+              isPlayingSample={
+                onPlayTrack
+                  ? Boolean(
+                      isAudioPlaying &&
+                        activeTrack &&
+                        activeTrack.id === item.id,
+                    )
+                  : playingSampleId === item.id
+              }
+              onPlaySample={() => handlePlaySample(item)}
+              onShowQrForMessage={
+                onShowQrForMessage
+                  ? () =>
+                      onShowQrForMessage(
+                        item,
+                        lang === "en" ? item.languageEn : item.langTh,
+                      )
+                  : undefined
+              }
               isFavorite={userData?.favorites?.includes(item.id)}
               onToggleFavorite={() => onToggleFavorite(item.id)}
             />

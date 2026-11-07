@@ -289,27 +289,15 @@ const ImportPage = ({ t, lang, onBack, onForward, hasPrev, hasNext, setCustomBac
   };
 
   const fetchMetadata = async (id) => {
-    // Helper to try multiple proxies (Netlify -> AllOrigins)
+    // Helper to try CORS proxies (AllOrigins -> CorsProxy.io)
     const fetchWithFallback = async (targetUrl, signal) => {
-        // 1. Try Netlify Proxy (Production Standard)
-        try {
-            const res = await fetch(`/.netlify/functions/fast-proxy?url=${encodeURIComponent(targetUrl)}`, { signal });
-            if (res.ok) {
-                const text = await res.text();
-                // Ensure we didn't get the React App HTML (common 404 behavior in SPA)
-                if (!text.includes('<div id="root">') && !text.includes("<title>Good News PWA</title>")) {
-                    return text;
-                }
-            }
-        } catch (e) {}
-
-        // 2. Try AllOrigins (Dev Fallback 1)
+        // 1. Try AllOrigins
         try {
            const res = await fetch(`https://api.allorigins.win/raw?url=${encodeURIComponent(targetUrl)}`, { signal });
            if (res.ok) return await res.text();
         } catch (e) {}
 
-        // 3. Try CorsProxy.io (Dev Fallback 2)
+        // 2. Try CorsProxy.io
         try {
             const res = await fetch(`https://corsproxy.io/?` + encodeURIComponent(targetUrl), { signal });
             if (res.ok) return await res.text();
@@ -771,7 +759,7 @@ const ImportPage = ({ t, lang, onBack, onForward, hasPrev, hasNext, setCustomBac
               <p className="text-xs text-gray-600 dark:text-gray-400 mt-2 leading-relaxed">
                 💡{" "}
                 {t.url_pattern_note ||
-                  "The app automatically generates the download URL using your Program ID and Track Number. In production, this is proxied through Netlify to avoid CORS issues."}
+                  "The app automatically generates the download URL using your Program ID and Track Number."}
               </p>
             </div>
           </div>

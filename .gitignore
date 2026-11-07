@@ -9,6 +9,7 @@
 .DS_Store
 npm-debug.log
 yarn-error.log
+firebase-debug.log
 # ... other lines ...
 /bad
 .cache

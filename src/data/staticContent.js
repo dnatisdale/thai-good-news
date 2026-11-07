@@ -7955,7 +7955,7 @@ export const staticContent = [
     "shareUrl": "5fi.sh/T6851",
     "duration": "",
     "trackCount": "",
-    "sampleUrl": "/audio/Tai.Lu.06851.mp3",
+    "sampleUrl": "/audio/Thai.Lu.06851.mp3",
     "stableKey": "Thai Lu"
   },
   {

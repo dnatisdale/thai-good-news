@@ -149,7 +149,7 @@ export const i18n = {
     url_pattern_info: "Auto-Generated URL Pattern",
     download_url_label: "Download URL Format:",
     url_pattern_note:
-      "The app automatically generates the download URL using your Program ID and Track Number. In production, this is proxied through Netlify (/api/proxy-audio/*) to avoid CORS issues.",
+      "The app automatically generates the download URL using your Program ID and Track Number.",
     review_edit_title: "Review & Edit",
     lang_en_label: "Language (EN)",
     lang_th_label: "Language (TH)",
@@ -394,7 +394,7 @@ export const i18n = {
     verse_th_label: "ข้อพระคัมภีร์ (ไทย)", // NEW
     preview_audio_label: "ตัวอย่างเสียง", // NEW
     url_pattern_note:
-      "แอปจะสร้าง URL สำหรับดาวน์โหลดให้อัตโนมัติจาก Program ID และหมายเลขแทร็กของคุณ ในการใช้งานจริงจะเรียกผ่าน Netlify (/api/proxy-audio/*) เพื่อหลีกเลี่ยงปัญหา CORS",
+      "แอปจะสร้าง URL สำหรับดาวน์โหลดให้อัตโนมัติจาก Program ID และหมายเลขแทร็กของคุณ",
     review_edit_title: "ตรวจสอบ & แก้ไข",
     lang_en_label: "ภาษา (อังกฤษ)",
     lang_th_label: "ภาษา (ไทย)",

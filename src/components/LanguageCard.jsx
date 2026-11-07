@@ -1,13 +1,9 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import {
   Volume2,
+  Pause,
   Heart,
-  Download,
-  YouTubeColor,
-  ExternalLink,
   Qrcode,
-  ChevronDown,
-  ChevronUp,
 } from "./Icons";
 import { i18n } from "../i18n";
 
@@ -21,23 +17,37 @@ const LanguageCard = ({
   onShowQrForLanguage,
   selectionState,
   onToggle,
+  showCheckbox = false,
+  onEnableSelectMode,
   setHovering,
   onPlayLanguage,
   isPlayingLanguage,
   isFavorite,
   onToggleFavorite,
-  sampleUrl,
-  externalUrl,
-  languageVideoUrl,
   searchQuery,
   id,
 }) => {
-  const [isExpanded, setIsExpanded] = useState(false);
   const [localIsFavorite, setLocalIsFavorite] = useState(!!isFavorite);
+  const longPressTimerRef = useRef(null);
 
   useEffect(() => {
     setLocalIsFavorite(!!isFavorite);
   }, [isFavorite]);
+
+  const handleTouchStart = () => {
+    if (!onEnableSelectMode && !onToggle) return;
+    longPressTimerRef.current = setTimeout(() => {
+      if (onEnableSelectMode) onEnableSelectMode();
+      if (onToggle) onToggle();
+    }, 550);
+  };
+
+  const handleTouchEndOrMove = () => {
+    if (longPressTimerRef.current) {
+      clearTimeout(longPressTimerRef.current);
+      longPressTimerRef.current = null;
+    }
+  };
 
   const highlightText = (text, query) => {
     if (!query || !text) return text;
@@ -68,267 +78,180 @@ const LanguageCard = ({
         : "ข้อความ";
 
   const circleButtonClass =
-    "w-10 h-10 flex items-center justify-center rounded-full bg-gray-200 dark:bg-white text-gray-600 dark:text-gray-600 transition-all duration-200 shrink-0 hover:scale-110 active:scale-95 focus:outline-none focus:ring-2 focus:ring-brand-red/30";
+    "w-[40px] h-[40px] flex items-center justify-center rounded-full bg-gray-200 dark:bg-white text-gray-600 dark:text-gray-600 transition-all duration-200 shrink-0 hover:scale-110 active:scale-95 focus:outline-none focus:ring-2 focus:ring-brand-red/30";
 
   const disabledCircleClass =
-    "w-10 h-10 flex items-center justify-center rounded-full bg-gray-200 dark:bg-white text-gray-400 dark:text-gray-400 shrink-0 cursor-not-allowed opacity-55";
-
-  const caretTitle = isExpanded
-    ? lang === "en"
-      ? "Hide extra buttons"
-      : "ซ่อนปุ่มเพิ่มเติม"
-    : lang === "en"
-      ? "Show extra buttons"
-      : "แสดงปุ่มเพิ่มเติม";
+    "w-[40px] h-[40px] flex items-center justify-center rounded-full bg-gray-200 dark:bg-white text-gray-400 dark:text-gray-400 shrink-0 cursor-not-allowed opacity-55";
 
   return (
     <div
       id={id}
       onMouseEnter={() => setHovering && setHovering(true)}
       onMouseLeave={() => setHovering && setHovering(false)}
-      className="relative bg-white dark:bg-[#374151] px-2 py-1.5 mb-1 rounded-xl shadow-md border-b-4 border-brand-red card-hover transition-colors"
+      onTouchStart={handleTouchStart}
+      onTouchEnd={handleTouchEndOrMove}
+      onTouchMove={handleTouchEndOrMove}
+      className="relative bg-white dark:bg-[#374151] px-[10px] py-[8px] mb-[6px] rounded-xl shadow-md border-b-4 border-brand-red card-hover transition-colors"
     >
       {/* MAIN CARD ROW */}
-      <div className="flex items-start gap-1.5">
-        {/* CHECKBOX */}
-        <div
-          className="pt-4 shrink-0"
-          onClick={(e) => {
-            e.stopPropagation();
-            onToggle();
-          }}
-        >
-          <input
-            type="checkbox"
-            className="w-6 h-6 accent-[#003366] dark:accent-[#a91b0d] cursor-pointer"
-            checked={selectionState === "checked"}
-            ref={(input) => {
-              if (input) {
-                input.indeterminate = selectionState === "indeterminate";
-              }
-            }}
-            readOnly
-          />
-        </div>
+      <div className="card-responsive-row flex items-center justify-between gap-[8px]">
+        <div className="flex items-center gap-[8px] flex-1 min-w-0">
+          {/* CHECKBOX (Hidden unless Select mode is active or items are selected) */}
+          {showCheckbox && onToggle && (
+            <div
+              className="shrink-0 flex items-center"
+              onClick={(e) => {
+                e.stopPropagation();
+                onToggle();
+              }}
+            >
+              <input
+                type="checkbox"
+                className="w-[22px] h-[22px] accent-[#003366] dark:accent-[#a91b0d] cursor-pointer"
+                checked={selectionState === "checked"}
+                ref={(input) => {
+                  if (input) {
+                    input.indeterminate = selectionState === "indeterminate";
+                  }
+                }}
+                readOnly
+              />
+            </div>
+          )}
 
-        {/* LANGUAGE TEXT */}
-        <div
-          onClick={() => onSelect(languageName)}
-          className="flex-1 min-w-0 pt-3 cursor-pointer"
-        >
-          <h3
-            className={`text-xl font-bold leading-tight ${ACCENT_COLOR_CLASS} dark:text-white`}
+          {/* LANGUAGE TEXT */}
+          <div
+            onClick={() => onSelect(languageName)}
+            className="flex-1 min-w-0 cursor-pointer py-[2px]"
           >
-            {highlightText(languageName, searchQuery)}
-          </h3>
+            <h3
+              className={`text-xl font-bold leading-snug break-words ${ACCENT_COLOR_CLASS} dark:text-white`}
+            >
+              {highlightText(languageName, searchQuery)}
+            </h3>
 
-          <p className="text-xs text-gray-500 dark:text-gray-300 mt-0.5 whitespace-nowrap overflow-hidden text-ellipsis">
-            {lang === "en" ? "Tap to view" : "แตะเพื่อดู"} ({messageCount}{" "}
-            {messageWord})
-          </p>
+            <p className="text-xs text-gray-500 dark:text-gray-300 mt-0.5 leading-snug">
+              {lang === "en" ? "Tap to view" : "แตะเพื่อดู"} ({messageCount}{" "}
+              {messageWord})
+            </p>
+          </div>
         </div>
 
-        {/* RIGHT BUTTON AREA */}
-        <div className="relative shrink-0 w-[132px] pt-4 pr-0">
-          {/* CARET */}
+        {/* RIGHT BUTTON AREA (3 Primary Actions: Listen, Favorite, QR/More) */}
+        <div className="card-responsive-actions shrink-0 flex items-center gap-[6px]">
+          {/* 1. LISTEN */}
           <button
             type="button"
             onClick={(e) => {
               e.stopPropagation();
-              setIsExpanded((currentValue) => !currentValue);
+              onPlayLanguage && onPlayLanguage();
             }}
-            className="
-              absolute -top-2 right-0 z-20
-              w-10 h-8
-              flex items-center justify-center
-              text-gray-500 dark:text-gray-200
-              bg-transparent border-0 shadow-none
-              outline-none ring-0
-              hover:text-brand-red dark:hover:text-white
-              hover:scale-145 active:scale-170
-              focus:outline-none focus:ring-0
-              transition-all duration-200 ease-out
-            "
-            title={caretTitle}
-            aria-label={caretTitle}
-            aria-expanded={isExpanded}
+            className={`${circleButtonClass} ${
+              isPlayingLanguage
+                ? "bg-amber-100 dark:bg-amber-100 text-amber-600 dark:text-amber-600 animate-pulse"
+                : "hover:bg-amber-500 hover:text-white"
+            }`}
+            title={
+              isPlayingLanguage
+                ? lang === "en"
+                  ? "Stop sample"
+                  : "หยุดตัวอย่าง"
+                : lang === "en"
+                  ? "Listen to sample"
+                  : "ฟังตัวอย่าง"
+            }
+            aria-label={
+              isPlayingLanguage
+                ? lang === "en"
+                  ? "Stop sample"
+                  : "หยุดตัวอย่าง"
+                : lang === "en"
+                  ? "Listen to sample"
+                  : "ฟังตัวอย่าง"
+            }
           >
-            {isExpanded ? (
-              <ChevronUp className="w-8 h-8" />
+            {isPlayingLanguage ? (
+              <Pause className="w-[22px] h-[22px]" />
             ) : (
-              <ChevronDown className="w-8 h-8" />
+              <Volume2 className="w-[22px] h-[22px]" />
             )}
           </button>
 
-          {/* TOP 3 BUTTONS */}
-          <div className="grid grid-cols-3 gap-1.5 justify-items-center">
-            {/* LISTEN */}
+          {/* 2. FAVORITE */}
+          {onToggleFavorite ? (
             <button
               type="button"
               onClick={(e) => {
                 e.stopPropagation();
-                onPlayLanguage && onPlayLanguage();
+                setLocalIsFavorite((currentValue) => !currentValue);
+                onToggleFavorite();
               }}
-              className={`${circleButtonClass} ${
-                isPlayingLanguage
-                  ? "bg-amber-100 dark:bg-amber-100 text-amber-600 dark:text-amber-600 animate-pulse"
-                  : "hover:bg-amber-500 hover:text-white"
-              }`}
-              title={lang === "en" ? "Listen to sample" : "ฟังตัวอย่าง"}
-              aria-label={lang === "en" ? "Listen to sample" : "ฟังตัวอย่าง"}
-            >
-              <Volume2 className="w-6 h-6" />
-            </button>
-
-            {/* FAVORITE */}
-            {onToggleFavorite ? (
-              <button
-                type="button"
-                onClick={(e) => {
-                  e.stopPropagation();
-                  setLocalIsFavorite((currentValue) => !currentValue);
-                  onToggleFavorite();
-                }}
-                className={`${circleButtonClass} group hover:bg-brand-red`}
-                title={
-                  localIsFavorite ? "Remove from Favorites" : "Add to Favorites"
-                }
-                aria-label={
-                  localIsFavorite ? "Remove from Favorites" : "Add to Favorites"
-                }
-              >
-                <Heart
-                  className="w-6 h-6 transition-all group-hover:text-white"
-                  style={{
-                    fill: localIsFavorite ? "#CC3333" : "none",
-                    color: "#CC3333",
-                    strokeWidth: "2",
-                  }}
-                />
-              </button>
-            ) : (
-              <div
-                className={disabledCircleClass}
-                title="Favorites unavailable"
-                aria-label="Favorites unavailable"
-              >
-                <Heart className="w-6 h-6" />
-              </div>
-            )}
-
-            {/* QR SHARE */}
-            <button
-              type="button"
-              onClick={(e) => {
-                e.stopPropagation();
-                onShowQrForLanguage(languageName);
-              }}
-              className={`${circleButtonClass} hover:bg-brand-red hover:text-white`}
-              title={i18n[lang].share_language_qr || "Show QR code / Share"}
+              className={`${circleButtonClass} group hover:bg-brand-red`}
+              title={
+                localIsFavorite
+                  ? lang === "en"
+                    ? "Remove from Favorites"
+                    : "ลบออกจากรายการโปรด"
+                  : lang === "en"
+                    ? "Add to Favorites"
+                    : "เพิ่มในรายการโปรด"
+              }
               aria-label={
-                i18n[lang].share_language_qr || "Show QR code / Share"
+                localIsFavorite
+                  ? lang === "en"
+                    ? "Remove from Favorites"
+                    : "ลบออกจากรายการโปรด"
+                  : lang === "en"
+                    ? "Add to Favorites"
+                    : "เพิ่มในรายการโปรด"
               }
             >
-              <Qrcode className="w-6 h-6" />
+              <Heart
+                className="w-[22px] h-[22px] transition-all group-hover:text-white"
+                style={{
+                  fill: localIsFavorite ? "#CC3333" : "none",
+                  color: "#CC3333",
+                  strokeWidth: "2",
+                }}
+              />
             </button>
-          </div>
-
-          {/* BOTTOM 3 BUTTONS */}
-          {isExpanded && (
-            <div className="mt-1 grid grid-cols-3 gap-1.5 justify-items-center">
-              {/* OPEN */}
-              {externalUrl ? (
-                <a
-                  href={externalUrl}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  onClick={(e) => e.stopPropagation()}
-                  className={`${circleButtonClass} hover:bg-blue-500 hover:text-white`}
-                  title={
-                    i18n[lang].open_language_on_grn ||
-                    "Open this language on GRN / 5fish"
-                  }
-                  aria-label={
-                    i18n[lang].open_language_on_grn ||
-                    "Open this language on GRN / 5fish"
-                  }
-                >
-                  <ExternalLink className="w-6 h-6" />
-                </a>
-              ) : (
-                <div
-                  className={disabledCircleClass}
-                  title={
-                    lang === "en"
-                      ? "No external link available"
-                      : "ไม่มีลิงก์ภายนอก"
-                  }
-                  aria-label={
-                    lang === "en"
-                      ? "No external link available"
-                      : "ไม่มีลิงก์ภายนอก"
-                  }
-                >
-                  <ExternalLink className="w-6 h-6" />
-                </div>
-              )}
-
-              {/* DOWNLOAD */}
-              {sampleUrl ? (
-                <a
-                  href={sampleUrl}
-                  download
-                  onClick={(e) => e.stopPropagation()}
-                  className={`${circleButtonClass} hover:bg-green-500 hover:text-white`}
-                  title="Download sample"
-                  aria-label="Download sample"
-                >
-                  <Download className="w-6 h-6" />
-                </a>
-              ) : (
-                <div
-                  className={disabledCircleClass}
-                  title={
-                    lang === "en"
-                      ? "No download available"
-                      : "ไม่มีไฟล์ดาวน์โหลด"
-                  }
-                  aria-label={
-                    lang === "en"
-                      ? "No download available"
-                      : "ไม่มีไฟล์ดาวน์โหลด"
-                  }
-                >
-                  <Download className="w-6 h-6" />
-                </div>
-              )}
-
-              {/* VIDEO */}
-              {languageVideoUrl ? (
-                <a
-                  href={languageVideoUrl}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  onClick={(e) => e.stopPropagation()}
-                  className={`${circleButtonClass} hover:bg-gray-300`}
-                  title={lang === "en" ? "Watch video" : "ดูวิดีโอ"}
-                  aria-label={lang === "en" ? "Watch video" : "ดูวิดีโอ"}
-                >
-                  <YouTubeColor className="w-6 h-6" />
-                </a>
-              ) : (
-                <div
-                  className={disabledCircleClass}
-                  title={lang === "en" ? "No video available" : "ไม่มีวิดีโอ"}
-                  aria-label={
-                    lang === "en" ? "No video available" : "ไม่มีวิดีโอ"
-                  }
-                >
-                  <YouTubeColor className="w-6 h-6" />
-                </div>
-              )}
+          ) : (
+            <div
+              className={disabledCircleClass}
+              title={
+                lang === "en" ? "Favorites unavailable" : "ไม่พร้อมใช้งาน"
+              }
+              aria-label={
+                lang === "en" ? "Favorites unavailable" : "ไม่พร้อมใช้งาน"
+              }
+            >
+              <Heart className="w-[22px] h-[22px]" />
             </div>
           )}
+
+          {/* 3. QR SHARE & MORE */}
+          <button
+            type="button"
+            onClick={(e) => {
+              e.stopPropagation();
+              onShowQrForLanguage(languageName);
+            }}
+            className={`${circleButtonClass} hover:bg-brand-red hover:text-white`}
+            title={
+              i18n[lang]?.share_language_qr ||
+              (lang === "en"
+                ? "QR Code, Share & More"
+                : "คิวอาร์โค้ด แชร์ และอื่นๆ")
+            }
+            aria-label={
+              i18n[lang]?.share_language_qr ||
+              (lang === "en"
+                ? "QR Code, Share & More"
+                : "คิวอาร์โค้ด แชร์ และอื่นๆ")
+            }
+          >
+            <Qrcode className="w-[22px] h-[22px]" />
+          </button>
         </div>
       </div>
     </div>

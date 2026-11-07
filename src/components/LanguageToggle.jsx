@@ -9,14 +9,14 @@ const LanguageToggle = ({ lang, setLang, t }) => {
   };
 
   return (
-    <div className="flex items-center space-x-1 md:space-x-2 flex-shrink-0">
+    <div className="flex items-center flex-shrink-0">
       <button
         onClick={toggleLang}
-        className="text-white p-1 rounded-lg hover:bg-red-800 transition-colors btn-hover flex-shrink-0"
+        className="text-white p-[6px] rounded-lg hover:bg-red-800 transition-colors btn-hover flex-shrink-0"
         title={lang === "en" ? "เปลี่ยนเป็นภาษาไทย" : "Switch to English"}
         aria-label={lang === "en" ? "เปลี่ยนเป็นภาษาไทย" : "Switch to English"}
       >
-        <LanguageIcon className="w-7 h-7 md:w-8 md:h-8" />
+        <LanguageIcon className="w-[26px] h-[26px] md:w-[28px] md:h-[28px]" />
       </button>
     </div>
   );

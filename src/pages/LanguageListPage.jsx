@@ -5,6 +5,7 @@
 import React, { useState, useRef } from "react";
 import LanguageCard from "../components/LanguageCard";
 import { getLanguageIndeterminateState } from "../utils/filterLogic";
+import { playSampleWithOfflineSupport } from "../utils/audioHelper";
 import { Search } from "lucide-react";
 
 const LanguageListPage = ({
@@ -15,6 +16,11 @@ const LanguageListPage = ({
   onShowQrForLanguage,
   selectedPrograms,
   onToggleLanguage,
+  showCheckboxes = false,
+  onEnableSelectMode,
+  onPlayTrack,
+  activeTrack,
+  isAudioPlaying = false,
   onHoverChange,
   userData,
   onToggleFavoriteLanguage,
@@ -178,14 +184,25 @@ const LanguageListPage = ({
     return null;
   };
 
-  // Play / stop a short language sample
+  // Play / stop a language sample (uses main bottom player if provided)
   const handlePlayLanguageSample = (group) => {
     if (!group || !group.messages || group.messages.length === 0) {
       return;
     }
 
-    const firstMessageWithSample = group.messages.find((msg) => msg.sampleUrl);
-    if (!firstMessageWithSample || !firstMessageWithSample.sampleUrl) {
+    const firstMessageWithSample = group.messages.find(
+      (msg) => msg.sampleUrl || msg.trackDownloadUrl,
+    );
+    if (!firstMessageWithSample) {
+      return;
+    }
+
+    if (onPlayTrack) {
+      onPlayTrack(firstMessageWithSample);
+      return;
+    }
+
+    if (!firstMessageWithSample.sampleUrl) {
       return;
     }
 
@@ -196,20 +213,15 @@ const LanguageListPage = ({
       return;
     }
 
-    audioRef.current.pause();
-    audioRef.current.currentTime = 0;
-    audioRef.current.src = firstMessageWithSample.sampleUrl;
-    audioRef.current.load();
-
-    audioRef.current
-      .play()
-      .then(() => {
-        setPlayingLanguageKey(group.stableKey);
-      })
-      .catch((err) => {
-        console.error("Error playing language sample:", err);
-        setPlayingLanguageKey(null);
-      });
+    playSampleWithOfflineSupport(
+      audioRef.current,
+      firstMessageWithSample.sampleUrl,
+      {
+        onPlaySuccess: () => setPlayingLanguageKey(group.stableKey),
+        onPlayError: () => setPlayingLanguageKey(null),
+        onEnded: () => setPlayingLanguageKey(null),
+      }
+    );
   };
 
   // Clean up audio when leaving page
@@ -320,22 +332,26 @@ const LanguageListPage = ({
                     onToggle={() =>
                       onToggleLanguage(group.stableKey, group.messages)
                     }
+                    showCheckbox={showCheckboxes}
+                    onEnableSelectMode={onEnableSelectMode}
                     setHovering={onHoverChange}
                     onPlayLanguage={() => handlePlayLanguageSample(group)}
-                    isPlayingLanguage={playingLanguageKey === group.stableKey}
+                    isPlayingLanguage={
+                      onPlayTrack
+                        ? Boolean(
+                            isAudioPlaying &&
+                              activeTrack &&
+                              group.messages.some(
+                                (m) => m.id === activeTrack.id,
+                              ),
+                          )
+                        : playingLanguageKey === group.stableKey
+                    }
                     isFavorite={
                       !!userData?.favoriteLanguages?.includes(group.stableKey)
                     }
                     onToggleFavorite={() =>
                       onToggleFavoriteLanguage(group.stableKey)
-                    }
-                    sampleUrl={
-                      group.messages.find((msg) => msg.sampleUrl)?.sampleUrl
-                    }
-                    externalUrl={buildLanguageExternalUrl(group)}
-                    languageVideoUrl={
-                      group.messages.find((msg) => msg.languageVideoUrl)
-                        ?.languageVideoUrl
                     }
                     searchQuery={searchQuery}
                   />

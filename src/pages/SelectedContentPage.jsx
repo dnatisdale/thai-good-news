@@ -3,6 +3,7 @@ import { Share2, Download, ChevronLeft, ChevronRight, Music, PdfFile } from "../
 import { Copy, Printer } from "lucide-react";
 import ContentCard from "../components/ContentCard";
 import { getFilteredMessages } from "../utils/filterLogic";
+import { playSampleWithOfflineSupport } from "../utils/audioHelper";
 
 const ACCENT_COLOR_CLASS = "text-brand-red";
 
@@ -25,10 +26,46 @@ const SelectedContentPage = ({
   onDownloadPDF,
   userData, // 👇 NEW PROP
   onToggleFavorite, // 👇 NEW PROP
+  onPlayTrack,
+  activeTrack,
+  isAudioPlaying = false,
+  onShowQrForMessage,
 }) => {
   // Use the logic to get the actual message objects
   const filteredContent = getFilteredMessages(allMessages, selectedPrograms);
   const count = filteredContent.length;
+
+  const [playingSampleId, setPlayingSampleId] = React.useState(null);
+  const audioRef = React.useRef(new Audio());
+
+  const handlePlaySample = (item) => {
+    if (onPlayTrack) {
+      onPlayTrack(item);
+      return;
+    }
+
+    if (playingSampleId === item.id) {
+      audioRef.current.pause();
+      audioRef.current.currentTime = 0;
+      setPlayingSampleId(null);
+      return;
+    }
+
+    if (item.sampleUrl) {
+      playSampleWithOfflineSupport(audioRef.current, item.sampleUrl, {
+        onPlaySuccess: () => setPlayingSampleId(item.id),
+        onPlayError: () => setPlayingSampleId(null),
+        onEnded: () => setPlayingSampleId(null),
+      });
+    }
+  };
+
+  React.useEffect(() => {
+    return () => {
+      audioRef.current.pause();
+      audioRef.current.currentTime = 0;
+    };
+  }, []);
   
 
 
@@ -150,6 +187,25 @@ const SelectedContentPage = ({
                   /* Don't navigate on this page */
                 }}
                 showLanguageName={true} // Show the Language name since they are mixed
+                isPlayingSample={
+                  onPlayTrack
+                    ? Boolean(
+                        isAudioPlaying &&
+                          activeTrack &&
+                          activeTrack.id === item.id,
+                      )
+                    : playingSampleId === item.id
+                }
+                onPlaySample={() => handlePlaySample(item)}
+                onShowQrForMessage={
+                  onShowQrForMessage
+                    ? () =>
+                        onShowQrForMessage(
+                          item,
+                          lang === "en" ? item.languageEn : item.langTh,
+                        )
+                    : undefined
+                }
                 isFavorite={userData?.favorites?.includes(item.id)}
                 onToggleFavorite={() => onToggleFavorite(item.id)}
               />

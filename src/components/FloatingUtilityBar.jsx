@@ -48,24 +48,24 @@ const FloatingUtilityBar = ({
   };
 
   return (
-    <div className="relative flex-shrink-0 mr-1 md:mr-2 z-[100]" ref={dropdownRef}>
+    <div className="relative flex-shrink-0 z-[100]" ref={dropdownRef}>
 
       {/* BUTTON CONTAINER */}
-      <div className="relative flex flex-col md:flex-row items-center gap-px md:gap-1">
+      <div className="relative flex flex-col md:flex-row items-center">
         {/* Font Size Icon Button */}
         <button
           onClick={() => setIsOpen(!isOpen)}
-          className="text-white p-1 rounded-lg hover:bg-red-800 transition-colors btn-hover flex-shrink-0"
+          className="text-white p-[6px] rounded-lg hover:bg-red-800 transition-colors btn-hover flex-shrink-0"
           style={{ backgroundColor: isOpen ? '#a91b0d' : 'transparent' }}
           aria-label="Font Size"
           title="Font Size"
         >
-          <FontSize className="w-6 h-6" />
+          <FontSize className="w-[24px] h-[24px] md:w-[26px] md:h-[26px]" />
         </button>
 
-        {/* Font Size Dropdown Menu */}
+        {/* Font Size Dropdown Menu (fixed px sizing so it remains usable at any root font size) */}
         {isOpen && (
-          <div className="absolute top-full right-0 mt-2 bg-white dark:bg-slate-700 rounded-lg shadow-xl border border-gray-200 dark:border-slate-600 py-2 min-w-[140px] z-50">
+          <div className="absolute top-full right-0 mt-[8px] bg-white dark:bg-slate-700 rounded-lg shadow-xl border border-gray-200 dark:border-slate-600 py-[8px] min-w-[160px] z-50">
             {[
               { label: lang === 'en' ? 'Small' : 'เล็ก', size: '12px' },
               { label: lang === 'en' ? 'Medium' : 'กลาง', size: '16px' },
@@ -79,7 +79,7 @@ const FloatingUtilityBar = ({
                   setFontSize(size);
                   setIsOpen(false);
                 }}
-                className={`w-full px-4 py-2 text-left hover:bg-gray-100 dark:hover:bg-slate-600 transition-colors ${
+                className={`w-full px-[14px] py-[8px] text-[15px] text-left hover:bg-gray-100 dark:hover:bg-slate-600 transition-colors ${
                   fontSize === size
                     ? 'font-semibold'
                     : 'text-gray-700 dark:text-gray-200'
@@ -88,7 +88,7 @@ const FloatingUtilityBar = ({
               >
                 <span className="flex items-center justify-between">
                   <span>{label}</span>
-                  <span className="text-xs text-gray-500 dark:text-gray-400 ml-2">
+                  <span className="text-[12px] text-gray-500 dark:text-gray-400 ml-[8px]">
                     {parseInt(size)}px
                   </span>
                 </span>

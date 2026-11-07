@@ -1,6 +1,7 @@
 import React, { useMemo } from "react";
 import ContentCard from "../components/ContentCard";
 import { ChevronLeft } from "../components/Icons";
+import { playSampleWithOfflineSupport } from "../utils/audioHelper";
 
 const ACCENT_COLOR_CLASS = "text-brand-red";
 
@@ -26,6 +27,33 @@ const ProgramDetailsPage = ({
     // Let's use the title from the first track but maybe clean it up if needed.
     return lang === "en" ? first.title_en : first.title_th;
   }, [tracks, lang]);
+
+  const [playingSampleId, setPlayingSampleId] = React.useState(null);
+  const audioRef = React.useRef(new Audio());
+
+  const handlePlaySample = (item) => {
+    if (playingSampleId === item.id) {
+      audioRef.current.pause();
+      audioRef.current.currentTime = 0;
+      setPlayingSampleId(null);
+      return;
+    }
+
+    if (item.sampleUrl) {
+      playSampleWithOfflineSupport(audioRef.current, item.sampleUrl, {
+        onPlaySuccess: () => setPlayingSampleId(item.id),
+        onPlayError: () => setPlayingSampleId(null),
+        onEnded: () => setPlayingSampleId(null),
+      });
+    }
+  };
+
+  React.useEffect(() => {
+    return () => {
+      audioRef.current.pause();
+      audioRef.current.currentTime = 0;
+    };
+  }, []);
 
   return (
     <div className="p-4 pt-8 h-full overflow-y-auto">
@@ -58,6 +86,8 @@ const ProgramDetailsPage = ({
           t={t}
           onSelect={onSelectTrack}
           showLanguageName={false}
+          isPlayingSample={playingSampleId === item.id}
+          onPlaySample={() => handlePlaySample(item)}
           // We don't need selection checkboxes here for now
         />
       ))}
